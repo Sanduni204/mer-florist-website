@@ -10,7 +10,7 @@
         
         <p>copywrite &copy; 2024 mer ; designed by SH Galbadaarachchi ; All Rights Reserved</p>
     </footer>
-    <script type="text/javascript" src="1javafile.js"></script>
+    <script type="text/javascript" src="<?php echo APPURL; ?>/1javafile.js"></script>
     </p>
 </body>
 </html>
