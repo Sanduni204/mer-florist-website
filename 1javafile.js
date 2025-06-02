@@ -65,9 +65,58 @@ selectedImages.forEach(image => {
         window.location.href = 'payment.html';
     });
 });
+   document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const messageDiv = document.getElementById('register-message');
+            
+            // Basic validation
+            if (!username || !email || !password) {
+                showMessage('Please fill in all fields.', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('Password must be at least 6 characters long.', 'error');
+                return;
+            }
+            
+            // If validation passes
+            showMessage('Registration successful! Welcome, ' + username + '!', 'success');
+            
+            // Here you would typically send the data to your server
+            console.log('Registration data:', { username, email, password });
+            
+            // Clear form after success
+            setTimeout(() => {
+                this.reset();
+                hideMessage();
+            }, 3000);
+        });
 
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('register-message');
+            messageDiv.textContent = text;
+            messageDiv.className = 'register-message ' + type;
+            messageDiv.style.display = 'block';
+        }
 
+        function hideMessage() {
+            const messageDiv = document.getElementById('register-message');
+            messageDiv.style.display = 'none';
+        }
 
-
-
-  
+        // Add interactive effects
+        const inputs = document.querySelectorAll('.register-form-group input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateY(-2px)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateY(0)';
+            });
+        });

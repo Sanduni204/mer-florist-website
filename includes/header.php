@@ -19,6 +19,8 @@
                 <li><a href="1home.html" id="home-link" class="navlink">Home</a></li>
                 <li><a href="1catalogue.html" id="catalogue-link" class="navlink">Shop</a></li>
                 <li><a href="1contact.html" id="contact-link" class="navlink">Contact</a></li>
+                <li><a href="./auth/1register.html" id="register-link" class="navlink">Sign-up</a></li>
+
                 <img src=".\Images\logo.png" class="logo">
 
             </ul>
