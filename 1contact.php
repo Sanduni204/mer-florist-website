@@ -1,4 +1,21 @@
 <?php require "includes/header.php"; ?>
+
+<header>
+    
+    <div class="menubar">
+        <nav>
+            <ul class="main">
+                <li><a href="<?php echo APPURL; ?>/1home.php" id="home-link" class="navlink">Home</a></li>
+                <li><a href="<?php echo APPURL; ?>/1catalogue.php" id="catalogue-link" class="navlink">Shop</a></li>
+                <li><a href="<?php echo APPURL; ?>/1contact.php" id="contact-link" class="navlink">Contact</a></li>  
+                <li><a href="<?php echo APPURL; ?>/auth/1register.php" id="register-link" class="navlink">Sign-up</a></li>
+                <li><a href="<?php echo APPURL; ?>/auth/1login.php" id="login-link" class="navlink">Sign-in</a></li>
+                <img src="<?php echo APPURL; ?>/Images/logo.png" class="logo">
+
+            </ul>
+        </nav>
+    </div>
+</header>
 <h3 class="meet_us">Let's Talk</h3>
         <div id="info">
             <div class="col1">

@@ -20,7 +20,12 @@ else{
         //echo "email is valid";
 
         if(password_verify($password, $fetch['mypassword'])){
-            echo "LOGGED IN";
+           $_SESSION['username'] = $fetch['username'];
+           $_SESSION['email'] = $fetch['email'];
+           $_SESSION['user_id'] = $fetch['id'];
+           
+            header("location: ".APPURL."");
+            
         }else{
             echo "<script>alert('email or password is wrong');</script>";
         }
@@ -31,6 +36,22 @@ else{
 }}
     ?>
 
+<header>
+    
+    <div class="menubar">
+        <nav>
+            <ul class="main">
+                <li><a href="<?php echo APPURL; ?>/1home.php" id="home-link" class="navlink">Home</a></li>
+                <li><a href="<?php echo APPURL; ?>/1catalogue.php" id="catalogue-link" class="navlink">Shop</a></li>
+                <li><a href="<?php echo APPURL; ?>/1contact.php" id="contact-link" class="navlink">Contact</a></li>  
+                <li><a href="<?php echo APPURL; ?>/auth/1register.php" id="register-link" class="navlink">Sign-up</a></li>
+                <li><a href="<?php echo APPURL; ?>/auth/1login.php" id="login-link" class="navlink">Sign-in</a></li>
+                <img src="<?php echo APPURL; ?>/Images/logo.png" class="logo">
+
+            </ul>
+        </nav>
+    </div>
+</header>
     
     <div class="login-header">
         <div class="container">

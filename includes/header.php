@@ -1,4 +1,6 @@
 <?php
+
+session_start();
 define ("APPURL","http://localhost/mer_ecommerce");
 ?>
 <!DOCTYPE html>
@@ -14,20 +16,4 @@ define ("APPURL","http://localhost/mer_ecommerce");
     </head>
 
 <body>
-    <header>
     
-    <div class="menubar">
-        <nav>
-            <ul class="main">
-<li><a href="../1home.html" id="home-link" class="navlink">Home</a></li>
-                <li><a href="../1catalogue.html" id="catalogue-link" class="navlink">Shop</a></li>
-                <li><a href="../1contact.php" id="contact-link" class="navlink">Contact</a></li>
-                <li><a href="1register.php" id="register-link" class="navlink">Sign-up</a></li>
-                <li><a href="1login.php" id="register-link" class="navlink">Sign-in</a></li>
-
-                <img src="../Images/logo.png" class="logo">
-
-            </ul>
-        </nav>
-    </div>
-</header>

@@ -1,34 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mer | home</title>
-    <link rel="stylesheet" type="text/css" href="1style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" 
-    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" 
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
-<body>
-    <header>
+<?php 
+
+require "includes/header.php"; ?>
+
+
+<header>
+    
     <div class="menubar">
         <nav>
             <ul class="main">
-                <li><a href="1home.html" id="home-link" class="navlink">Home</a></li>
-                <li><a href="1catalogue.html" id="catalogue-link" class="navlink">Shop</a></li>
-                <li><a href="1contact.html" id="contact-link" class="navlink">Contact</a></li><br>
-                 <li><a href="./auth/1register.html" id="register-link" class="navlink">Sign-up</a></li>
-                 <li><a href="1login.html" id="register-link" class="navlink">Sign-in</a></li>
-                <li><a href="1home.html#aboutsec" id ="about-link" class="navlink">About</a></li>
-                <li><a href="1home.html#fitems" id ="fItems-link" class="navlink">Featured Items</a></li>
-                <img src=".\Images\logo.png" class="logo">
+                <li><a href="<?php echo APPURL; ?>/1home.php" id="home-link" class="navlink">Home</a></li>
+                <li><a href="<?php echo APPURL; ?>/1catalogue.php" id="catalogue-link" class="navlink">Shop</a></li>
+                <li><a href="<?php echo APPURL; ?>/1contact.php" id="contact-link" class="navlink">Contact</a></li>
+                <li><a href="<?php echo APPURL; ?>/auth/1register.php" id="register-link" class="navlink">Sign-up</a></li>
+                <li><a href="<?php echo APPURL; ?>/auth/1login.php" id="login-link" class="navlink">Sign-in</a></li>
+                
+<?php if(isset($_SESSION['username'])) : ?>
+                <li class="drop">
+                <a href="#"><?php //echo $_SESSION['username']; ?></a>
+                <ul class="dropdown arrow-top">
+                <li><a href="<?php echo APPURL; ?>/auth/logout.php">Logout</a></li>
+                
+            </ul>
+                </li>
+<?php else : ?>
+    <li><a href="<?php echo APPURL; ?>/auth/1register.php" id="register-link" class="navlink">Sign-up</a></li>
+    <li><a href="<?php echo APPURL; ?>/auth/1login.php" id="login-link" class="navlink">Sign-in</a></li>
+    <?php endif; ?>
+                         
+                    
+                      
+                      
+                    
+                <img src="<?php echo APPURL; ?>/Images/logo.png" class="logo">
 
             </ul>
         </nav>
     </div>
 </header>
-
-
 
 <div class="container">
   <img src=".\Images\front_top.jpg" style="width:100%;">
@@ -132,21 +140,4 @@
         </div></a>
    </div>
 
-   
-
-   
-
-    <footer>
-        <div class ="icons">
-            <a href "#"><i class="fa-brands fa-facebook"></i></a>
-            <a href "#"><i class="fa-brands fa-instagram"></i></a>
-            <a href "#"><i class="fa-brands fa-twitter"></i></a>
-            <a href "#"><i class="fa-brands fa-whatsapp"></i></a>
-            <a href "#"><i class="fa-brands fa-youtube"></i></a>
-        </div>
-        
-        <p>copywrite &copy; 2024 mer ; designed by SH Galbadaarachchi ; All Rights Reserved</p>
-    </footer>
-    <script type="text/javascript" src="1javafile.js"></script>
-</body>
-</html>
+   <?php require "includes/footer.php"; ?>
