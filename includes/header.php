@@ -24,12 +24,10 @@ define ("APPURL","http://localhost/mer_ecommerce");
                 <li><a href="<?php echo APPURL; ?>/1home.php" id="home-link" class="navlink">Home</a></li>
                 <li><a href="<?php echo APPURL; ?>/1catalogue.php" id="catalogue-link" class="navlink">Shop</a></li>
                 <li><a href="<?php echo APPURL; ?>/1contact.php" id="contact-link" class="navlink">Contact</a></li>
-                <li><a href="<?php echo APPURL; ?>/auth/1register.php" id="register-link" class="navlink">Sign-up</a></li>
-                <li><a href="<?php echo APPURL; ?>/auth/1login.php" id="login-link" class="navlink">Sign-in</a></li>
                 
-<?php if(isset($_SESSION['username'])) : ?>
+                <?php if(isset($_SESSION['username'])) : ?>
                 <li class="drop">
-                <a href="#"><?php //echo $_SESSION['username']; ?></a>
+                <a href="#"><?php echo $_SESSION['username']; ?></a>
                 <ul class="dropdown arrow-top">
                 <li><a href="<?php echo APPURL; ?>/auth/logout.php">Logout</a></li>
                 
