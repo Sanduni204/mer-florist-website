@@ -27,7 +27,7 @@ define ("APPURL","http://localhost/mer_ecommerce");
                 
                 <?php if(isset($_SESSION['username'])) : ?>
                 <li class="drop">
-                <a href="#"><?php echo $_SESSION['username']; ?></a>
+                <a href="1catalogue.php"><?php echo $_SESSION['username']; ?></a>
                 <ul class="dropdown arrow-top">
                 <li><a href="<?php echo APPURL; ?>/auth/logout.php">Logout</a></li>
                 

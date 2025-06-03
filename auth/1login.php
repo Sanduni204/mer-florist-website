@@ -24,8 +24,8 @@ else{
            $_SESSION['email'] = $fetch['email'];
            $_SESSION['user_id'] = $fetch['id'];
            
-            header("location: ".APPURL."");
-            
+header("location: ".APPURL."");
+        
         }else{
             echo "<script>alert('email or password is wrong');</script>";
         }

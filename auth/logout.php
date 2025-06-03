@@ -4,4 +4,5 @@ session_start();
 session_unset();
 session_destroy();
 
-header("location: http://localhost/mer_ecommerce");
+header("location: http://localhost/mer_ecommerce/");
+exit();
