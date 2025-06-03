@@ -18,7 +18,7 @@ else{
         ':email' => $email,
         ':mypassword' => password_hash($password, PASSWORD_DEFAULT),
     ]);
-    header("location:login.php");
+    header("location:1login.php");
 }
 }
 ?>
@@ -35,6 +35,8 @@ else{
                 <!-- Message container for success/error messages -->
                 <div id="register-message" class="register-message" style="display: none;"></div>
                 
+
+                <!--form-->
                 <form id="registrationForm" action="1register.php" method ="POST">
                     <div class="register-form-group">
                         <label for="username">Username</label>
