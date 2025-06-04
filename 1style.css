@@ -794,6 +794,7 @@ padding-top: 5%;
 .sub{
     text-align: center;
     padding-top: 30px;
+    padding-bottom: 30px;
     font-size: 40px;
     font-style: italic;
     font-variant:unset;

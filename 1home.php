@@ -1,6 +1,13 @@
-<?php 
+<?php require "includes/header.php"; ?>
+<?php
+require_once "Config/config.php";
 
-require "includes/header.php"; ?>
+$select=$conn->query("SELECT*FROM shop WHERE fid IN (5, 4, 3, 1)");
+$select->execute();
+
+$shop = $select->fetchAll(PDO::FETCH_OBJ);
+
+?>
 
 
 <div class="container">
@@ -66,43 +73,23 @@ require "includes/header.php"; ?>
     </div>
    </div>
 
+   
    <div id="fitems"><br><br><br>
    <h3 class="sub">Featured items</h3>
    <div class="front2">
-        <a href="1payment.html"><div class="f">
-        <img class="img" src=".\Images\Rose6.jpg">
-            <p>Secret love</p>
-            <p>RS.4000.00</p>
+    
+   
+        <?php foreach($shop as $sho) : ?>
+            <a href="1payment.html"><div class="f">
+            <img class="img" src=".\Images\<?php echo $sho->image ; ?>">
+            <p><?php echo $sho->name; ?></p>
+            <p>RS.<?php echo $sho->price; ?>.00</p>
             <p><B>Best Seller*</B></p>
-        </div></a>
+            </div></a>
+        <?php endforeach; ?>
 
-        <a href="1payment.html"><div class="f">
-            <img class="img" src=".\Images\Lily6.jpg">
-            <p>Perfection Lily</p>
-            <p>RS.3000.00</p>
-            <p><B>Delivery Free*</B></p>
-        </div></a>
+    </div>
 
-        <a href="1payment.html"><div class="f">
-            <img class="img" src=".\Images\Daisy2.jpg">
-            <p>Glorious Daisy</p>
-            <p><s>RS.3000.00</s></p>
-            <p>RS.2700.00</p>
-        </div></a>
 
-        <a href="1payment.html"><div class="f">
-            <img class="img" src=".\Images\Tulip5.jpg">
-            <p>Tulip Love</p>
-            <p>RS.5000.00</p>
-            <p><B>Best Seller*</B></p>
-        </div></a>
-
-        <a href="1payment.html"><div class="f">
-            <img class="img" src=".\Images\Sunflower4.jpg">
-            <p>Mini Sunny Bunch</p>
-            <p>RS.2100.00</p>
-            <p><B>New Ariival*</B></p>
-        </div></a>
-   </div>
 
    <?php require "includes/footer.php"; ?>
