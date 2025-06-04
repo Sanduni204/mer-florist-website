@@ -1,6 +1,10 @@
 <?php require "../includes/header.php"; ?>
 <?php require "../config/config.php"; ?>
 <?php
+if(isset($_SESSION['username'])){
+header("location: ".APPURL."1home.php");
+exit;}
+
 if(isset($_POST['submit'])){
     if(empty($_POST['email']) OR empty($_POST['password']))
   echo "<script>alert('Some inputs are empty');</script>";
