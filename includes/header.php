@@ -1,7 +1,6 @@
 <?php
-
 session_start();
-define ("APPURL","http://localhost/mer_ecommerce");
+define ("APPURL","http://localhost/mer_ecommerce/");
 ?>
 <!DOCTYPE html>
 <html lang="en">
