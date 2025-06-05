@@ -18,7 +18,55 @@ $shop = $select->fetchAll(PDO::FETCH_OBJ);
   </div>
 </div>
 
-  
+  <div class="search-section">
+    <div class="search-container">
+        <h2 class="search-title">Find Your Perfect Bouquet</h2>
+        <p class="search-subtitle">Discover beautiful flowers for every occasion</p>
+        
+        <form class="search-form" action="search_results.php" method="GET">
+            <div class="search-input-group">
+                <input 
+                    type="text" 
+                    name="search" 
+                    class="search-input" 
+                    placeholder="Search for roses, lilies, wedding bouquets..."
+                    value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>"
+                    required
+                >
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            
+            <select name="category" class="category-select">
+                <option value="">All Categories</option>
+                <option value="Rose">Rose Bouquets</option>
+                <option value="Lily">Lily Bouquets</option>
+                <option value="Daisy">Daisy Bouquets</option>
+                <option value="Tulip">Tulip Bouquets</option>
+                <option value="Sunflower">Sunflower Bouquets</option>
+                <option value="Hydrangea">Hydrangea Bouquets</option>
+            </select>
+            
+            <button type="submit" class="search-btn">
+                <i class="fas fa-search"></i>
+                Search
+            </button>
+        </form>
+        <div class="quick-search">
+            <p class="quick-search-title">Popular Searches:</p>
+            <div class="quick-tags">
+                <a href="?search=bridal" class="quick-tag">Bridal Bouquets</a>
+                <a href="?search=red roses" class="quick-tag">Red Roses</a>
+                <a href="?search=wedding" class="quick-tag">Wedding Flowers</a>
+                <a href="?search=birthday" class="quick-tag">Birthday Bouquets</a>
+                <a href="?search=anniversary" class="quick-tag">Anniversary</a>
+                <a href="?search=best seller" class="quick-tag">Best Sellers</a>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<div id="aboutsec"><br><br><br>
 
    <div id="aboutsec"><br><br><br>
     <h3 class ="sub">About us</h3>
