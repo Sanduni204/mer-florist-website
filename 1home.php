@@ -2,7 +2,7 @@
 <?php
 require_once "Config/config.php";
 
-$select=$conn->query("SELECT*FROM shop WHERE fid IN (5, 4, 3, 1)");
+$select=$conn->query("SELECT*FROM shop ");
 $select->execute();
 
 $shop = $select->fetchAll(PDO::FETCH_OBJ);
@@ -23,48 +23,61 @@ $shop = $select->fetchAll(PDO::FETCH_OBJ);
         <h2 class="search-title">Find Your Perfect Bouquet</h2>
         <p class="search-subtitle">Discover beautiful flowers for every occasion</p>
         
-        <form class="search-form" action="search_results.php" method="GET">
+<form class="search-form" action="search.php" method="POST">
             <div class="search-input-group">
-                <input 
-                    type="text" 
-                    name="search" 
-                    class="search-input" 
-                    placeholder="Search for roses, lilies, wedding bouquets..."
-                    value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>"
-                    required
-                >
-                <i class="fas fa-search search-icon"></i>
-            </div>
-            
-            <select name="category" class="category-select">
-                <option value="">All Categories</option>
-                <option value="Rose">Rose Bouquets</option>
-                <option value="Lily">Lily Bouquets</option>
-                <option value="Daisy">Daisy Bouquets</option>
-                <option value="Tulip">Tulip Bouquets</option>
-                <option value="Sunflower">Sunflower Bouquets</option>
-                <option value="Hydrangea">Hydrangea Bouquets</option>
+                <select name="types" class="category-select">
+                <option value="">Pick a bouquet</option>
+                <option value="Rose Bouquets">Rose Bouquets</option>
+                <option value="Lily Bouquets">Lily Bouquets</option>
+                <option value="Daisy Bouquets">Daisy Bouquets</option>
+                <option value="Tulip Bouquets">Tulip Bouquets</option>
+                <option value="Sunflower Bouquets">Sunflower Bouquets</option>
+                <option value="Hydrangea Bouquets">Hydrangea Bouquets</option>
             </select>
-            
-            <button type="submit" class="search-btn">
+            </div>
+
+            <div class="search-input-group">
+                <select name="color_theme" class="category-select">
+                <option value="">Pick a color</option>                
+                <option value="Red">Red</option>
+                <option value="White">White</option>
+                <option value="Yellow">Yellow</option>
+                <option value="Blue">Blue</option>
+                <option value="Orange">Orange</option>
+                <option value="Pink">Pink</option>
+                <option value="Purple">Purple</option>
+                <option value="Mix">Mix</option>
+                </select>
+            </div>
+                       
+            <button type="submit" class="search-btn" name="submit">
                 <i class="fas fa-search"></i>
                 Search
             </button>
         </form>
-        <div class="quick-search">
-            <p class="quick-search-title">Popular Searches:</p>
-            <div class="quick-tags">
-                <a href="?search=bridal" class="quick-tag">Bridal Bouquets</a>
-                <a href="?search=red roses" class="quick-tag">Red Roses</a>
-                <a href="?search=wedding" class="quick-tag">Wedding Flowers</a>
-                <a href="?search=birthday" class="quick-tag">Birthday Bouquets</a>
-                <a href="?search=anniversary" class="quick-tag">Anniversary</a>
-                <a href="?search=best seller" class="quick-tag">Best Sellers</a>
-            </div>
-        </div>
+        
         
     </div>
 </div>
+
+
+<div id="fitems"><br><br><br>
+   <h3 class="sub">Featured Items</h3>
+   <div class="front2">
+    
+   
+        <?php foreach($shop as $sho) : ?>
+            <a href="1payment.html"><div class="f">
+            <img class="img" src=".\Images\<?php echo $sho->image ; ?>">
+            <p><?php echo $sho->name; ?></p>
+            <p>RS.<?php echo $sho->price; ?>.00</p>
+            <p><B><?php echo $sho->description; ?></B></p>
+            </div></a>
+        
+<?php endforeach; ?>
+    </div>
+
+
 
 <div id="aboutsec"><br><br><br>
 
@@ -122,21 +135,7 @@ $shop = $select->fetchAll(PDO::FETCH_OBJ);
    </div>
 
    
-   <div id="fitems"><br><br><br>
-   <h3 class="sub">Featured items</h3>
-   <div class="front2">
-    
    
-        <?php foreach($shop as $sho) : ?>
-            <a href="1payment.html"><div class="f">
-            <img class="img" src=".\Images\<?php echo $sho->image ; ?>">
-            <p><?php echo $sho->name; ?></p>
-            <p>RS.<?php echo $sho->price; ?>.00</p>
-            <p><B>Best Seller*</B></p>
-            </div></a>
-        <?php endforeach; ?>
-
-    </div>
 
 
 
