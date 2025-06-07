@@ -162,3 +162,41 @@ if (fitemLink) {
         }
     }
 }, 500);
+
+function toggleDropdown() {
+            const dropdown = document.getElementById('dropdownContent');
+            const arrow = document.getElementById('dropdownArrow');
+            
+            dropdown.classList.toggle('show');
+            arrow.classList.toggle('open');
+        }
+
+        // Function to select option
+        function selectOption(optionText) {
+            const selectedOption = document.getElementById('selectedOption');
+            const dropdownItems = document.querySelectorAll('.dropdown-item');
+            
+            // Remove selected class from all items
+            dropdownItems.forEach(item => item.classList.remove('selected'));
+            
+            // Update selected option text
+            selectedOption.textContent = optionText;
+            
+            // Add selected class to clicked item
+            event.target.classList.add('selected');
+            
+            // Close dropdown
+            toggleDropdown();
+            
+            // You can add your sorting logic here
+            console.log('Selected:', optionText);
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.querySelector('.sort-dropdown');
+            if (!dropdown.contains(event.target)) {
+                document.getElementById('dropdownContent').classList.remove('show');
+                document.getElementById('dropdownArrow').classList.remove('open');
+            }
+        });

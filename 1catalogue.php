@@ -41,7 +41,19 @@
         </div>
     
     </div>
+    <div class="sort-dropdown">
+        <button class="dropdown-btn" onclick="toggleDropdown()">
+            <span id="selectedOption">Sort by</span>
+            <span class="dropdown-arrow" id="dropdownArrow">▼</span>
+        </button>
+        <div class="dropdown-content" id="dropdownContent">
+            <div class="dropdown-item" onclick="selectOption('Sort by')">Sort by</div>
+            <div class="dropdown-item" onclick="selectOption('Price Ascending')">Price Ascending</div>
+            <div class="dropdown-item" onclick="selectOption('Price Descending')">Price Descending</div>
+        </div>
+    </div><br><br>
     <div id="Rose">
+        
         
         <a href="1payment.html"><div class="R">
             <img class="img" src=".\Images\Rose1.jpg">
