@@ -2,10 +2,12 @@
 <?php
 require_once "Config/config.php";
 
-$select=$conn->query("SELECT*FROM shop ");
+$select=$conn->query("SELECT*FROM shop WHERE description='Best seller'OR description = 'delivery free' LIMIT 5");
 $select->execute();
 
 $shop = $select->fetchAll(PDO::FETCH_OBJ);
+
+   
 
 ?>
 

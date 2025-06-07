@@ -11,7 +11,7 @@ if(isset($_POST['submit'])){
     $type = $_POST['types'];
     $color_theme = $_POST['color_theme'];
 
-    $search = $conn->query("SELECT*FROM shop WHERE type LIKE '%$type%' OR 
+    $search = $conn->query("SELECT*FROM shop WHERE type LIKE '%$type%' AND 
     color_theme LIKE '%$color_theme%'");
     // % for wild card 
     $search->execute();
