@@ -1606,10 +1606,11 @@ padding-top: 5%;
 }
 
  .sort-dropdown {
-            position: relative;
-            display: inline-block;
+        position: absolute;    
+        float:right;
+        margin: 50px;
             
-            right: 0px;
+            
 
         }
 
@@ -1627,6 +1628,8 @@ padding-top: 5%;
             align-items: center;
             transition: all 0.3s ease;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
         }
 
         .dropdown-btn:hover {
@@ -1657,6 +1660,8 @@ padding-top: 5%;
             visibility: hidden;
             transform: translateY(-10px);
             transition: all 0.3s ease;
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
         }
 
         .dropdown-content.show {

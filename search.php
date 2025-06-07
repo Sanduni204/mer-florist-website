@@ -22,7 +22,22 @@ if(isset($_POST['submit'])){
     header("location: ".APPURL."1home.php");
 }
 
+
+
 ?>
+<div class="sort-dropdown">
+        <button class="dropdown-btn" onclick="toggleDropdown()">
+            <span id="selectedOption">Sort by</span>
+            <span class="dropdown-arrow" id="dropdownArrow">▼</span>
+        </button>
+        <div class="dropdown-content" id="dropdownContent">
+            
+        
+            <div class="dropdown-item" onclick="selectOption('Price Ascending')">Price Ascending</div>
+            <div class="dropdown-item" onclick="selectOption('Price Descending')">Price Descending</div>
+        </div>
+    </div><br><br>
+
 <?php if(isset($_POST['submit'])): ?>
 <div id="fitems"><br><br><br>
    
