@@ -2,24 +2,20 @@
 <?php
 require_once "Config/config.php";
 
-$select=$conn->query("SELECT*FROM shop");
-$select->execute();
 
-$shop = $select->fetchAll(PDO::FETCH_OBJ);
+if(isset($_GET['price'])){
+    $price = $_GET['price'];
 
-if(isset($_POST['submit'])){
-    $type = $_POST['types'];
-    $color_theme = $_POST['color_theme'];
-
-    $search = $conn->query("SELECT*FROM shop WHERE type LIKE '%$type%' AND 
-    color_theme LIKE '%$color_theme%'");
-    // % for wild card 
-    $search->execute();
-
-    $listings = $search->fetchALL(PDO::FETCH_OBJ);
-
-}else{
-    header("location: ".APPURL."1home.php");
+    // Sanitize the input to prevent SQL injection
+    if ($price == 'ASC' || $price == 'DESC') {
+        $price_query = $conn->prepare("SELECT * FROM shop ORDER BY price $price");
+        $price_query->execute();
+        $allListingsPrice = $price_query->fetchAll(PDO::FETCH_OBJ);
+    } else {
+        // Handle invalid input (e.g., display an error message)
+        echo "Invalid sorting option.";
+        exit;
+    }
 }
 
 
@@ -33,18 +29,18 @@ if(isset($_POST['submit'])){
         <div class="dropdown-content" id="dropdownContent">
             
         
-            <a href="price.php?price=as" class="dropdown-item" onclick="selectOption('Price Ascending')">Price Ascending</div>
-            <a href="price.php?price=des" class="dropdown-item" onclick="selectOption('Price Descending')">Price Descending</div>
+<a href="price.php?price=ASC" class="dropdown-item" onclick="selectOption('Price Ascending')">Price Ascending</a>
+            <a href="price.php?price=DESC" class="dropdown-item" onclick="selectOption('Price Descending')">Price Descending</a>
         </div>
     </div><br><br>
 
-<?php if(isset($_POST['submit'])): ?>
+
 <div id="fitems"><br><br><br>
    
    <div class="front2">
     
-   <?php if(count($listings)>0) :?>
-        <?php foreach($listings as $listing) : ?>
+   
+        <?php foreach($allListingsPrice as $listing) : ?>
             <a href="1payment.html"><div class="f">
             <img class="img" src=".\Images\<?php echo $listing->image ; ?>">
             <p><?php echo $listing->name; ?></p>
@@ -53,14 +49,10 @@ if(isset($_POST['submit'])){
             </div></a>
         
 <?php endforeach; ?>
-<?php else :?>
-    <div class="bg-success text-white">we do not have any listing with this query for
-    now </div><br><br>
-    <?php endif; ?>
+
     
 
     
 
    <?php require "includes/footer.php"; ?>
 </div>
-<?php endif; ?>
