@@ -1,6 +1,5 @@
 <?php require "includes/header.php"; ?>
-<?php
-require_once "Config/config.php";
+<?php require "Config/config.php";
 
 $select=$conn->query("SELECT*FROM shop WHERE description='Best seller'OR description = 'delivery free' LIMIT 5");
 $select->execute();
