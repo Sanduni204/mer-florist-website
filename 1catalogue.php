@@ -1,4 +1,18 @@
 <?php require "includes/header.php"; ?>
+<?php require "Config/config.php"; ?>
+<?php
+if(isset($_GET['id'])){
+    $id = $_GET['id'];
+
+    
+        $single = $conn->query("SELECT * FROM shop WHERE id='$id'");
+
+        $single->execute();
+        $allDetails = $single->fetch(PDO::FETCH_OBJ);
+         
+    
+}
+?>
 
 
 <div class="section">
@@ -49,6 +63,7 @@
             <img class="img" src=".\Images\Rose1.jpg">
             <p>100 Roses</p>
             <p>RS.2000.00</p>
+            <p><B>Best Seller*</B></p>
         </div></a>
         <a href="1payment.html"><div class="R">
             <img class="img" src=".\Images\Rose2.jpg">

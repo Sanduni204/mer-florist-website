@@ -33,8 +33,8 @@ if(isset($_POST['submit'])){
         <div class="dropdown-content" id="dropdownContent">
             
         
-            <a href="price.php?price=ASC" class="dropdown-item" >Price Ascending</a>
-            <a href="price.php?price=DESC" class="dropdown-item" >Price Descending</a>
+            <a href="price.php?price=ASC" class="dropdown-item" id="dropdown-item-1" >Price Ascending</a>
+            <a href="price.php?price=DESC" class="dropdown-item" id="dropdown-item-2">Price Descending</a>
         </div>
     </div><br><br>
 
