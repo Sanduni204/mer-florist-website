@@ -11,7 +11,8 @@ require_once __DIR__ . '/../includes/header.php';
 ?>
 <!-- Admin local styles -->
 <style>
-  .admin-wrapper { max-width: 1100px; margin: 100px auto 40px; padding: 0 20px; }
+  .admin-main { display:grid; place-items:center; }
+  .admin-wrapper { max-width: 1100px; margin: 0 auto; padding: 0 20px; width: 100%; }
   .admin-nav { display:flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
   .admin-nav a { padding: 10px 14px; border:1px solid #ddd; border-radius:8px; background:#fff; }
   .admin-card { background:#fff; border:1px solid #eee; border-radius:12px; padding:20px; box-shadow:0 10px 20px rgba(0,0,0,0.05); }
@@ -22,5 +23,6 @@ require_once __DIR__ . '/../includes/header.php';
   .admin-table th, .admin-table td { border-bottom:1px solid #eee; padding:10px; text-align:left; }
 </style>
 
-<div class="admin-wrapper">
-  <div class="admin-card">
+<div class="main-content admin-main">
+  <div class="admin-wrapper">
+    <div class="admin-card">
