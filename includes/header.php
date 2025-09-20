@@ -36,6 +36,9 @@ define ("APPURL","http://localhost/mer_ecommerce/");
     <li><a href="<?php echo APPURL; ?>/auth/1register.php" id="register-link" class="navlink">Sign-up</a></li>
     <li><a href="<?php echo APPURL; ?>/auth/1login.php" id="login-link" class="navlink">Sign-in</a></li>
     <?php endif; ?>
+    <?php if(isset($_SESSION['is_admin']) && $_SESSION['is_admin']===true): ?>
+        <li><a href="<?php echo APPURL; ?>/admin/index.php" class="navlink">Admin</a></li>
+    <?php endif; ?>
                          
                     
                       

