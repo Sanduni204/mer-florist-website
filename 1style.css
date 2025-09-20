@@ -1663,10 +1663,11 @@ padding-top: 5%;
             transition: all 0.3s ease;
             font-family: 'Times New Roman', Times, serif;
             font-style: italic;
+            min-width: 220px;
+            display: flex;             /* Stack items vertically */
+            flex-direction: column;
+            gap: 10px;                 /* Space between options */
            
-        }
-        #dropdown-item-1,#dropdown-item-2{
-            padding: 60px;
         }
 
         .dropdown-content.show {
@@ -1676,10 +1677,17 @@ padding-top: 5%;
         }
 
         .dropdown-item {
+            display: block; /* Ensure vertical margins take effect */
             padding: 12px 20px;
             cursor: pointer;
             transition: background-color 0.2s ease;
             border-bottom: 1px solid #f0f0f0;
+            white-space: nowrap; /* Keep labels on one line */
+        }
+
+        /* Prevent manual line breaks inside dropdown items */
+        .dropdown-item br {
+            display: none;
         }
 
         .dropdown-item:last-child {
@@ -1688,6 +1696,11 @@ padding-top: 5%;
 
         .dropdown-item:hover {
             background-color: #f8f9ff;
+        }
+
+        /* Space handled by parent gap; keep margin zero to avoid doubling */
+        .dropdown-item:not(:last-child) {
+            margin-bottom: 0;
         }
 
         .dropdown-item.selected {
