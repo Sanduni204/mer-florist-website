@@ -2,25 +2,29 @@
 <?php
 require_once "Config/config.php";
 
-$select=$conn->query("SELECT*FROM shop");
-$select->execute();
+// Accept filters from POST (initial search) or GET (when sorting)
+$type = $_POST['types'] ?? ($_GET['types'] ?? null);
+$color_theme = $_POST['color_theme'] ?? ($_GET['color_theme'] ?? null);
+// Sort order via GET
+$sortOrder = isset($_GET['price']) ? strtoupper($_GET['price']) : null;
 
-$shop = $select->fetchAll(PDO::FETCH_OBJ);
-
-if(isset($_POST['submit'])){
-    $type = $_POST['types'];
-    $color_theme = $_POST['color_theme'];
-
-    $search = $conn->query("SELECT*FROM shop WHERE type LIKE '%$type%' AND 
-    color_theme LIKE '%$color_theme%'");
-    // % for wild card 
-    $search->execute();
-
-    $listings = $search->fetchALL(PDO::FETCH_OBJ);
-
-}else{
+if ($type === null || $color_theme === null) {
     header("location: ".APPURL."1home.php");
+    exit;
 }
+
+// Build filtered query with optional sort
+$sql = "SELECT * FROM shop WHERE type LIKE :type AND color_theme LIKE :color_theme";
+if ($sortOrder === 'ASC' || $sortOrder === 'DESC') {
+    $sql .= " ORDER BY price " . $sortOrder;
+}
+
+$stmt = $conn->prepare($sql);
+$stmt->execute([
+    ':type' => "%{$type}%",
+    ':color_theme' => "%{$color_theme}%",
+]);
+$listings = $stmt->fetchAll(PDO::FETCH_OBJ);
 
 
 
@@ -31,19 +35,17 @@ if(isset($_POST['submit'])){
             <span class="dropdown-arrow" id="dropdownArrow">▼</span>
         </button>
         <div class="dropdown-content" id="dropdownContent">
-            
-        
-            <a href="price.php?price=ASC" class="dropdown-item" id="dropdown-item-1" >Price Ascending</a>
-            <a href="price.php?price=DESC" class="dropdown-item" id="dropdown-item-2">Price Descending</a>
+            <?php $qType = urlencode($type); $qColor = urlencode($color_theme); ?>
+            <a href="search.php?types=<?php echo $qType; ?>&color_theme=<?php echo $qColor; ?>&price=ASC" class="dropdown-item" id="dropdown-item-1">Price Ascending</a>
+            <a href="search.php?types=<?php echo $qType; ?>&color_theme=<?php echo $qColor; ?>&price=DESC" class="dropdown-item" id="dropdown-item-2">Price Descending</a>
         </div>
     </div><br><br>
 
-<?php if(isset($_POST['submit'])): ?>
 <div id="fitems"><br><br><br>
    
    <div class="front2">
     
-   <?php if(count($listings)>0) :?>
+    <?php if(!empty($listings) && count($listings)>0) :?>
         <?php foreach($listings as $listing) : ?>
             <a href="1payment.html"><div class="f">
             <img class="img" src=".\Images\<?php echo $listing->image ; ?>">
@@ -63,4 +65,3 @@ if(isset($_POST['submit'])){
 
    <?php require "includes/footer.php"; ?>
 </div>
-<?php endif; ?>
