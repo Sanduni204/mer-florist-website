@@ -1,5 +1,5 @@
 <?php require "../includes/header.php"; ?>
-<?php require "../config/config.php"; ?>
+<?php require "../Config/config.php"; ?>
 <?php
 if(isset($_SESSION['username'])){
 header("location: ".APPURL."1home.php");

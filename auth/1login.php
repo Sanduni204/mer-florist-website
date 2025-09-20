@@ -1,5 +1,5 @@
 <?php require "../includes/header.php"; ?>
-<?php require "../config/config.php"; ?>
+<?php require "../Config/config.php"; ?>
 <?php
 if(isset($_SESSION['username'])){
 header("location: ".APPURL."1home.php");
@@ -72,6 +72,14 @@ header("location: ".APPURL."1home.php");
                 
          <button type="submit" name ="submit" class="login-btn">Login</button>
             </form>
+
+            <div class="login-footer" style="margin-top:10px;">
+                <p>Forgot password? <a href="<?php echo APPURL; ?>auth/forgot-password.php">Reset</a></p>
+            </div>
+
+            <div class="login-footer">
+                <p>Don't have an account? <a href="<?php echo APPURL; ?>auth/1register.php">Sign Up</a></p>
+            </div>
 
             
         </div>
