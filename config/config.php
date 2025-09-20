@@ -1,16 +1,12 @@
 <?php
-// Unified PDO configuration with port fallback and UTF-8 charset
-// Adjust DBNAME, USER, PASS as needed for your local environment
 
-// Host and credentials
 define("HOSTNAME", "localhost");
 define("DBNAME", "mer");
 define("USER", "root");
 define("PASS", "");
 
-// Preferred port first (XAMPP often uses 3308/3307), then fallback to 3306
 $ports = [3308, 3307, 3306];
-// Try both direct IP and hostname
+
 $hosts = ["127.0.0.1", HOSTNAME];
 $lastException = null;
 
