@@ -1,6 +1,10 @@
 <?php
-session_start();
-define ("APPURL","http://localhost/mer_ecommerce/");
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (!defined('APPURL')) {
+    define('APPURL', 'http://localhost/mer_ecommerce/');
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -20,32 +24,37 @@ define ("APPURL","http://localhost/mer_ecommerce/");
     <div class="menubar">
         <nav>
             <ul class="main">
-                <li><a href="<?php echo APPURL; ?>/1home.php" id="home-link" class="navlink">Home</a></li>
-                <li><a href="<?php echo APPURL; ?>/1catalogue.php" id="catalogue-link" class="navlink">Shop</a></li>
-                <li><a href="<?php echo APPURL; ?>/1contact.php" id="contact-link" class="navlink">Contact</a></li>
-                
-                <?php if(isset($_SESSION['username'])) : ?>
-                <li class="drop">
-                <a href="1catalogue.php"><?php echo $_SESSION['username']; ?></a>
-                <ul class="dropdown arrow-top">
-                <li><a href="<?php echo APPURL; ?>/auth/logout.php">Logout</a></li>
-                
-            </ul>
-                </li>
-<?php else : ?>
-    <li><a href="<?php echo APPURL; ?>/auth/1register.php" id="register-link" class="navlink">Sign-up</a></li>
-    <li><a href="<?php echo APPURL; ?>/auth/1login.php" id="login-link" class="navlink">Sign-in</a></li>
-    <?php endif; ?>
-    <?php if(isset($_SESSION['is_admin']) && $_SESSION['is_admin']===true): ?>
-        <li><a href="<?php echo APPURL; ?>/admin/index.php" class="navlink">Admin</a></li>
-    <?php endif; ?>
-                         
-                    
-                      
-                      
-                    
-                <img src="<?php echo APPURL; ?>/Images/logo.png" class="logo">
+                <?php if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true): ?>
+                    <li><a href="<?php echo APPURL; ?>admin/index.php" class="navlink">Dashboard</a></li>
+                    <li><a href="<?php echo APPURL; ?>admin/add_flower.php" class="navlink">Add Flower</a></li>
+                    <li><a href="<?php echo APPURL; ?>admin/manage_flowers.php" class="navlink">Manage Flowers</a></li>
+                    <li class="drop">
+                        <a href="<?php echo APPURL; ?>admin/index.php">
+                            <?php echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Admin'; ?>
+                        </a>
+                        <ul class="dropdown arrow-top">
+                            <li><a href="<?php echo APPURL; ?>admin/logout.php">Logout</a></li>
+                        </ul>
+                    </li>
+                <?php else: ?>
+                    <li><a href="<?php echo APPURL; ?>/1home.php" id="home-link" class="navlink">Home</a></li>
+                    <li><a href="<?php echo APPURL; ?>/1catalogue.php" id="catalogue-link" class="navlink">Shop</a></li>
+                    <li><a href="<?php echo APPURL; ?>/1contact.php" id="contact-link" class="navlink">Contact</a></li>
 
+                    <?php if(isset($_SESSION['username'])) : ?>
+                        <li class="drop">
+                            <a href="<?php echo APPURL; ?>1catalogue.php"><?php echo $_SESSION['username']; ?></a>
+                            <ul class="dropdown arrow-top">
+                                <li><a href="<?php echo APPURL; ?>auth/logout.php">Logout</a></li>
+                            </ul>
+                        </li>
+                    <?php else : ?>
+                        <li><a href="<?php echo APPURL; ?>auth/1register.php" id="register-link" class="navlink">Sign-up</a></li>
+                        <li><a href="<?php echo APPURL; ?>auth/1login.php" id="login-link" class="navlink">Sign-in</a></li>
+                    <?php endif; ?>
+                <?php endif; ?>
+
+                <img src="<?php echo APPURL; ?>/Images/logo.png" class="logo">
             </ul>
         </nav>
     </div>
