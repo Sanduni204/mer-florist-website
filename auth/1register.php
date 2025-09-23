@@ -6,8 +6,8 @@ header("location: ".APPURL."1home.php");
 exit;}
 
 if(isset($_POST['submit'])){
-    if(empty($_POST['username']) OR empty($_POST['email']) OR empty($_POST['password']))
-  echo "<script>alert('Some inputs are empty');<script>";
+        if(empty($_POST['username']) OR empty($_POST['email']) OR empty($_POST['password']))
+    echo "<script>alert('Some inputs are empty');</script>";
 else{
     $username=$_POST['username'];
     $email=$_POST['email'];
@@ -60,6 +60,9 @@ else{
 
                     <button type="submit" class="register-btn" name="submit">Register</button>
                 </form>
+                <div class="login-footer" style="margin-top: 15px;">
+                    <p>Already have an account? <a href="<?php echo APPURL; ?>auth/1login.php">Sign in</a></p>
+                </div>
             </div>
         </div>
 
