@@ -6,6 +6,8 @@ a {
     padding: 0;
     box-sizing: border-box;
 }
+/* Make all images scale within their containers on smaller screens */
+img { max-width: 100%; height: auto; }
 
 .web {
     width: 100%;
@@ -738,12 +740,23 @@ input[type=submit]{
     .work {
         font-size: 16px;
         padding: 30px 20px 0 20px;
+        line-height: 1.7;               /* tighter line-height for small screens */
+        text-align: justify;            /* fill right side by justifying lines */
+        text-justify: inter-word;       /* improve spacing in older browsers */
     }
     
+    .work { overflow: hidden; }
     .work img {
         float: none;
+        display: block;
         width: 100%;
-        margin-right: 0;
+        margin: 0 0 16px 0; /* add spacing below image */
+    }
+
+    /* Ensure paragraphs inherit justification and allow hyphenation */
+    .work p {
+        text-align: inherit;
+        hyphens: auto;
     }
 
     .front3 {
@@ -757,7 +770,10 @@ input[type=submit]{
     }
 
     .abt img {
-        width: 100%;
+        width: 100px;
+        height: 100px;
+        display: block;
+        margin: 0 auto;
     }
 
     .f {
@@ -786,6 +802,14 @@ input[type=submit]{
     .front4 .Services img {
         width: 100%;
     }
+    /* Ensure services/gallery images don't overflow */
+    .front4 div img { width: 100%; height: auto; max-width: 280px; }
+    /* Info section: stack and fit media */
+    #info div { width: 100%; height: auto; margin: 10px 0; }
+    .col1 img { width: 100%; height: auto; }
+    .col3 iframe { width: 100%; height: 300px; }
+    .col2 p { padding-left: 0; }
+    .col2 h3 { padding-left: 0; }
 }
 .container {
     position: relative;
@@ -904,7 +928,10 @@ padding-top: 5%;
     }
 
     .abt img {
-        width: 100%;
+        width: 100px;
+        height: 100px;
+        display: block;
+        margin: 0 auto;
     }
 
     .f {
@@ -931,6 +958,16 @@ padding-top: 5%;
 
     .front4 .Services img {
         width: 100%;
+    }
+    .front4 div img { width: 100%; height: auto; }
+    .col3 iframe { height: 260px; }
+    .work { overflow: hidden; }
+    .work img { float: none; display: block; width: 100%; margin: 0 0 12px 0; }
+    /* Slightly reduce side padding and line-height on very small screens */
+    .work {
+        padding: 20px 12px 0 12px;
+        line-height: 1.6;
+        text-align: justify;
     }
 }
 
@@ -1604,6 +1641,23 @@ padding-top: 5%;
     .search-title {
         font-size: 1.8rem;
     }
+}
+
+/* Home page responsiveness (mobile-only adjustments, preserve desktop design) */
+@media (max-width: 768px) {
+    .container .content { width: 90%; padding: 16px; bottom: auto; }
+    .top { font-size: 22px; }
+    .bottom { font-size: 20px; }
+    .sub { font-size: 28px; height: auto; padding: 20px 10px; }
+    .front_sub { font-size: 24px; padding: 40px 0 16px 0; }
+}
+
+@media (max-width: 480px) {
+    .container .content { width: 92%; padding: 12px; bottom: auto; }
+    .top { font-size: 18px; }
+    .bottom { font-size: 18px; }
+    .sub { font-size: 22px; height: auto; padding: 16px 10px; }
+    .front_sub { font-size: 20px; padding: 30px 0 12px 0; }
 }
 
  .sort-dropdown {
