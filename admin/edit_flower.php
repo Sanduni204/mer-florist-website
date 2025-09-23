@@ -37,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$error) {
   $color_theme = trim($_POST['color_theme'] ?? '');
   $price = trim($_POST['price'] ?? '');
   $description = trim($_POST['description'] ?? '');
+  $fid = trim($_POST['fid'] ?? '');
   $currentImage = $flower['image'] ?? '';
   $newImageFileName = $currentImage; // default keep current
 
@@ -66,9 +67,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$error) {
     }
 
     if ($error === '') {
-      $sql = "UPDATE shop SET name = :name, type = :type, color_theme = :color_theme, price = :price, description = :description, image = :image WHERE $pk = :id";
+      $sql = "UPDATE shop SET fid = :fid, name = :name, type = :type, color_theme = :color_theme, price = :price, description = :description, image = :image WHERE $pk = :id";
       $stmt = $conn->prepare($sql);
       $stmt->execute([
+        ':fid' => ($fid !== '' ? $fid : null),
         ':name' => $name,
         ':type' => $type,
         ':color_theme' => $color_theme,
@@ -95,6 +97,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$error) {
 <?php endif; ?>
 <?php if (!$error && $flower): ?>
 <form class="admin-form" method="post" enctype="multipart/form-data">
+  <label for="fid">FID (optional)</label>
+  <input id="fid" name="fid" value="<?php echo htmlspecialchars($flower['fid'] ?? ''); ?>" placeholder="e.g., F-001" />
+
   <label for="name">Name</label>
   <input id="name" name="name" value="<?php echo htmlspecialchars($flower['name'] ?? ''); ?>" required />
 

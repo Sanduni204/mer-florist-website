@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $color_theme = trim($_POST['color_theme'] ?? '');
   $price = trim($_POST['price'] ?? '');
   $description = trim($_POST['description'] ?? '');
+  $fid = trim($_POST['fid'] ?? '');
   $imageFileName = '';
 
   if ($name === '' || $type === '' || $color_theme === '' || $price === '') {
@@ -30,9 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($error === '') {
-      $sql = "INSERT INTO shop (name, type, color_theme, price, description, image) VALUES (:name, :type, :color_theme, :price, :description, :image)";
+      // Include fid when available
+      $sql = "INSERT INTO shop (fid, name, type, color_theme, price, description, image) VALUES (:fid, :name, :type, :color_theme, :price, :description, :image)";
       $stmt = $conn->prepare($sql);
       $stmt->execute([
+        ':fid' => ($fid !== '' ? $fid : null),
         ':name' => $name,
         ':type' => $type,
         ':color_theme' => $color_theme,
@@ -49,6 +52,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php if ($success): ?><div class="register-message success"><?php echo htmlspecialchars($success); ?></div><?php endif; ?>
 <?php if ($error): ?><div class="register-message error"><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
 <form class="admin-form" method="post" enctype="multipart/form-data">
+  <label for="fid">FID (optional)</label>
+  <input id="fid" name="fid" placeholder="e.g., F-001" />
+
   <label for="name">Name</label>
   <input id="name" name="name" required />
 

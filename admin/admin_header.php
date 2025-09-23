@@ -6,6 +6,18 @@ if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
     header('Location: /mer_ecommerce/admin/login.php');
     exit;
 }
+// Lightweight schema guard: ensure 'fid' column exists on 'shop'
+try {
+  $cols = $conn->query("SHOW COLUMNS FROM shop")->fetchAll(PDO::FETCH_ASSOC);
+  $hasFid = false;
+  foreach ($cols as $c) { if (strcasecmp($c['Field'], 'fid') === 0) { $hasFid = true; break; } }
+  if (!$hasFid) {
+    // Add a nullable fid column to avoid breaking existing inserts
+    $conn->exec("ALTER TABLE shop ADD COLUMN fid VARCHAR(100) NULL");
+  }
+} catch (Throwable $e) {
+  // Silently ignore if schema check or alter fails
+}
 // Include global site header (opens <html>, <head>, and <body> and renders main nav)
 require_once __DIR__ . '/../includes/header.php';
 ?>

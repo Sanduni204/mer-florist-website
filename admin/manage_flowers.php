@@ -21,31 +21,38 @@ try {
   // Keep default 'id' if SHOW COLUMNS fails
 }
 
-$sql = "SELECT $pk AS id, name, type, color_theme, price, image FROM shop ORDER BY $pk DESC";
+$sql = "SELECT $pk AS id, fid, name, type, color_theme, price, image, description FROM shop ORDER BY $pk DESC";
 $rows = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <h2>Manage Flowers</h2>
 <table class="admin-table">
   <thead>
     <tr>
-      <th>ID</th>
+      <th>FID</th>
       <th>Image</th>
       <th>Name</th>
       <th>Type</th>
       <th>Color</th>
       <th>Price</th>
+      <th>Description</th>
       <th>Actions</th>
     </tr>
   </thead>
   <tbody>
     <?php foreach ($rows as $r): ?>
       <tr>
-        <td><?php echo (int)$r['id']; ?></td>
+        <td><?php echo htmlspecialchars($r['fid'] ?? ''); ?></td>
         <td><?php if (!empty($r['image'])): ?><img src="<?php echo APPURL; ?>Images/<?php echo htmlspecialchars($r['image']); ?>" alt="" style="width:60px;height:60px;object-fit:cover;border-radius:6px;" /><?php endif; ?></td>
         <td><?php echo htmlspecialchars($r['name']); ?></td>
         <td><?php echo htmlspecialchars($r['type']); ?></td>
         <td><?php echo htmlspecialchars($r['color_theme']); ?></td>
         <td>Rs. <?php echo number_format((float)$r['price'], 2); ?></td>
+        <td>
+          <?php $desc = trim((string)($r['description'] ?? '')); ?>
+          <div style="max-width:280px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?php echo htmlspecialchars($desc); ?>">
+            <?php echo htmlspecialchars($desc); ?>
+          </div>
+        </td>
         <td>
           <a href="<?php echo APPURL; ?>admin/edit_flower.php?id=<?php echo (int)$r['id']; ?>">Edit</a>
         </td>
