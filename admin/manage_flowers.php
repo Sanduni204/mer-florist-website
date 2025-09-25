@@ -1,5 +1,8 @@
 <?php require __DIR__ . '/admin_header.php'; ?>
 <?php
+// Feedback messages
+$success = '';
+$error = '';
 // Detect primary key of shop table dynamically
 $pk = 'id';
 try {
@@ -21,10 +24,54 @@ try {
   // Keep default 'id' if SHOW COLUMNS fails
 }
 
+// Ensure a CSRF token exists for POST actions
+if (!isset($_SESSION['csrf_token'])) {
+  try { $_SESSION['csrf_token'] = bin2hex(random_bytes(16)); } catch (Throwable $e) { $_SESSION['csrf_token'] = bin2hex((string)mt_rand()); }
+}
+
+// Handle delete action (POST only)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delete') {
+  $token = $_POST['csrf_token'] ?? '';
+  if (!$token || !hash_equals($_SESSION['csrf_token'], $token)) {
+    $error = 'Invalid request. Please try again.';
+  } else {
+    $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+    if ($id <= 0) {
+      $error = 'Invalid flower identifier.';
+    } else {
+      try {
+        // Fetch image name to delete from disk after DB deletion
+        $stmt = $conn->prepare("SELECT image FROM shop WHERE $pk = :id");
+        $stmt->execute([':id' => $id]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Delete the row
+        $del = $conn->prepare("DELETE FROM shop WHERE $pk = :id");
+        $del->execute([':id' => $id]);
+
+        if ($del->rowCount() > 0) {
+          // Remove image file if present
+          if (!empty($row['image'])) {
+            $imgPath = __DIR__ . '/../Images/' . $row['image'];
+            if (is_file($imgPath)) { @unlink($imgPath); }
+          }
+          $success = 'Flower deleted successfully.';
+        } else {
+          $error = 'Flower not found or already deleted.';
+        }
+      } catch (Throwable $e) {
+        $error = 'Failed to delete flower.';
+      }
+    }
+  }
+}
+
 $sql = "SELECT $pk AS id, fid, name, type, color_theme, price, image, description FROM shop ORDER BY $pk DESC";
 $rows = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <h2>Manage Flowers</h2>
+<?php if (!empty($success)): ?><div class="register-message success"><?php echo htmlspecialchars($success); ?></div><?php endif; ?>
+<?php if (!empty($error)):   ?><div class="register-message error"><?php   echo htmlspecialchars($error);   ?></div><?php endif; ?>
 <table class="admin-table">
   <thead>
     <tr>
@@ -54,7 +101,13 @@ $rows = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
           </div>
         </td>
         <td>
-          <a href="<?php echo APPURL; ?>admin/edit_flower.php?id=<?php echo (int)$r['id']; ?>">Edit</a>
+            <a href="<?php echo APPURL; ?>admin/edit_flower.php?id=<?php echo (int)$r['id']; ?>">Edit</a>
+            <form method="post" style="display:inline-block;margin-left:8px;" onsubmit="return confirm('Are you sure you want to delete this flower?');">
+              <input type="hidden" name="action" value="delete" />
+              <input type="hidden" name="id" value="<?php echo (int)$r['id']; ?>" />
+              <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>" />
+              <button type="submit" style="background:none;border:none;color:#c0392b;cursor:pointer;text-decoration:underline;">Delete</button>
+            </form>
         </td>
       </tr>
     <?php endforeach; ?>
