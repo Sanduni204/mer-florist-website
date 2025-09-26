@@ -10,7 +10,7 @@ $shop = $select->fetchAll(PDO::FETCH_OBJ);
 ?>
 
 
-<div class="container">
+<div class="container home-hero">
   <img src=".\Images\front_top.jpg" style="width:100%;">
   <div class="content">
     <p class="top">Discover <i>Mer</i>:<br>Where Every Petal Tells a Story.</p><br><br>
@@ -61,9 +61,9 @@ $shop = $select->fetchAll(PDO::FETCH_OBJ);
 </div>
 
 
-<div id="fitems"><br><br><br>
-   <h3 class="sub">Featured Items</h3>
-   <div class="front2">
+<section id="fitems">
+    <h3 class="sub">Featured Items</h3>
+    <div class="front2">
     
    
         <?php foreach($shop as $sho) : ?>
@@ -76,12 +76,10 @@ $shop = $select->fetchAll(PDO::FETCH_OBJ);
         
 <?php endforeach; ?>
     </div>
+</section>
 
 
-
-<div id="aboutsec"><br><br><br>
-
-   <div id="aboutsec"><br><br><br>
+<section id="aboutsec">
     <h3 class ="sub">About us</h3>
  <div class="front3">
      <p class="work">
@@ -131,12 +129,11 @@ $shop = $select->fetchAll(PDO::FETCH_OBJ);
                  has a positive experience with us.</p>
         </div>
     </div>
-    </div>
-   </div>
+</section>
 
    
    
 
 
 
-   <?php require "includes/footer.php"; ?>
+    <?php require "includes/footer.php"; ?>

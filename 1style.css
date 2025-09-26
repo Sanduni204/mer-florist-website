@@ -1693,6 +1693,29 @@ padding-top: 5%;
     }
 }
 
+/* ==========================
+   Home section spacing (uniform gaps between sections)
+   ========================== */
+:root { --section-gap: 48px; }
+
+/* Apply the same vertical gap to major home sections */
+.home-hero,
+.search-section,
+#fitems,
+#aboutsec,
+.front2,
+.front3,
+.front4,
+.section,
+#info {
+    margin-top: var(--section-gap) !important;
+    margin-bottom: var(--section-gap) !important;
+}
+
+/* Responsive gap tuning */
+@media (max-width: 768px) { :root { --section-gap: 32px; } }
+@media (max-width: 480px) { :root { --section-gap: 24px; } }
+
 /* Home page responsiveness (mobile-only adjustments, preserve desktop design) */
 @media (max-width: 768px) {
     .container .content { width: 90%; padding: 16px; bottom: auto; }
