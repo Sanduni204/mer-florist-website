@@ -1,12 +1,11 @@
 <?php require "includes/header.php"; ?>
 <?php require "Config/config.php";
 
-$select=$conn->query("SELECT*FROM shop WHERE description='Best seller'OR description = 'delivery free' LIMIT 5");
+// Featured Items: show any items that have a non-empty description
+$select = $conn->query("SELECT * FROM shop WHERE description IS NOT NULL AND TRIM(description) <> '' LIMIT 8");
 $select->execute();
 
 $shop = $select->fetchAll(PDO::FETCH_OBJ);
-
-   
 
 ?>
 
