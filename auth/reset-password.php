@@ -1,21 +1,28 @@
 <?php require "../includes/header.php"; ?>
 <?php require "../Config/config.php"; ?>
 <?php
+// Ensure reset columns exist (in case this page is accessed first)
+try {
+    $conn->query("SELECT password_reset_token, password_reset_expires FROM users LIMIT 1");
+} catch (PDOException $e) {
+    try { $conn->exec("ALTER TABLE users ADD COLUMN password_reset_token VARCHAR(128) NULL"); } catch (PDOException $e2) {}
+    try { $conn->exec("ALTER TABLE users ADD COLUMN password_reset_expires DATETIME NULL"); } catch (PDOException $e3) {}
+}
+
 // Basic guards and load user by token/email
 $token = isset($_GET['token']) ? trim($_GET['token']) : '';
 $email = isset($_GET['email']) ? trim($_GET['email']) : '';
 
 $valid = false;
 $user = null;
-if ($token && $email) {
+if ($token !== '' && $email !== '') {
     try {
-        $stmt = $conn->prepare("SELECT id, email, password_reset_token, password_reset_expires FROM users WHERE email = :email LIMIT 1");
-        $stmt->execute([':email' => $email]);
+        // Match by both email and token directly, then check expiry
+        $stmt = $conn->prepare("SELECT id, email, password_reset_expires FROM users WHERE email = :email AND password_reset_token = :token LIMIT 1");
+        $stmt->execute([':email' => $email, ':token' => $token]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($user && !empty($user['password_reset_token']) && hash_equals($user['password_reset_token'], $token)) {
-            if (!empty($user['password_reset_expires']) && strtotime($user['password_reset_expires']) > time()) {
-                $valid = true;
-            }
+        if ($user && !empty($user['password_reset_expires']) && strtotime($user['password_reset_expires']) > time()) {
+            $valid = true;
         }
     } catch (PDOException $e) {
         $valid = false;
@@ -48,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ]);
             $success = true;
         } else {
-            $message = 'Reset link is invalid or has expired.';
+            $message = 'Reset link is invalid or has expired. Please request a new link.';
         }
     }
 }
@@ -68,14 +75,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         <?php else: ?>
             <?php if (!$valid && $_SERVER['REQUEST_METHOD'] !== 'POST'): ?>
-                <div class="login-message" style="display:block;">Reset link is invalid or has expired.</div>
+                <div class="login-message" style="display:block;">Reset link is invalid or has expired. <a href="<?php echo APPURL; ?>auth/forgot-password.php">Request a new link</a>.</div>
             <?php endif; ?>
 
             <?php if (!empty($message)): ?>
                 <div class="login-message" style="display:block;"><?php echo htmlspecialchars($message); ?></div>
             <?php endif; ?>
 
-            <form action="reset-password.php" method="POST" class="login-form">
+            <?php if ($valid || $_SERVER['REQUEST_METHOD'] === 'POST'): ?>
+            <form action="<?php echo APPURL; ?>auth/reset-password.php" method="POST" class="login-form">
                 <input type="hidden" name="token" value="<?php echo htmlspecialchars($token); ?>">
                 <input type="hidden" name="email" value="<?php echo htmlspecialchars($email); ?>">
                 <div class="login-form-group">
@@ -88,6 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <button type="submit" class="login-btn">Reset Password</button>
             </form>
+            <?php endif; ?>
         <?php endif; ?>
 
         <div class="login-footer" style="margin-top:10px;">
