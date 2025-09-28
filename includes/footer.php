@@ -10,8 +10,6 @@
     
     <p>Copyright &copy; 2024 mer ; designed by SH Galbadaarachchi ; All Rights Reserved</p>
 </footer>
-   
-    </p>
     <script type="text/javascript" src="<?php echo APPURL; ?>/1javafile.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

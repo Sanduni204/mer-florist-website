@@ -63,5 +63,7 @@ $listings = $stmt->fetchAll(PDO::FETCH_OBJ);
 
     
 
-   <?php require "includes/footer.php"; ?>
-</div>
+    </div> <!-- /.front2 -->
+</div> <!-- /#fitems -->
+
+<?php require "includes/footer.php"; ?>

@@ -1,6 +1,7 @@
 <?php require "includes/header.php"; ?>
 <?php require "Config/config.php"; ?>
 
+<div class="finder-wrapper">
 <div class="search-section">
     <div class="search-container">
         <h2 class="search-title">Find Your Perfect Bouquet</h2>
@@ -38,6 +39,7 @@
                 Search
             </button>
         </form>
+    </div>
     </div>
 </div>
 

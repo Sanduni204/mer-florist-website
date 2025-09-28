@@ -55,6 +55,24 @@ nav ul.main li a:hover {
 .nav-search a { padding: 10px 12px; }
 .nav-search i { font-size: 18px; line-height: 1; vertical-align: middle; }
 
+/* Finder page: center the search box */
+.finder-wrapper {
+    min-height: calc(100vh - 70px); /* full viewport minus fixed header */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px; /* small breathing space on mobile */
+}
+
+/* Make the search section look like a focused card on its own page */
+body .finder-wrapper .search-section {
+    margin: 0;              /* override page-level margins */
+    max-width: 900px;       /* constrain width */
+    width: 100%;
+    border-radius: 20px;    /* slightly larger radius */
+    box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+}
+
 body {
     background-color:#ffffff;
     padding-top: 70px;
