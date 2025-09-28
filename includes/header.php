@@ -40,6 +40,12 @@ if (!defined('APPURL')) {
                     <li><a href="<?php echo APPURL; ?>/1home.php" id="home-link" class="navlink">Home</a></li>
                     <li><a href="<?php echo APPURL; ?>/1catalogue.php" id="catalogue-link" class="navlink">Shop</a></li>
                     <li><a href="<?php echo APPURL; ?>/1contact.php" id="contact-link" class="navlink">Contact</a></li>
+                    <!-- Search icon after Contact and before user links -->
+                    <li class="nav-search">
+                        <a href="<?php echo APPURL; ?>find.php" class="navlink" aria-label="Search bouquets">
+                            <i class="fas fa-search"></i>
+                        </a>
+                    </li>
 
                     <?php if(isset($_SESSION['username'])) : ?>
                         <li class="drop">

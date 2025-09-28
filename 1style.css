@@ -51,6 +51,10 @@ nav ul.main li a:hover {
     color: rgb(219, 219, 28);
     }
 
+/* Header search icon */
+.nav-search a { padding: 10px 12px; }
+.nav-search i { font-size: 18px; line-height: 1; vertical-align: middle; }
+
 body {
     background-color:#ffffff;
     padding-top: 70px;
