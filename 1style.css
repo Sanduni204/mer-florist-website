@@ -1708,13 +1708,19 @@ padding-top: 5%;
 .front4,
 .section,
 #info {
-    margin-top: var(--section-gap) !important;
-    margin-bottom: var(--section-gap) !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
 }
 
 /* Responsive gap tuning */
 @media (max-width: 768px) { :root { --section-gap: 32px; } }
 @media (max-width: 480px) { :root { --section-gap: 24px; } }
+
+/* Make home hero flush with fixed header (remove gap without overlap) */
+.home-hero { 
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
 
 /* Home page responsiveness (mobile-only adjustments, preserve desktop design) */
 @media (max-width: 768px) {
