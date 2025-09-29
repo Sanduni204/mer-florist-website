@@ -54,9 +54,12 @@ $shop = $select->fetchAll(PDO::FETCH_OBJ);
           we're here to help you find the perfect floral arrangements to convey your heartfelt sentiments.</p>
           
  </div>
+</section>
 
-<h4 class="front_sub">Why choose us?</h4>
-<div class="front3">
+<!-- Why choose us moved to the end of the page -->
+<section id="whychoose">
+    <h4 class="front_sub">Why choose us?</h4>
+    <div class="front3">
         <div class="abt" id="abt1">
             <img src =".\Images\choose1.jpeg">
             <p class="big">Quality Assurance</p>

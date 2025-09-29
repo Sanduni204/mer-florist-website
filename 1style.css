@@ -1716,33 +1716,45 @@ padding-top: 5%;
 }
 
 /* ==========================
-   Home section spacing (uniform gaps between sections)
-   ========================== */
-:root { --section-gap: 48px; }
+    Home section spacing (uniform gaps between sections)
+    ========================== */
+:root { --section-gap: 24px; }
 
-/* Apply the same vertical gap to major home sections */
-.home-hero,
-.search-section,
+/* Home sections: consistent vertical spacing */
+.home-hero { 
+    margin-top: 0 !important;                  /* flush under fixed header */
+    margin-bottom: var(--section-gap) !important; /* space after hero */
+}
+
 #fitems,
 #aboutsec,
-.front2,
+.section,
 .front3,
 .front4,
+#info,
+#whychoose {
+    margin-top: var(--section-gap) !important;
+    margin-bottom: var(--section-gap) !important;
+}
+
+/* Ensure wrappers don't add extra top/bottom padding so the visible gap
+   matches the hero→featured spacing exactly */
+#fitems,
+#aboutsec,
 .section,
-#info {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
+.front3,
+.front4,
+#info,
+#whychoose {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
 }
 
-/* Responsive gap tuning */
-@media (max-width: 768px) { :root { --section-gap: 32px; } }
-@media (max-width: 480px) { :root { --section-gap: 24px; } }
+/* Responsive gap tuning (reduced by half) */
+@media (max-width: 768px) { :root { --section-gap: 16px; } }
+@media (max-width: 480px) { :root { --section-gap: 12px; } }
 
-/* Make home hero flush with fixed header (remove gap without overlap) */
-.home-hero { 
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-}
+/* Note: hero spacing handled above */
 
 /* Home page responsiveness (mobile-only adjustments, preserve desktop design) */
 @media (max-width: 768px) {
@@ -1759,14 +1771,61 @@ padding-top: 5%;
     .sub, .sub1, .front_sub { font-size: 22px; height: auto; padding: 16px 10px; }
 }
 
- .sort-dropdown {
-        position: absolute;    
-        float:right;
-        margin: 100px;
-            
-            
+/* ==========================
+   Tighten just the gap between Featured Items and About Us (home only)
+   - Avoid affecting search results page where #fitems is used with .search-results
+   ========================== */
+#fitems:not(.search-results) {
+    /* reduce the bottom gap after Featured Items */
+    margin-bottom: calc(var(--section-gap) * 0.5) !important;
+}
 
-        }
+#fitems:not(.search-results) .front2 {
+    /* remove extra internal margins that can collapse and enlarge the gap */
+    margin-top: 0 !important;
+    margin-bottom: calc(var(--section-gap) * 0.5) !important;
+}
+
+#aboutsec {
+    /* reduce the top gap before About Us to match the tighter spacing */
+    margin-top: calc(var(--section-gap) * 0.5) !important;
+}
+
+#aboutsec .front_sub {
+    /* prevent heading top margin from inflating the perceived gap */
+    margin-top: 0 !important;
+}
+
+/* ==========================
+   Larger gap between About Us and Why Choose Us (home)
+   ========================== */
+#aboutsec { margin-bottom: calc(var(--section-gap) * 1.25) !important; }
+#whychoose { margin-top: calc(var(--section-gap) * 1.25) !important; }
+/* Keep heading tight to the card grid inside Why Choose Us */
+.front3 .front_sub { margin-top: 0 !important; }
+
+ .sort-dropdown {
+     position: fixed;
+     top: 80px;              /* below fixed header (70px) */
+     left: 16px;             /* a bit of breathing room from edge */
+     margin: 0;
+     z-index: 1100;          /* above page content, below header if overlapping */
+     }
+
+     @media (max-width: 480px) {
+         .sort-dropdown { top: 80px; left: 8px; }
+     }
+
+    /* Space below fixed sort dropdown on search results page; reset margins so global section spacing doesn't affect search */
+    .search-results {
+        padding-top: 72px; /* creates clear gap below the fixed sort control */
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    @media (max-width: 480px) {
+        .search-results { padding-top: 64px; }
+    }
 
         .dropdown-btn {
             background: white;

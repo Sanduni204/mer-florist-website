@@ -40,9 +40,9 @@ $listings = $stmt->fetchAll(PDO::FETCH_OBJ);
             <a href="search.php?types=<?php echo $qType; ?>&color_theme=<?php echo $qColor; ?>&price=ASC" class="dropdown-item" id="dropdown-item-1">Price Ascending</a>
             <a href="search.php?types=<?php echo $qType; ?>&color_theme=<?php echo $qColor; ?>&price=DESC" class="dropdown-item" id="dropdown-item-2">Price Descending</a>
         </div>
-    </div><br><br>
+    </div>
 
-<div id="fitems"><br><br><br>
+<div id="fitems" class="search-results">
    
    <div class="front2">
     
