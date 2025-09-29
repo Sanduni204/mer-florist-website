@@ -1,4 +1,5 @@
 <?php require "includes/header.php"; ?>
+<main class="main-content">
 <?php
 require_once "Config/config.php";
 
@@ -65,5 +66,7 @@ $listings = $stmt->fetchAll(PDO::FETCH_OBJ);
 
     </div> <!-- /.front2 -->
 </div> <!-- /#fitems -->
+</main>
 
 <?php require "includes/footer.php"; ?>
+</main>
