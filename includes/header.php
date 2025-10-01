@@ -5,6 +5,15 @@ if (session_status() === PHP_SESSION_NONE) {
 if (!defined('APPURL')) {
     define('APPURL', 'http://localhost/mer_ecommerce/');
 }
+// Try to load custom logo from contact_info if available
+$customLogo = null;
+try {
+    require_once __DIR__ . '/../Config/config.php';
+    $row = $conn->query('SELECT logo FROM contact_info WHERE id = 1')->fetch(PDO::FETCH_ASSOC);
+    if ($row && !empty($row['logo'])) { $customLogo = $row['logo']; }
+} catch (Throwable $e) {
+    // ignore if table not available
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -28,6 +37,7 @@ if (!defined('APPURL')) {
                     <li><a href="<?php echo APPURL; ?>admin/index.php" class="navlink">Dashboard</a></li>
                     <li><a href="<?php echo APPURL; ?>admin/add_flower.php" class="navlink">Add Flower</a></li>
                     <li><a href="<?php echo APPURL; ?>admin/manage_flowers.php" class="navlink">Manage Flowers</a></li>
+                    <li><a href="<?php echo APPURL; ?>admin/contact_settings.php" class="navlink">Contact Info</a></li>
                     <li class="drop">
                         <a href="<?php echo APPURL; ?>admin/index.php">
                             <?php echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Admin'; ?>
@@ -60,7 +70,7 @@ if (!defined('APPURL')) {
                     <?php endif; ?>
                 <?php endif; ?>
 
-                <img src="<?php echo APPURL; ?>/Images/logo.png" class="logo">
+                <img src="<?php echo APPURL; ?>/Images/<?php echo $customLogo ? htmlspecialchars($customLogo) : 'logo.png'; ?>" class="logo">
             </ul>
         </nav>
     </div>
