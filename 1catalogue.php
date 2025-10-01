@@ -1,16 +1,46 @@
 <?php require "includes/header.php"; ?>
 <?php require "Config/config.php"; ?>
 <?php
-if(isset($_GET['id'])){
-    $id = $_GET['id'];
-
-    
-        $single = $conn->query("SELECT * FROM shop WHERE id='$id'");
-
-        $single->execute();
-        $allDetails = $single->fetch(PDO::FETCH_OBJ);
-         
-    
+// Dynamic shop: render sections by bouquet type using DB data from `shop`
+// Helper: fetch items by type keywords (case-insensitive)
+function fetch_items_by_types(PDO $conn, array $keywords): array {
+    if (empty($keywords)) return [];
+    $clauses = [];
+    $params = [];
+    foreach ($keywords as $i => $kw) {
+        $clauses[] = "type LIKE :t$i";
+        $params[":t$i"] = "%$kw%"; // match both 'Rose' and 'Rose Bouquets'
+    }
+    $where = implode(' OR ', $clauses);
+    // Prefer id DESC if exists; fallback to name
+    $sql = "SELECT id, fid, name, type, color_theme, price, image, description FROM shop WHERE $where ORDER BY id DESC";
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    } catch (Throwable $e) {
+        // Fallback without id ordering (in case schema differs)
+        try {
+            $stmt = $conn->prepare("SELECT fid, name, type, color_theme, price, image, description FROM shop WHERE $where ORDER BY name ASC");
+            $stmt->execute($params);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        } catch (Throwable $e2) { return []; }
+    }
+}
+function render_item_card(array $it, string $cardClass): string {
+    $name = htmlspecialchars($it['name'] ?? '');
+    $price = isset($it['price']) ? number_format((float)$it['price'], 2) : '0.00';
+    $desc = htmlspecialchars(trim((string)($it['description'] ?? '')));
+    $img = htmlspecialchars($it['image'] ?? '');
+    $imgTag = $img !== ''
+        ? '<img class="img" src="'.APPURL.'Images/'.$img.'" alt="'. $name .'" />'
+        : '<div class="img" style="display:flex;align-items:center;justify-content:center;background:#f6f6f6;color:#999;">No Image</div>';
+    return '<a href="1payment.html"><div class="'. $cardClass .'">'
+         . $imgTag
+         . '<p>'. $name .'</p>'
+         . '<p>RS.'. $price .'</p>'
+         . ($desc !== '' ? '<p><b>'. $desc .'</b></p>' : '')
+         . '</div></a>';
 }
 ?>
 
@@ -57,334 +87,57 @@ if(isset($_GET['id'])){
     </div>
     
     <div id="Rose">
-        
-        
-        <a href="1payment.html"><div class="R">
-            <img class="img" src=".\Images\Rose1.jpg">
-            <p>100 Roses</p>
-            <p>RS.2000.00</p>
-            <p><B>Best Seller*</B></p>
-        </div></a>
-        <a href="1payment.html"><div class="R">
-            <img class="img" src=".\Images\Rose2.jpg">
-            <p>Lovely Bridal Roses</p>
-            <p>RS.1500.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="R">
-            <img class="img" src=".\Images\Rose3.jpg">
-            <p>Black Beauty Roses</p>
-            <p>RS.5000.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="R">
-            <img class="img" src=".\Images\Rose4.jpeg">
-            <p>White Roses</p>
-            <p>RS.3000.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="R">
-            <img class="img" src=".\Images\Rose5.jpg">
-            <p>Dear Roses</p>
-            <p>RS.4000.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="R">
-            <img class="img" src=".\Images\Rose6.jpg">
-            <p>Secret love</p>
-            <p>RS.4000.00</p>
-            <p><B>Best Seller*</B></p>
-        </div></a>
-        <a href="1payment.html"><div class="R">
-            <img class="img" src=".\Images\Rose7.jpg">
-            <p>Fancy Rosy</p>
-            <p>RS.4200.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="R">
-            <img class="img" src=".\Images\Rose8.jpg">
-            <p>Dreamy Roses</p>
-            <p>RS.3700.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="R">
-            <img class="img" src=".\Images\Rose9.jpg">
-            <p>Pricess Roses</p>
-            <p>RS.3000.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="R">
-            <img class="img" src=".\Images\Rose10.jpg">
-            <p>Everlasting Roses</p>
-            <p>RS.4900.00</p>
-        </div></a>
+        <?php $roseItems = fetch_items_by_types($conn, ['Rose']); ?>
+        <?php if (!empty($roseItems)): ?>
+            <?php foreach ($roseItems as $it) { echo render_item_card($it, 'R'); } ?>
+        <?php else: ?>
+            <p style="padding:10px;color:#666;">No Rose bouquets yet. Please check back later.</p>
+        <?php endif; ?>
     </div>
 
     <div id="Lily">
-        
-        <a href="1payment.html"><div class="L">
-            <img class="img" src=".\Images\Lily1.jpeg">
-            <p>Hello Lily</p>
-            <p>RS.1500.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="L">
-            <img class="img" src=".\Images\Lily2.jpeg">
-            <p>Lily Whispers</p>
-            <p>RS.2500.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="L">
-            <img class="img" src=".\Images\Lily3.jpeg">
-            <p>Gold Lily</p>
-            <p>RS.3000.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="L">
-            <img class="img" src=".\Images\Lily4.jpeg">
-            <p>Dreamscape Lily</p>
-            <p>RS.2700.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="L">
-            <img class="img" src=".\Images\Lily5.jpg">
-            <p>Lily Beauty</p>
-            <p>RS.3200.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="L">
-            <img class="img" src=".\Images\Lily6.jpg">
-            <p>Perfection Lily</p>
-            <p>RS.3000.00</p>
-            <p><B>Delivery Free*</B></p>
-        </div></a>
-        <a href="1payment.html"><div class="L">
-            <img class="img" src=".\Images\Lily7.jpeg">
-            <p>Delights Lily Bridal</p>
-            <p>RS.3400.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="L">
-            <img class="img" src=".\Images\Lily8.jpeg">
-            <p>Velvet Lily Bridal</p>
-            <p>RS.3300.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="L">
-            <img class="img" src=".\Images\Lily9.jpg">
-            <p>Lily Elegance Bridal</p>
-            <p>RS.4000.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="L">
-            <img class="img" src=".\Images\Lily10.jpg">
-            <p>Fancy Lily</p>
-            <p>RS.3500.00</p>
-        </div></a>
+        <?php $lilyItems = fetch_items_by_types($conn, ['Lily']); ?>
+        <?php if (!empty($lilyItems)): ?>
+            <?php foreach ($lilyItems as $it) { echo render_item_card($it, 'L'); } ?>
+        <?php else: ?>
+            <p style="padding:10px;color:#666;">No Lily bouquets yet. Please check back later.</p>
+        <?php endif; ?>
     </div>
 
     <div id="Daisy">
-        
-        <a href="1payment.html"><div class="D">
-            <img class="img" src=".\Images\Daisy1.jpg">
-            <p>Daisy Darling</p>
-            <p>RS.3000.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="D">
-            <img class="img" src=".\Images\Daisy2.jpg">
-            <p>Glorious Daisy</p>
-            <p><s>RS.3000.00</s></p>
-            <p>RS.2700.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="D">
-            <img class="img" src=".\Images\Daisy3.jpg">
-            <p>Dimple Daisy</p>
-            <p>RS.4000.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="D">
-            <img class="img" src=".\Images\Daisy4.jpg">
-            <p>Pinky Daisy</p>
-            <p>RS.3200.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="D">
-            <img class="img" src=".\Images\Daisy5.png">
-            <p>Daisy Sweetheart</p>
-            <p>RS.4500.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="D">
-            <img class="img" src=".\Images\Daisy6.jpg">
-            <p>Daisy Dazzle</p>
-            <p>RS.4300.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="D">
-            <img class="img" src=".\Images\Daisy7.jpeg">
-            <p>Charming Daisy Bridal</p>
-            <p>RS.3700.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="D">
-            <img class="img" src=".\Images\Daisy8.jpg">
-            <p>Delicate Daisy</p>
-            <p>RS.3800.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="D">
-            <img class="img" src=".\Images\Daisy9.jpg">
-            <p>Mini Daisy Bridal</p>
-            <p>RS.3400.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="D">
-            <img class="img" src=".\Images\Daisy10.png">
-            <p>Popping Daisy Bridal</p>
-            <p>RS.4300.00</p>
-        </div></a>
+        <?php $daisyItems = fetch_items_by_types($conn, ['Daisy']); ?>
+        <?php if (!empty($daisyItems)): ?>
+            <?php foreach ($daisyItems as $it) { echo render_item_card($it, 'D'); } ?>
+        <?php else: ?>
+            <p style="padding:10px;color:#666;">No Daisy bouquets yet. Please check back later.</p>
+        <?php endif; ?>
     </div>
 
     <div id="Tulip">
-        
-        <a href="1payment.html"><div class="T">
-            <img class="img" src=".\Images\Tulip1.jpg">
-            <p>Cool Tulip</p>
-            <p>RS.3500.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="T">
-            <img class="img" src=".\Images\Tulip2.jpg">
-            <p>Velvet Tulip</p>
-            <p>RS.3400.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="T">
-            <img class="img" src=".\Images\Tulip3.jpg">
-            <p>Blossom Bunch</p>
-            <p>RS.4000.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="T">
-            <img class="img" src=".\Images\Tulip4.jpeg">
-            <p>Tulip Tickel</p>
-            <p>RS.4000.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="T">
-            <img class="img" src=".\Images\Tulip5.jpg">
-            <p>Tulip Love</p>
-            <p>RS.5000.00</p>
-            <p><B>Best Seller*</B></p>
-        </div></a>
-        <a href="1payment.html"><div class="T">
-            <img class="img" src=".\Images\Tulip6.png">
-            <p>Snowdrop Bridal Tulip</p>
-            <p>RS.3000.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="T">
-            <img class="img" src=".\Images\Tulip7.jpg">
-            <p>Fancy Tulip</p>
-            <p>RS.4000.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="T">
-            <img class="img" src=".\Images\Tulip8.jpg">
-            <p>Trail Tulip</p>
-            <p>RS.4500.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="T">
-            <img class="img" src=".\Images\Tulip9.jpg">
-            <p>Tulip Tendril</p>
-            <p>RS.4600.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="T">
-            <img class="img" src=".\Images\Tulip10.jpg">
-            <p>Little Tulip</p>
-            <p>RS.2300.00</p>
-        </div></a>
+        <?php $tulipItems = fetch_items_by_types($conn, ['Tulip']); ?>
+        <?php if (!empty($tulipItems)): ?>
+            <?php foreach ($tulipItems as $it) { echo render_item_card($it, 'T'); } ?>
+        <?php else: ?>
+            <p style="padding:10px;color:#666;">No Tulip bouquets yet. Please check back later.</p>
+        <?php endif; ?>
     </div>
 
     <div id="Sunflower">
-        
-        <a href="1payment.html"><div class="S">
-            <img class="img" src=".\Images\Sunflower1.jpg">
-            <p>Sunny Smiles</p>
-            <p>RS.2300.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="S">
-            <img class="img" src=".\Images\Sunflower2.jpeg">
-            <p>Golden Glow</p>
-            <p>RS.3200.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="S">
-            <img class="img" src=".\Images\Sunflower3.jpg">
-            <p>Bright Blossom Bunch</p>
-            <p>RS.4000.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="S">
-            <img class="img" src=".\Images\Sunflower4.jpg">
-            <p>Mini Sunny Bunch</p>
-            <p>RS.2100.00</p>
-            <p><B>New Arrival*</B></p>
-        </div></a>
-        <a href="1payment.html"><div class="S">
-            <img class="img" src=".\Images\Sunflower5.jpeg">
-            <p>Sunflower Love</p>
-            <p>RS.3400.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="S">
-            <img class="img" src=".\Images\Sunflower6.jpeg">
-            <p>Golden Petal bridal</p>
-            <p>RS.3700.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="S">
-            <img class="img" src=".\Images\Sunflower7.jpeg">
-            <p>Sunshine</p>
-            <p>RS.4300.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="S">
-            <img class="img" src=".\Images\Sunflower8.jpg">
-            <p>Sparkel Bridal</p>
-            <p>RS.3100.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="S">
-            <img class="img" src=".\Images\Sunflower9.jpg">
-            <p>Smiling Sunflower</p>
-            <p>RS.4300.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="S">
-            <img class="img" src=".\Images\Sunflower10.jpg">
-            <p>Cheerful Sun Bunch</p>
-            <p>RS.4000.00</p>
-        </div></a>
+        <?php $sunItems = fetch_items_by_types($conn, ['Sunflower', 'Sun']); ?>
+        <?php if (!empty($sunItems)): ?>
+            <?php foreach ($sunItems as $it) { echo render_item_card($it, 'S'); } ?>
+        <?php else: ?>
+            <p style="padding:10px;color:#666;">No Sunflower bouquets yet. Please check back later.</p>
+        <?php endif; ?>
     </div>
 
     <div id="Hydrangea">
-        
-        <a href="1payment.html"><div class="Dh">
-            <img class="img" src=".\Images\Hydrangea1.jpg">
-            <p>Enchanting Dahliah</p>
-            <p>RS.3200.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="Dh">
-            <img class="img" src=".\Images\Hydrangea2.jpg">
-            <p>Dreamy Dahliah</p>
-            <p>RS.2700.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="Dh">
-            <img class="img" src=".\Images\Hydrangea3.jpeg">
-            <p>Fancy Dahliah</p>
-            <p>RS.3800.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="Dh">
-            <img class="img" src=".\Images\Hydrangea4.jpg">
-            <p>Beauty Dahliah</p>
-            <p>RS.4000.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="Dh">
-            <img class="img" src=".\Images\Hydrangea5.jpg">
-            <p>Glamorous Dahlia</p>
-            <p>RS.3000.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="Dh">
-            <img class="img" src=".\Images\Hydrangea6.jpg">
-            <p>Divine Dahlia</p>
-            <p>RS.3400.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="Dh">
-            <img class="img" src=".\Images\Hydrangea7.jpeg">
-            <p>Dahliah Love</p>
-            <p>RS.4200.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="Dh">
-            <img class="img" src=".\Images\Hydrangea8.png">
-            <p>Charming Bridal Dahliah</p>
-            <p>RS.3500.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="Dh">
-            <img class="img" src=".\Images\Hydrangea9.jpg">
-            <p>Little Love Dahliah</p>
-            <p>RS.2900.00</p>
-        </div></a>
-        <a href="1payment.html"><div class="Dh">
-            <img class="img" src=".\Images\Hydrangea10.jpeg">
-            <p>Dynasty Dahliah</p>
-            <p>RS.4000.00</p>
-        </div></a>
+        <?php $hydraItems = fetch_items_by_types($conn, ['Hydrangea', 'Dahlia', 'Dahliah']); ?>
+        <?php if (!empty($hydraItems)): ?>
+            <?php foreach ($hydraItems as $it) { echo render_item_card($it, 'Dh'); } ?>
+        <?php else: ?>
+            <p style="padding:10px;color:#666;">No Hydrangea/Dahlia bouquets yet. Please check back later.</p>
+        <?php endif; ?>
     </div>
 
   

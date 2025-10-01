@@ -10,6 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $price = trim($_POST['price'] ?? '');
   $description = trim($_POST['description'] ?? '');
   $fid = trim($_POST['fid'] ?? '');
+  $featured = isset($_POST['featured']) ? 1 : 0;
+  $badge = trim($_POST['badge'] ?? '');
   $imageFileName = '';
 
   if ($name === '' || $type === '' || $color_theme === '' || $price === '') {
@@ -32,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($error === '') {
       // Include fid when available
-      $sql = "INSERT INTO shop (fid, name, type, color_theme, price, description, image) VALUES (:fid, :name, :type, :color_theme, :price, :description, :image)";
+      $sql = "INSERT INTO shop (fid, name, type, color_theme, price, description, image, featured, badge) VALUES (:fid, :name, :type, :color_theme, :price, :description, :image, :featured, :badge)";
       $stmt = $conn->prepare($sql);
       $stmt->execute([
         ':fid' => ($fid !== '' ? $fid : null),
@@ -42,6 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ':price' => (float)$price,
         ':description' => $description,
         ':image' => $imageFileName,
+        ':featured' => (int)$featured,
+        ':badge' => ($badge !== '' ? $badge : null),
       ]);
       $success = 'Flower added successfully!';
     }
@@ -69,6 +73,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <label for="description">Description</label>
   <textarea id="description" name="description" rows="3" placeholder="Optional details..."></textarea>
+
+  <label for="featured" style="display:flex;align-items:center;gap:8px;margin-top:10px;">
+    <input id="featured" name="featured" type="checkbox" /> Mark as Featured
+  </label>
+
+  <label for="badge">Badge (optional)</label>
+  <input id="badge" name="badge" placeholder="e.g., Best Seller, New Arrival" />
 
   <label for="image">Image (optional)</label>
   <input id="image" name="image" type="file" accept="image/*" />

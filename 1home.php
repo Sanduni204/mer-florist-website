@@ -1,11 +1,45 @@
 <?php require "includes/header.php"; ?>
 <?php require "Config/config.php";
 
-// Featured Items: show any items that have a non-empty description
-$select = $conn->query("SELECT * FROM shop WHERE description IS NOT NULL AND TRIM(description) <> '' LIMIT 8");
-$select->execute();
+// Determine a safe ORDER BY column: prefer primary key; fallback to created_at, id/ID, or name
+$orderCol = 'name';
+$hasFeaturedCol = false;
+try {
+    $cols = $conn->query('SHOW COLUMNS FROM shop')->fetchAll(PDO::FETCH_ASSOC);
+    if ($cols) {
+        $fields = array_column($cols, 'Field');
+        foreach ($cols as $c) { if (!empty($c['Key']) && strtoupper($c['Key']) === 'PRI') { $orderCol = $c['Field']; break; } }
+        if ($orderCol === 'name') {
+            if (in_array('created_at', $fields, true)) { $orderCol = 'created_at'; }
+            elseif (in_array('id', $fields, true)) { $orderCol = 'id'; }
+            elseif (in_array('ID', $fields, true)) { $orderCol = 'ID'; }
+        }
+        $hasFeaturedCol = in_array('featured', $fields, true);
+    }
+} catch (Throwable $e) { /* keep defaults */ }
 
-$shop = $select->fetchAll(PDO::FETCH_OBJ);
+// Featured Items: Show ALL items that have a non-empty description
+// If 'featured' column exists, prioritize featured first in ordering
+try {
+    $sql = "SELECT * FROM shop WHERE description IS NOT NULL AND TRIM(description) <> ''";
+    if ($hasFeaturedCol) {
+        $sql .= " ORDER BY featured DESC, $orderCol DESC";
+    } else {
+        $sql .= " ORDER BY $orderCol DESC";
+    }
+    $stmt = $conn->query($sql);
+    $stmt->execute();
+    $shop = $stmt->fetchAll(PDO::FETCH_OBJ);
+} catch (Throwable $e) {
+    // Fallback to any items
+    try {
+        $select = $conn->query("SELECT * FROM shop ORDER BY $orderCol DESC");
+        $select->execute();
+        $shop = $select->fetchAll(PDO::FETCH_OBJ);
+    } catch (Throwable $e2) {
+        $shop = [];
+    }
+}
 
 ?>
 
@@ -26,15 +60,18 @@ $shop = $select->fetchAll(PDO::FETCH_OBJ);
     <div class="front2">
     
    
-        <?php foreach($shop as $sho) : ?>
-            <a href="1payment.html"><div class="f">
-            <img class="img" src=".\Images\<?php echo $sho->image ; ?>">
-            <p><?php echo $sho->name; ?></p>
-            <p>RS.<?php echo $sho->price; ?>.00</p>
-            <p><B><?php echo $sho->description; ?></B></p>
-            </div></a>
-        
-<?php endforeach; ?>
+                <?php foreach($shop as $sho) : ?>
+                        <a href="1payment.html"><div class="f">
+                        <img class="img" src=".\Images\<?php echo $sho->image ; ?>">
+                        <p><?php echo $sho->name; ?></p>
+                        <p>RS.<?php echo number_format((float)$sho->price, 2); ?></p>
+                        <?php if (!empty($sho->badge)) : ?>
+                            <p><b><?php echo htmlspecialchars($sho->badge); ?></b></p>
+                        <?php elseif (!empty($sho->description)) : ?>
+                            <p><b><?php echo htmlspecialchars($sho->description); ?></b></p>
+                        <?php endif; ?>
+                        </div></a>
+                <?php endforeach; ?>
     </div>
 </section>
 
