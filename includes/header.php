@@ -38,6 +38,7 @@ try {
                     <li><a href="<?php echo APPURL; ?>admin/add_flower.php" class="navlink">Add Flower</a></li>
                     <li><a href="<?php echo APPURL; ?>admin/manage_flowers.php" class="navlink">Manage Flowers</a></li>
                     <li><a href="<?php echo APPURL; ?>admin/contact_settings.php" class="navlink">Contact Info</a></li>
+                    <li><a href="<?php echo APPURL; ?>admin/media_cleanup.php" class="navlink">Media Cleanup</a></li>
                     <li class="drop">
                         <a href="<?php echo APPURL; ?>admin/index.php">
                             <?php echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Admin'; ?>
