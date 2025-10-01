@@ -3,7 +3,7 @@
 
 // Determine a safe ORDER BY column: prefer primary key; fallback to created_at, id/ID, or name
 $orderCol = 'name';
-$hasFeaturedCol = false;
+$hasFeaturedCol = false; // will not be used further; kept to avoid extra logic
 try {
     $cols = $conn->query('SHOW COLUMNS FROM shop')->fetchAll(PDO::FETCH_ASSOC);
     if ($cols) {
@@ -19,14 +19,8 @@ try {
 } catch (Throwable $e) { /* keep defaults */ }
 
 // Featured Items: Show ALL items that have a non-empty description
-// If 'featured' column exists, prioritize featured first in ordering
 try {
-    $sql = "SELECT * FROM shop WHERE description IS NOT NULL AND TRIM(description) <> ''";
-    if ($hasFeaturedCol) {
-        $sql .= " ORDER BY featured DESC, $orderCol DESC";
-    } else {
-        $sql .= " ORDER BY $orderCol DESC";
-    }
+    $sql = "SELECT * FROM shop WHERE description IS NOT NULL AND TRIM(description) <> '' ORDER BY $orderCol DESC";
     $stmt = $conn->query($sql);
     $stmt->execute();
     $shop = $stmt->fetchAll(PDO::FETCH_OBJ);
@@ -65,11 +59,9 @@ try {
                         <img class="img" src=".\Images\<?php echo $sho->image ; ?>">
                         <p><?php echo $sho->name; ?></p>
                         <p>RS.<?php echo number_format((float)$sho->price, 2); ?></p>
-                        <?php if (!empty($sho->badge)) : ?>
-                            <p><b><?php echo htmlspecialchars($sho->badge); ?></b></p>
-                        <?php elseif (!empty($sho->description)) : ?>
-                            <p><b><?php echo htmlspecialchars($sho->description); ?></b></p>
-                        <?php endif; ?>
+                                    <?php if (!empty($sho->description)) : ?>
+                                        <p><b><?php echo htmlspecialchars($sho->description); ?></b></p>
+                                    <?php endif; ?>
                         </div></a>
                 <?php endforeach; ?>
     </div>

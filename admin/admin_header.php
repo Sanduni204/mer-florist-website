@@ -10,22 +10,10 @@ if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
 try {
   $cols = $conn->query("SHOW COLUMNS FROM shop")->fetchAll(PDO::FETCH_ASSOC);
   $hasFid = false;
-  $hasFeatured = false;
-  $hasBadge = false;
   foreach ($cols as $c) { if (strcasecmp($c['Field'], 'fid') === 0) { $hasFid = true; break; } }
-  foreach ($cols as $c) { if (strcasecmp($c['Field'], 'featured') === 0) { $hasFeatured = true; break; } }
-  foreach ($cols as $c) { if (strcasecmp($c['Field'], 'badge') === 0) { $hasBadge = true; break; } }
   if (!$hasFid) {
     // Add a nullable fid column to avoid breaking existing inserts
     $conn->exec("ALTER TABLE shop ADD COLUMN fid VARCHAR(100) NULL");
-  }
-  if (!$hasFeatured) {
-    // Featured flag default 0
-    $conn->exec("ALTER TABLE shop ADD COLUMN featured TINYINT(1) NOT NULL DEFAULT 0");
-  }
-  if (!$hasBadge) {
-    // Optional badge label like 'Best Seller', 'New Arrival'
-    $conn->exec("ALTER TABLE shop ADD COLUMN badge VARCHAR(50) NULL");
   }
 } catch (Throwable $e) {
   // Silently ignore if schema check or alter fails

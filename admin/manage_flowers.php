@@ -81,8 +81,6 @@ $rows = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
       <th>Type</th>
       <th>Color</th>
       <th>Price</th>
-      <th>Featured</th>
-      <th>Badge</th>
       <th>Description</th>
       <th>Actions</th>
     </tr>
@@ -96,8 +94,6 @@ $rows = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
         <td><?php echo htmlspecialchars($r['type']); ?></td>
         <td><?php echo htmlspecialchars($r['color_theme']); ?></td>
         <td>Rs. <?php echo number_format((float)$r['price'], 2); ?></td>
-        <td><?php echo !empty($r['featured']) ? 'Yes' : 'No'; ?></td>
-        <td><?php echo htmlspecialchars($r['badge'] ?? ''); ?></td>
         <td>
           <?php $desc = trim((string)($r['description'] ?? '')); ?>
           <div style="max-width:280px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="<?php echo htmlspecialchars($desc); ?>">

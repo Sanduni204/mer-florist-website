@@ -38,8 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$error) {
   $price = trim($_POST['price'] ?? '');
   $description = trim($_POST['description'] ?? '');
   $fid = trim($_POST['fid'] ?? '');
-  $featured = isset($_POST['featured']) ? 1 : 0;
-  $badge = trim($_POST['badge'] ?? '');
   $currentImage = $flower['image'] ?? '';
   $newImageFileName = $currentImage; // default keep current
 
@@ -69,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$error) {
     }
 
     if ($error === '') {
-      $sql = "UPDATE shop SET fid = :fid, name = :name, type = :type, color_theme = :color_theme, price = :price, description = :description, image = :image, featured = :featured, badge = :badge WHERE $pk = :id";
+      $sql = "UPDATE shop SET fid = :fid, name = :name, type = :type, color_theme = :color_theme, price = :price, description = :description, image = :image WHERE $pk = :id";
       $stmt = $conn->prepare($sql);
       $stmt->execute([
         ':fid' => ($fid !== '' ? $fid : null),
@@ -79,8 +77,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$error) {
         ':price' => (float)$price,
         ':description' => $description,
         ':image' => $newImageFileName,
-        ':featured' => (int)$featured,
-        ':badge' => ($badge !== '' ? $badge : null),
         ':id' => $id,
       ]);
       $success = 'Flower updated successfully!';
@@ -119,12 +115,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$error) {
   <label for="description">Description</label>
   <textarea id="description" name="description" rows="3"><?php echo htmlspecialchars($flower['description'] ?? ''); ?></textarea>
 
-  <label for="featured" style="display:flex;align-items:center;gap:8px;margin-top:10px;">
-    <input id="featured" name="featured" type="checkbox" <?php echo !empty($flower['featured']) ? 'checked' : ''; ?> /> Mark as Featured
-  </label>
+  
 
-  <label for="badge">Badge (optional)</label>
-  <input id="badge" name="badge" value="<?php echo htmlspecialchars($flower['badge'] ?? ''); ?>" placeholder="e.g., Best Seller, New Arrival" />
 
   <label>Current Image</label>
   <div style="margin-bottom:10px;">
