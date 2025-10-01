@@ -17,6 +17,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   } elseif (!is_numeric($price)) {
     $error = 'Price must be a number.';
   } else {
+    // Auto-generate name like Rose11 if name is empty or equals the type
+    try {
+      $trimType = trim($type);
+      // Base is first word (letters only), e.g., 'Rose' from 'Rose Bouquets'
+      $base = preg_replace('/[^a-zA-Z]+.*/', '', $trimType); // keep leading letters until non-letter
+      if ($base === '') { $base = preg_replace('/\s+.*/', '', $trimType); }
+      if ($base === '') { $base = $trimType; }
+      // Normalize base casing: capitalize first letter only
+      $base = ucfirst(strtolower($base));
+      if ($name === '' || strcasecmp($name, $trimType) === 0 || strcasecmp($name, $base) === 0) {
+        // Find next numeric suffix using max existing suffix for same base
+        // Consider records with type starting with base (case-insensitive) and name matching pattern Base[0-9]+
+        $regex = '^' . preg_quote($base, '/') . '[0-9]+$';
+        // MySQL REGEXP doesn't use delimiters; pass as a parameter
+        $stmtMax = $conn->prepare("SELECT MAX(CAST(SUBSTRING(name, :offset) AS UNSIGNED)) AS maxnum
+                                   FROM shop
+                                   WHERE LOWER(type) LIKE CONCAT(LOWER(:base), '%')
+                                     AND name REGEXP :rx");
+        $offset = strlen($base) + 1; // 1-based index for SUBSTRING
+        $stmtMax->execute([
+          ':offset' => $offset,
+          ':base' => $base,
+          ':rx' => $regex,
+        ]);
+        $rowMax = $stmtMax->fetch(PDO::FETCH_ASSOC);
+        $next = (int)($rowMax['maxnum'] ?? 0) + 1;
+        $name = $base . $next;
+      }
+    } catch (Throwable $e) {
+      // Fallback: if name still empty, use base+1
+      if ($name === '') {
+        $fallbackBase = ucfirst(strtolower(trim($type)));
+        $name = $fallbackBase !== '' ? ($fallbackBase . '1') : ('Item' . time());
+      }
+    }
     // Handle image upload if provided
     if (!empty($_FILES['image']['name'])) {
       $uploadDir = __DIR__ . '/../Images/';
