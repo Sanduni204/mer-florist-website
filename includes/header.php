@@ -25,6 +25,7 @@ try {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" 
     integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" 
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="<?php echo APPURL; ?>/1javafile.js"></script>
     </head>
 
 <body>
@@ -51,6 +52,27 @@ try {
                     <li><a href="<?php echo APPURL; ?>/1home.php" id="home-link" class="navlink">Home</a></li>
                     <li><a href="<?php echo APPURL; ?>/1catalogue.php" id="catalogue-link" class="navlink">Shop</a></li>
                     <li><a href="<?php echo APPURL; ?>/1contact.php" id="contact-link" class="navlink">Contact</a></li>
+                    
+                    <?php if(isset($GLOBALS['current_page']) && $GLOBALS['current_page'] === 'search'): ?>
+                    <!-- Sort dropdown only for search page -->
+                    <li class="nav-sort-dropdown">
+                        <div class="sort-dropdown">
+                            <button class="dropdown-btn" onclick="toggleDropdown()">
+                                <span id="selectedOption">Sort by</span>
+                                <span class="dropdown-arrow" id="dropdownArrow">▼</span>
+                            </button>
+                            <div class="dropdown-content" id="dropdownContent">
+                                <?php 
+                                $qType = isset($GLOBALS['search_filters']['type']) ? urlencode($GLOBALS['search_filters']['type']) : '';
+                                $qColor = isset($GLOBALS['search_filters']['color_theme']) ? urlencode($GLOBALS['search_filters']['color_theme']) : '';
+                                ?>
+                                <a href="<?php echo APPURL; ?>search.php?types=<?php echo $qType; ?>&color_theme=<?php echo $qColor; ?>&price=ASC" class="dropdown-item" id="dropdown-item-1">Price Ascending</a>
+                                <a href="<?php echo APPURL; ?>search.php?types=<?php echo $qType; ?>&color_theme=<?php echo $qColor; ?>&price=DESC" class="dropdown-item" id="dropdown-item-2">Price Descending</a>
+                            </div>
+                        </div>
+                    </li>
+                    <?php endif; ?>
+                    
                     <!-- Search icon after Contact and before user links -->
                     <li class="nav-search">
                         <a href="<?php echo APPURL; ?>find.php" class="navlink" aria-label="Search bouquets">

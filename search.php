@@ -1,4 +1,12 @@
-<?php require "includes/header.php"; ?>
+<?php 
+// Set page info for header
+$GLOBALS['current_page'] = 'search';
+$GLOBALS['search_filters'] = [
+    'type' => $_POST['types'] ?? ($_GET['types'] ?? null),
+    'color_theme' => $_POST['color_theme'] ?? ($_GET['color_theme'] ?? null)
+];
+require "includes/header.php"; 
+?>
 <main class="main-content">
 <?php
 require_once "Config/config.php";
@@ -27,20 +35,7 @@ $stmt->execute([
 ]);
 $listings = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-
-
 ?>
-<div class="sort-dropdown">
-        <button class="dropdown-btn" onclick="toggleDropdown()">
-            <span id="selectedOption">Sort by</span>
-            <span class="dropdown-arrow" id="dropdownArrow">▼</span>
-        </button>
-        <div class="dropdown-content" id="dropdownContent">
-            <?php $qType = urlencode($type); $qColor = urlencode($color_theme); ?>
-            <a href="search.php?types=<?php echo $qType; ?>&color_theme=<?php echo $qColor; ?>&price=ASC" class="dropdown-item" id="dropdown-item-1">Price Ascending</a>
-            <a href="search.php?types=<?php echo $qType; ?>&color_theme=<?php echo $qColor; ?>&price=DESC" class="dropdown-item" id="dropdown-item-2">Price Descending</a>
-        </div>
-    </div>
 
 <div id="fitems" class="search-results">
    
