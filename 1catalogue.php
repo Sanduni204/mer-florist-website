@@ -35,7 +35,8 @@ function render_item_card(array $it, string $cardClass): string {
     $imgTag = $img !== ''
         ? '<img class="img" src="'.APPURL.'Images/'.$img.'" alt="'. $name .'" />'
         : '<div class="img" style="display:flex;align-items:center;justify-content:center;background:#f6f6f6;color:#999;">No Image</div>';
-    return '<a href="1payment.html"><div class="'. $cardClass .'">'
+    $id = isset($it['id']) ? (int)$it['id'] : 0;
+    return '<a href="1payment.php?id='.$id.'"><div class="'. $cardClass .'">'
          . $imgTag
          . '<p>'. $name .'</p>'
          . '<p>RS.'. $price .'</p>'

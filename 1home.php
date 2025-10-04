@@ -55,7 +55,8 @@ try {
     
    
                 <?php foreach($shop as $sho) : ?>
-                        <a href="1payment.html"><div class="f">
+                        <?php $shopId = isset($sho->id) ? (int)$sho->id : 0; ?>
+                        <a href="1payment.php?id=<?php echo $shopId; ?>"><div class="f">
                         <img class="img" src=".\Images\<?php echo $sho->image ; ?>">
                         <p><?php echo $sho->name; ?></p>
                         <p>RS.<?php echo number_format((float)$sho->price, 2); ?></p>

@@ -41,7 +41,8 @@ if(isset($_GET['price'])){
     
    
         <?php foreach($allListingsPrice as $listing) : ?>
-            <a href="1payment.html"><div class="f">
+            <?php $listingId = isset($listing->id) ? (int)$listing->id : 0; ?>
+            <a href="1payment.php?id=<?php echo $listingId; ?>"><div class="f">
             <img class="img" src=".\Images\<?php echo $listing->image ; ?>">
             <p><?php echo $listing->name; ?></p>
             <p>RS.<?php echo $listing->price; ?>.00</p>
