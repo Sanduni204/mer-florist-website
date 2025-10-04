@@ -56,7 +56,7 @@ nav ul.main li a:hover {
 
 /* Finder page: center the search box */
 .finder-wrapper {
-    min-height: 100vh;
+    min-height: 80vh;
     background: url('Images/bk_search.jpg');
     background-size: cover;
     background-position: center;
@@ -328,6 +328,7 @@ body {
     color: #000000;
     font-size: 18px;
     font-style: italic;
+    transition: opacity 0.3s ease, transform 0.3s ease;
    
       
 }
@@ -368,6 +369,7 @@ body {
     box-shadow: 0 14px 28px rgb(255, 255, 255);
     font-size: 18px;
     font-style: italic;
+    transition: opacity 0.3s ease, transform 0.3s ease;
    
       
 }
@@ -412,6 +414,7 @@ body {
     
     font-size: 18px;
     font-style: italic;
+    transition: opacity 0.3s ease, transform 0.3s ease;
         
 }
 .D:hover {opacity: 0.8; transform: scale(1.02);}
@@ -453,6 +456,7 @@ body {
     
     font-size: 18px;
     font-style: italic;
+    transition: opacity 0.3s ease, transform 0.3s ease;
    
 }
 .T:hover {opacity: 0.8; transform: scale(1.02);}
@@ -493,6 +497,7 @@ body {
     box-sizing: border-box;
     font-size: 18px;
     font-style: italic;
+    transition: opacity 0.3s ease, transform 0.3s ease;
        
 }
 .S:hover {opacity: 0.8; transform: scale(1.02);}
@@ -534,6 +539,7 @@ body {
     box-shadow: 0 14px 28px rgb(255, 255, 255);
     font-size: 18px;
     font-style: italic;
+    transition: opacity 0.3s ease, transform 0.3s ease;
    
       
 }
@@ -718,6 +724,7 @@ input[type=submit]{
     gap: 6px;
     padding-bottom: 8px;
     color: black;
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 /* Featured grid: tighten columns on small screens */
@@ -727,7 +734,10 @@ input[type=submit]{
 @media (max-width: 480px) {
     .front2 { grid-template-columns: 1fr; }
 }
-.f:hover { opacity: 0.95; }
+.f:hover { 
+    opacity: 0.8; 
+    transform: scale(1.02);
+}
 .f p{
     padding: 0 8px;
     margin: 2px 0;
@@ -1543,9 +1553,9 @@ padding-top: 5%;
 /* Search Section Styles */
 .search-section {
     background: transparent;
-    padding: 60px 20px;
+    padding: 40px 20px;
     text-align: center;
-    margin: 20px 0;
+    margin: 0;
     border-radius: 15px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-style: italic;
