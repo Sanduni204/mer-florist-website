@@ -1,7 +1,7 @@
 <?php require "includes/header.php"; ?>
 <?php require "Config/config.php";
 
-// Determine a safe ORDER BY column: prefer primary key; fallback to created_at, id/ID, or name
+// Determine a safe ORDER BY column: prefer primary key; fallback to created_at, fid, or name
 $orderCol = 'name';
 $hasFeaturedCol = false; // will not be used further; kept to avoid extra logic
 try {
@@ -11,6 +11,7 @@ try {
         foreach ($cols as $c) { if (!empty($c['Key']) && strtoupper($c['Key']) === 'PRI') { $orderCol = $c['Field']; break; } }
         if ($orderCol === 'name') {
             if (in_array('created_at', $fields, true)) { $orderCol = 'created_at'; }
+            elseif (in_array('fid', $fields, true)) { $orderCol = 'fid'; }
             elseif (in_array('id', $fields, true)) { $orderCol = 'id'; }
             elseif (in_array('ID', $fields, true)) { $orderCol = 'ID'; }
         }
@@ -55,7 +56,7 @@ try {
     
    
                 <?php foreach($shop as $sho) : ?>
-                        <?php $shopId = isset($sho->id) ? (int)$sho->id : 0; ?>
+                        <?php $shopId = isset($sho->fid) ? (int)$sho->fid : 0; ?>
                         <a href="1payment.php?id=<?php echo $shopId; ?>"><div class="f">
                         <img class="img" src=".\Images\<?php echo $sho->image ; ?>">
                         <p><?php echo $sho->name; ?></p>

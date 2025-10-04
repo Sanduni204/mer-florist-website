@@ -12,14 +12,14 @@ function fetch_items_by_types(PDO $conn, array $keywords): array {
         $params[":t$i"] = "%$kw%"; // match both 'Rose' and 'Rose Bouquets'
     }
     $where = implode(' OR ', $clauses);
-    // Prefer id DESC if exists; fallback to name
-    $sql = "SELECT id, fid, name, type, color_theme, price, image, description FROM shop WHERE $where ORDER BY id DESC";
+    // Use fid for ordering and selection
+    $sql = "SELECT fid, name, type, color_theme, price, image, description FROM shop WHERE $where ORDER BY fid DESC";
     try {
         $stmt = $conn->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     } catch (Throwable $e) {
-        // Fallback without id ordering (in case schema differs)
+        // Fallback without ordering
         try {
             $stmt = $conn->prepare("SELECT fid, name, type, color_theme, price, image, description FROM shop WHERE $where ORDER BY name ASC");
             $stmt->execute($params);
@@ -27,6 +27,7 @@ function fetch_items_by_types(PDO $conn, array $keywords): array {
         } catch (Throwable $e2) { return []; }
     }
 }
+
 function render_item_card(array $it, string $cardClass): string {
     $name = htmlspecialchars($it['name'] ?? '');
     $price = isset($it['price']) ? number_format((float)$it['price'], 2) : '0.00';
@@ -35,13 +36,13 @@ function render_item_card(array $it, string $cardClass): string {
     $imgTag = $img !== ''
         ? '<img class="img" src="'.APPURL.'Images/'.$img.'" alt="'. $name .'" />'
         : '<div class="img" style="display:flex;align-items:center;justify-content:center;background:#f6f6f6;color:#999;">No Image</div>';
-    $id = isset($it['id']) ? (int)$it['id'] : 0;
-    return '<a href="1payment.php?id='.$id.'"><div class="'. $cardClass .'">'
-         . $imgTag
-         . '<p>'. $name .'</p>'
-         . '<p>RS.'. $price .'</p>'
-         . ($desc !== '' ? '<p><b>'. $desc .'</b></p>' : '')
-         . '</div></a>';
+    $fid = isset($it['fid']) ? (int)$it['fid'] : 0;
+    return '<a href="1payment.php?id='.$fid.'"><div class="'. $cardClass .'">'.
+         $imgTag.
+         '<p>'. $name .'</p>'.
+         '<p>RS.'. $price .'</p>'.
+         ($desc !== '' ? '<p><b>'. $desc .'</b></p>' : '').
+         '</div></a>';
 }
 ?>
 

@@ -102,53 +102,71 @@ body {
 
 
 footer{
-    background-color: black;
-    color: rgb(186, 186, 186);
+    background: black;
+    color: white;
     text-align: center;
-    padding: 30px 20px;
-    border-radius: 12px;
+    padding: 15px 20px;
     margin-top: 50px;
     width: 100%;
+    min-height: 80px;
     box-sizing: border-box;
     position: relative;
     clear: both;
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .icons{
     justify-content: center;
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 25px;
     margin-bottom: 20px;
 }
 
 .icons a{
     border-radius: 50%;
-    background-color: rgb(207, 207, 207);
-    padding: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
-    width: 45px;
-    height: 45px;
+    width: 50px;
+    height: 50px;
+    border: 2px solid transparent;
+    backdrop-filter: blur(10px);
 }
 
 .icons a:hover{
-    background-color: rgb(219, 219, 28);
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    transform: scale(1.1) translateY(-3px);
+    border-color: #ecf0f1;
+    box-shadow: 0 5px 20px rgba(52, 152, 219, 0.4);
 }
 
 .icons a i{
-    color: black;
-    font-size: 20px;
+    color: #ecf0f1;
+    font-size: 24px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.icons a:hover i{
+    color: white;
 }
 
 footer p {
     margin: 0;
-    font-size: 14px;
-    line-height: 1.4;
+    font-size: 16px;
+    line-height: 1.6;
     font-style: italic;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    color: #ecf0f1;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    opacity: 0.9;
 }
 
 /* Update your existing body CSS */
@@ -306,7 +324,7 @@ body {
    
       
 }
-.R:hover {opacity: 0.25}
+.R:hover {opacity: 0.8; transform: scale(1.02);}
 .R p{
     padding-top: 10px;
 }
@@ -346,7 +364,7 @@ body {
    
       
 }
-.L:hover {opacity: 0.25}
+.L:hover {opacity: 0.8; transform: scale(1.02);}
 .L p{
     padding-top: 10px;
 }
@@ -389,7 +407,7 @@ body {
     font-style: italic;
         
 }
-.D:hover {opacity: 0.25}
+.D:hover {opacity: 0.8; transform: scale(1.02);}
 .D p{
     padding-top: 10px;
 }
@@ -430,7 +448,7 @@ body {
     font-style: italic;
    
 }
-.T:hover {opacity: 0.25}
+.T:hover {opacity: 0.8; transform: scale(1.02);}
 .T p{
     padding-top: 10px;
 }
@@ -470,7 +488,7 @@ body {
     font-style: italic;
        
 }
-.S:hover {opacity: 0.25}
+.S:hover {opacity: 0.8; transform: scale(1.02);}
 .S p{
     padding-top: 10px;
 }
@@ -512,7 +530,7 @@ body {
    
       
 }
-.Dh:hover {opacity: 0.25}
+.Dh:hover {opacity: 0.8; transform: scale(1.02);}
 .Dh p{
     padding-top: 10px;
 }
@@ -1912,9 +1930,4 @@ padding-top: 5%;
         /* Space handled by parent gap; keep margin zero to avoid doubling */
         .dropdown-item:not(:last-child) {
             margin-bottom: 0;
-        }
-
-        .dropdown-item.selected {
-            background-color: #667eea;
-            color: white;
         }

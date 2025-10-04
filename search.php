@@ -48,7 +48,7 @@ $listings = $stmt->fetchAll(PDO::FETCH_OBJ);
     
     <?php if(!empty($listings) && count($listings)>0) :?>
         <?php foreach($listings as $listing) : ?>
-            <?php $listingId = isset($listing->id) ? (int)$listing->id : 0; ?>
+            <?php $listingId = isset($listing->fid) ? (int)$listing->fid : 0; ?>
             <a href="1payment.php?id=<?php echo $listingId; ?>"><div class="f">
             <img class="img" src=".\Images\<?php echo $listing->image ; ?>">
             <p><?php echo $listing->name; ?></p>
