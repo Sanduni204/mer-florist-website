@@ -200,3 +200,31 @@ function toggleDropdown() {
                 document.getElementById('dropdownArrow').classList.remove('open');
             }
         });
+
+        // Handle dropdown arrow behavior for select elements
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectElements = document.querySelectorAll('.category-select');
+            
+            selectElements.forEach(function(select) {
+                const arrow = select.nextElementSibling;
+                
+                // Initially set arrow to down
+                if (arrow && arrow.classList.contains('select-arrow')) {
+                    arrow.style.transform = 'none';
+                }
+                
+                // Handle click - show up arrow when opening dropdown
+                select.addEventListener('mousedown', function() {
+                    if (arrow && arrow.classList.contains('select-arrow')) {
+                        arrow.style.transform = 'rotate(180deg)';
+                    }
+                });
+                
+                // Handle selection change - immediately show down arrow after selecting
+                select.addEventListener('change', function() {
+                    if (arrow && arrow.classList.contains('select-arrow')) {
+                        arrow.style.transform = 'none';
+                    }
+                });
+            });
+        });
