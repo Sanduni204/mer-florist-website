@@ -1800,6 +1800,7 @@ padding-top: 5%;
     border-radius: 0;
     font-size: 12px;
     font-weight: 600;
+    font-style: normal;
     text-decoration: none;
     border: none;
     cursor: pointer;
@@ -1837,15 +1838,19 @@ padding-top: 5%;
 }
 
 .pay-now-btn:hover {
-    background: linear-gradient(135deg, #fe98d7 0%, #ac789c 100%);
+    background: white;
+    color: #ed7787;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(237, 119, 135, 0.3);
+    font-style: italic;
 }
 
 .add-to-cart-btn:hover {
-    background: linear-gradient(135deg, #c8e6c9 0%, #388e3c 100%);
+    background: white;
+    color: #4CAF50;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+    font-style: italic;
 }
 
 .pay-now-btn:active, .add-to-cart-btn:active {

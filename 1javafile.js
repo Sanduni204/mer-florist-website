@@ -85,14 +85,6 @@ if (fitemLink) {
         });
     }
 
-    const selectedImages = document.querySelectorAll('.img');
-
-    selectedImages.forEach(image => {
-        image.addEventListener('click', () => {
-            window.location.href = 'payment.html';
-        });
-    });
-
     const registrationForm = document.getElementById('registrationForm');
     if (registrationForm) {
         registrationForm.addEventListener('submit', function(e) {
