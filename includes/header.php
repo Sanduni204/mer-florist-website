@@ -80,6 +80,18 @@ try {
                         </a>
                     </li>
 
+                    <li class="nav-cart">
+                        <a href="<?php echo APPURL; ?>cart.php" class="navlink" aria-label="Shopping cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <?php 
+                            $cartCount = isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0;
+                            if ($cartCount > 0): 
+                            ?>
+                                <span class="cart-count"><?php echo $cartCount; ?></span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
+
                     <?php if(isset($_SESSION['username'])) : ?>
                         <li class="drop">
                             <a href="<?php echo APPURL; ?>1catalogue.php"><?php echo $_SESSION['username']; ?></a>

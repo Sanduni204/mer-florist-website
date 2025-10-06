@@ -257,13 +257,25 @@ button[type="submit"]:active {
 </style>
 <?php require "Config/config.php"; ?>
 <?php
-// Get flower information from URL parameters or database
+// Initialize variables
 $flower = null;
 $flowerName = '';
 $flowerPrice = '';
 $flowerImage = '';
+$isCartCheckout = false;
+$cartItems = [];
+$cartTotal = 0;
 
-if (isset($_GET['id'])) {
+// Check if this is a cart checkout
+if (isset($_GET['cart']) && $_GET['cart'] == '1') {
+    $isCartCheckout = true;
+    if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+        $cartItems = $_SESSION['cart'];
+        foreach ($cartItems as $item) {
+            $cartTotal += $item['price'] * $item['quantity'];
+        }
+    }
+} elseif (isset($_GET['id'])) {
     // Get flower by ID from database
     try {
         $stmt = $conn->prepare("SELECT * FROM shop WHERE fid = :id");
@@ -288,7 +300,32 @@ if (isset($_GET['id'])) {
 <div class="main-content">
 <div class="payment-container">
     <!-- Item Details Box on the Left -->
-    <?php if ($flower): ?>
+    <?php if ($isCartCheckout && !empty($cartItems)): ?>
+    <div class="item-details-box">
+        <h3>Cart Items</h3>
+        <?php foreach ($cartItems as $item): ?>
+            <div style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                    <?php if ($item['image']): ?>
+                        <img src="<?php echo APPURL; ?>Images/<?php echo htmlspecialchars($item['image']); ?>" 
+                             alt="<?php echo htmlspecialchars($item['name']); ?>" 
+                             style="width: 40px; height: 40px; object-fit: cover; border-radius: 5px; margin-right: 10px;">
+                    <?php endif; ?>
+                    <div>
+                        <p style="margin: 0; font-weight: 600; font-size: 14px;"><?php echo htmlspecialchars($item['name']); ?></p>
+                        <p style="margin: 0; font-size: 12px; opacity: 0.9;">Qty: <?php echo $item['quantity']; ?> × RS. <?php echo number_format($item['price'], 2); ?></p>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+        <div style="border-top: 2px solid rgba(255,255,255,0.3); padding-top: 15px; margin-top: 15px;">
+            <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 600;">
+                <span>Total:</span>
+                <span>RS. <?php echo number_format($cartTotal, 2); ?></span>
+            </div>
+        </div>
+    </div>
+    <?php elseif ($flower): ?>
     <div class="item-details-box">
         <h3>Selected Item</h3>
         <div class="item-image">
@@ -363,12 +400,16 @@ if (isset($_GET['id'])) {
                 <input type="text" id="pcode" name="pcode" placeholder="1124" required>
             </div>
             <div class="form-group">
-                <label for="Iname">Item's Name</label>
-                <input type="text" id="Iname" name="Iname" value="<?php echo htmlspecialchars($flowerName); ?>" placeholder="Daisy Dazzle" required>
+                <label for="Iname"><?php echo $isCartCheckout ? "Order Description" : "Item's Name"; ?></label>
+                <input type="text" id="Iname" name="Iname" 
+                       value="<?php echo $isCartCheckout ? 'Cart Checkout - Multiple Items' : htmlspecialchars($flowerName); ?>" 
+                       placeholder="<?php echo $isCartCheckout ? 'Cart Checkout' : 'Daisy Dazzle'; ?>" required>
             </div>
             <div class="form-group">
                 <label for="price">Price (Rs.)</label>
-                <input type="text" id="price" name="price" value="<?php echo htmlspecialchars($flowerPrice); ?>" placeholder="0.00" readonly>
+                <input type="text" id="price" name="price" 
+                       value="<?php echo $isCartCheckout ? number_format($cartTotal, 2) : htmlspecialchars($flowerPrice); ?>" 
+                       placeholder="0.00" readonly>
             </div>
         </form>
     </div>

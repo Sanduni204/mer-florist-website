@@ -57,14 +57,18 @@ try {
    
                 <?php foreach($shop as $sho) : ?>
                         <?php $shopId = isset($sho->fid) ? (int)$sho->fid : 0; ?>
-                        <a href="1payment.php?id=<?php echo $shopId; ?>"><div class="f">
+                        <div class="f">
                         <img class="img" src=".\Images\<?php echo $sho->image ; ?>">
                         <p><?php echo $sho->name; ?></p>
                         <p>RS.<?php echo number_format((float)$sho->price, 2); ?></p>
                                     <?php if (!empty($sho->description)) : ?>
                                         <p><b><?php echo htmlspecialchars($sho->description); ?></b></p>
                                     <?php endif; ?>
-                        </div></a>
+                        <div class="item-buttons">
+                            <button onclick="addToCart(<?php echo $shopId; ?>)" class="add-to-cart-btn">Add to Cart</button>
+                            <a href="1payment.php?id=<?php echo $shopId; ?>" class="pay-now-btn">Pay Now</a>
+                        </div>
+                        </div>
                 <?php endforeach; ?>
     </div>
 </section>

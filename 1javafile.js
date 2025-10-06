@@ -52,9 +52,38 @@ if (fitemLink) {
     });
 }
 
-    document.getElementById('paymentButton').addEventListener('click', function() {
-        alert('Your payment is successful!');
-    });
+    const paymentButton = document.getElementById('paymentButton');
+    if (paymentButton) {
+        paymentButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Check if this is a cart checkout
+            const urlParams = new URLSearchParams(window.location.search);
+            const isCartCheckout = urlParams.get('cart') === '1';
+            
+            if (isCartCheckout) {
+                // Clear cart after successful payment
+                fetch('add_to_cart.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'action=clear_cart'
+                })
+                .then(() => {
+                    alert('Your payment is successful! Your cart has been cleared.');
+                    window.location.href = '1home.php';
+                })
+                .catch(() => {
+                    alert('Your payment is successful!');
+                    window.location.href = '1home.php';
+                });
+            } else {
+                alert('Your payment is successful!');
+                window.location.href = '1home.php';
+            }
+        });
+    }
 
     const selectedImages = document.querySelectorAll('.img');
 
@@ -228,3 +257,106 @@ function toggleDropdown() {
                 });
             });
         });
+
+// Add to cart functionality
+function addToCart(itemId) {
+    // Create form data
+    const formData = new FormData();
+    formData.append('action', 'add');
+    formData.append('item_id', itemId);
+    
+    // Send AJAX request
+    fetch('add_to_cart.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            showNotification('Item added to cart!', 'success');
+            // Update cart count if you have a cart counter in header
+            updateCartCount(data.cart_count);
+        } else {
+            showNotification('Failed to add item to cart', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('An error occurred', 'error');
+    });
+}
+
+// Notification system
+function showNotification(message, type) {
+    // Remove existing notifications
+    const existingNotification = document.querySelector('.notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = message;
+    
+    // Style the notification
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 25px;
+        color: white;
+        font-weight: 600;
+        z-index: 9999;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        animation: slideIn 0.3s ease;
+        max-width: 300px;
+        text-align: center;
+    `;
+    
+    if (type === 'success') {
+        notification.style.background = 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)';
+    } else {
+        notification.style.background = 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)';
+    }
+    
+    // Add CSS for animation if not already present
+    if (!document.querySelector('#notification-styles')) {
+        const style = document.createElement('style');
+        style.id = 'notification-styles';
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Add to body
+    document.body.appendChild(notification);
+    
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 300);
+    }, 3000);
+}
+
+// Update cart count (placeholder function)
+function updateCartCount(count) {
+    const cartCounter = document.querySelector('.cart-count');
+    if (cartCounter) {
+        cartCounter.textContent = count;
+    }
+}

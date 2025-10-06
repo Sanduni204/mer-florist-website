@@ -37,12 +37,16 @@ function render_item_card(array $it, string $cardClass): string {
         ? '<img class="img" src="'.APPURL.'Images/'.$img.'" alt="'. $name .'" />'
         : '<div class="img" style="display:flex;align-items:center;justify-content:center;background:#f6f6f6;color:#999;">No Image</div>';
     $fid = isset($it['fid']) ? (int)$it['fid'] : 0;
-    return '<a href="1payment.php?id='.$fid.'"><div class="'. $cardClass .'">'.
+    return '<div class="'. $cardClass .'">'.
          $imgTag.
          '<p>'. $name .'</p>'.
          '<p>RS.'. $price .'</p>'.
          ($desc !== '' ? '<p><b>'. $desc .'</b></p>' : '').
-         '</div></a>';
+         '<div class="item-buttons">'.
+         '<button onclick="addToCart('.$fid.')" class="add-to-cart-btn">Add to Cart</button>'.
+         '<a href="1payment.php?id='.$fid.'" class="pay-now-btn">Pay Now</a>'.
+         '</div>'.
+         '</div>';
 }
 ?>
 

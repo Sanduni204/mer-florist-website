@@ -54,6 +54,37 @@ nav ul.main li a:hover {
 .nav-search a { padding: 10px 12px; }
 .nav-search i { font-size: 18px; line-height: 1; vertical-align: middle; }
 
+/* Cart navigation styling */
+.nav-cart a { 
+    padding: 10px 12px; 
+    position: relative;
+}
+.nav-cart i { 
+    font-size: 18px; 
+    line-height: 1; 
+    vertical-align: middle; 
+}
+
+.cart-count {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: linear-gradient(135deg, #ed7787 0%, #c65d6b 100%);
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    text-align: center;
+    line-height: 1;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
 /* Finder page: center the search box */
 .finder-wrapper {
     min-height: 80vh;
@@ -329,6 +360,8 @@ body {
     font-size: 18px;
     font-style: italic;
     transition: opacity 0.3s ease, transform 0.3s ease;
+    position: relative;
+    overflow: hidden;
    
       
 }
@@ -370,6 +403,8 @@ body {
     font-size: 18px;
     font-style: italic;
     transition: opacity 0.3s ease, transform 0.3s ease;
+    position: relative;
+    overflow: hidden;
    
       
 }
@@ -415,6 +450,8 @@ body {
     font-size: 18px;
     font-style: italic;
     transition: opacity 0.3s ease, transform 0.3s ease;
+    position: relative;
+    overflow: hidden;
         
 }
 .D:hover {opacity: 0.8; transform: scale(1.02);}
@@ -457,6 +494,8 @@ body {
     font-size: 18px;
     font-style: italic;
     transition: opacity 0.3s ease, transform 0.3s ease;
+    position: relative;
+    overflow: hidden;
    
 }
 .T:hover {opacity: 0.8; transform: scale(1.02);}
@@ -498,6 +537,8 @@ body {
     font-size: 18px;
     font-style: italic;
     transition: opacity 0.3s ease, transform 0.3s ease;
+    position: relative;
+    overflow: hidden;
        
 }
 .S:hover {opacity: 0.8; transform: scale(1.02);}
@@ -540,6 +581,8 @@ body {
     font-size: 18px;
     font-style: italic;
     transition: opacity 0.3s ease, transform 0.3s ease;
+    position: relative;
+    overflow: hidden;
    
       
 }
@@ -725,6 +768,8 @@ input[type=submit]{
     padding-bottom: 8px;
     color: black;
     transition: opacity 0.3s ease, transform 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 /* Featured grid: tighten columns on small screens */
@@ -1731,6 +1776,80 @@ padding-top: 5%;
     font-size: 16px;
     font-weight: bold;
     display: inline-block;
+}
+
+/* Item buttons styling */
+.item-buttons {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 15px;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4), transparent);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    border-radius: 0 0 12px 12px;
+}
+
+.pay-now-btn, .add-to-cart-btn {
+    padding: 6px 20px;
+    border-radius: 0;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    width: 100%;
+    text-align: center;
+    height: 28px;
+    line-height: 16px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Card hover effects */
+.f:hover .item-buttons,
+.R:hover .item-buttons,
+.L:hover .item-buttons,
+.D:hover .item-buttons,
+.T:hover .item-buttons,
+.S:hover .item-buttons,
+.Dh:hover .item-buttons {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Make cards relative positioned for overlay */
+.pay-now-btn {
+    background: linear-gradient(135deg, #fcd4e8 0%, #ed7787 100%);
+    color: white;
+}
+
+.add-to-cart-btn {
+    background: linear-gradient(135deg, #e8f5e8 0%, #4CAF50 100%);
+    color: white;
+}
+
+.pay-now-btn:hover {
+    background: linear-gradient(135deg, #fe98d7 0%, #ac789c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(237, 119, 135, 0.3);
+}
+
+.add-to-cart-btn:hover {
+    background: linear-gradient(135deg, #c8e6c9 0%, #388e3c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+}
+
+.pay-now-btn:active, .add-to-cart-btn:active {
+    transform: translateY(0);
 }
 
 .quick-search {

@@ -44,12 +44,16 @@ $listings = $stmt->fetchAll(PDO::FETCH_OBJ);
     <?php if(!empty($listings) && count($listings)>0) :?>
         <?php foreach($listings as $listing) : ?>
             <?php $listingId = isset($listing->fid) ? (int)$listing->fid : 0; ?>
-            <a href="1payment.php?id=<?php echo $listingId; ?>"><div class="f">
+            <div class="f">
             <img class="img" src=".\Images\<?php echo $listing->image ; ?>">
             <p><?php echo $listing->name; ?></p>
             <p>RS.<?php echo $listing->price; ?>.00</p>
             <p><B><?php echo $listing->description; ?></B></p>
-            </div></a>
+            <div class="item-buttons">
+                <button onclick="addToCart(<?php echo $listingId; ?>)" class="add-to-cart-btn">Add to Cart</button>
+                <a href="1payment.php?id=<?php echo $listingId; ?>" class="pay-now-btn">Pay Now</a>
+            </div>
+            </div>
         
 <?php endforeach; ?>
 <?php else :?>
