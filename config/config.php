@@ -1,5 +1,10 @@
 <?php
 
+// Define APPURL if not already defined
+if (!defined('APPURL')) {
+    define('APPURL', 'http://localhost/mer_ecommerce/');
+}
+
 // Guard constant definitions to avoid redefinition notices
 if (!defined('HOSTNAME')) { define('HOSTNAME', 'localhost'); }
 if (!defined('DBNAME'))   { define('DBNAME',   'mer'); }

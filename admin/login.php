@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Set common session fields for header display
     $_SESSION['username'] = 'Admin';
     $_SESSION['email'] = $email;
-    header('Location: /mer_ecommerce/admin/index.php');
+    header('Location: ' . APPURL . 'admin/index.php');
     exit;
   } else {
     $error = 'Invalid admin credentials';

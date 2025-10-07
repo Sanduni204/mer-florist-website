@@ -155,39 +155,46 @@ if (fitemLink) {
     // Login form functionality
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
+        // Remove the preventDefault and client-side validation
+        // Let the form submit normally to PHP for server-side processing
+        
+        // Just add simple client-side validation without preventing submission
         loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const messageDiv = document.getElementById('login-message');
-
-            // Simple validation
-            if (email && password) {
-                // Show success message
-                messageDiv.className = 'login-message success';
-                messageDiv.textContent = 'Login successful! Redirecting...';
-                messageDiv.style.display = 'block';
-
-                // Simulate redirect after 2 seconds
-                setTimeout(() => {
-                    window.location.href = '1home.html';
-                }, 2000);
-            } else {
-                // Show error message
-                messageDiv.className = 'login-message error';
-                messageDiv.textContent = 'Please fill in all fields.';
-                messageDiv.style.display = 'block';
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            
+            // Only prevent submission if fields are empty
+            if (!email || !password) {
+                e.preventDefault();
+                const messageDiv = document.getElementById('login-message');
+                if (messageDiv) {
+                    messageDiv.className = 'login-message error';
+                    messageDiv.textContent = 'Please fill in all fields.';
+                    messageDiv.style.display = 'block';
+                }
+                return false;
             }
+            
+            // If fields are filled, allow normal form submission to PHP
+            return true;
         });
 
         // Hide message when user starts typing
-        document.getElementById('email').addEventListener('input', hideMessage);
-        document.getElementById('password').addEventListener('input', hideMessage);
+        const emailField = document.getElementById('email');
+        const passwordField = document.getElementById('password');
+        
+        if (emailField) {
+            emailField.addEventListener('input', hideLoginMessage);
+        }
+        if (passwordField) {
+            passwordField.addEventListener('input', hideLoginMessage);
+        }
 
-        function hideMessage() {
+        function hideLoginMessage() {
             const messageDiv = document.getElementById('login-message');
-            messageDiv.style.display = 'none';
+            if (messageDiv) {
+                messageDiv.style.display = 'none';
+            }
         }
     }
 }, 500);

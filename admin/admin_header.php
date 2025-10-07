@@ -1,9 +1,9 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 require_once __DIR__ . '/../Config/config.php';
-// Admin session check early, use absolute path to avoid APPURL redefinition issues
+// Admin session check early
 if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
-    header('Location: /mer_ecommerce/admin/login.php');
+    header('Location: ' . APPURL . 'admin/login.php');
     exit;
 }
 // Lightweight schema guard: ensure 'fid' column exists on 'shop'

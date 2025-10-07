@@ -1,55 +1,72 @@
-<?php require "../includes/header.php"; ?>
-<?php require "../Config/config.php"; ?>
-<?php
+<?php 
+// Start session and include config FIRST, before any output
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require "../Config/config.php";
+
+// Check if user is already logged in and redirect BEFORE any HTML output
 if(isset($_SESSION['username'])){
-header("location: ".APPURL."1home.php");
-exit;}
-
-if(isset($_POST['submit'])){
-    if(empty($_POST['email']) OR empty($_POST['password']))
-  echo "<script>alert('Some inputs are empty');</script>";
-else{
-    $email=$_POST['email'];
-    $password=$_POST['password'];
-
-    // Admin override: allow hardcoded admin credentials to grant admin session
-    if ($email === 'admin@mer.com' && $password === 'admin123') {
-        $_SESSION['is_admin'] = true;
-        $_SESSION['username'] = 'Admin';
-        $_SESSION['email'] = $email;
-        // Optional: a synthetic user_id for admin session context
-        $_SESSION['user_id'] = 0;
+    // Check if user is admin and redirect accordingly
+    if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true){
         header("location: ".APPURL."admin/index.php");
-        exit;
+    } else {
+        header("location: ".APPURL."1home.php");
     }
+    exit;
+}
 
-    //query (prepared to avoid SQL injection)
-    $login = $conn->prepare("SELECT * FROM users WHERE email = :email");
-    $login->execute([':email' => $email]);
+// Process login form BEFORE any HTML output
+if(isset($_POST['submit'])){
+    if(empty($_POST['email']) OR empty($_POST['password'])){
+        $error_message = "Some inputs are empty";
+    } else {
+        $email=$_POST['email'];
+        $password=$_POST['password'];
 
-    //fetch
-    $fetch=$login->fetch(PDO::FETCH_ASSOC);
+        // Admin override: allow hardcoded admin credentials to grant admin session
+        if ($email === 'admin@mer.com' && $password === 'admin123') {
+            $_SESSION['is_admin'] = true;
+            $_SESSION['username'] = 'Admin';
+            $_SESSION['email'] = $email;
+            // Optional: a synthetic user_id for admin session context
+            $_SESSION['user_id'] = 0;
+            header("location: ".APPURL."admin/index.php");
+            exit;
+        }
 
-    if($login->rowCount() > 0){
-        //echo $login->rowCount();
-        //echo "email is valid";
+        //query (prepared to avoid SQL injection)
+        $login = $conn->prepare("SELECT * FROM users WHERE email = :email");
+        $login->execute([':email' => $email]);
 
-        if(password_verify($password, $fetch['mypassword'])){
-           $_SESSION['username'] = $fetch['username'];
-           $_SESSION['email'] = $fetch['email'];
-           $_SESSION['user_id'] = $fetch['id'];
-           
-header("location: ".APPURL."1home.php");
-        
-        }else{
-            echo "<script>alert('email or password is wrong');</script>";
+        //fetch
+        $fetch=$login->fetch(PDO::FETCH_ASSOC);
+
+        if($login->rowCount() > 0){
+            if(password_verify($password, $fetch['mypassword'])){
+               $_SESSION['username'] = $fetch['username'];
+               $_SESSION['email'] = $fetch['email'];
+               $_SESSION['user_id'] = $fetch['id'];
+               
+               // Check if user is admin from database or set regular user session
+               // For now, all regular users go to home page
+               $_SESSION['is_admin'] = false;
+               
+               header("location: ".APPURL."1home.php");
+               exit;
+            }else{
+                $error_message = "Email or password is wrong";
+            }
+        }
+        else{
+            $error_message = "Email or password is wrong";
         }
     }
-    else{
-        echo "<script>alert('email or password is wrong');</script>";
-    }
-}}
-    ?>
+}
+
+// NOW include header after all redirect logic is complete
+require "../includes/header.php";
+?>
 
     
     <div class="login-header">
@@ -64,9 +81,11 @@ header("location: ".APPURL."1home.php");
             <h2 class="login-form-title">Login</h2>
             
             <!-- Success/Error Messages -->
-            <div id="login-message" class="login-message" style="display: none;">
-                <!-- Messages will be displayed here -->
+            <?php if(isset($error_message)): ?>
+            <div id="login-message" class="login-message" style="display: block; background: #fdecea; color: #b71c1c; padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+                <?php echo htmlspecialchars($error_message); ?>
             </div>
+            <?php endif; ?>
 
             <!--form-->
             <form action="1login.php" method="POST"  id="loginForm" class="login-form">
