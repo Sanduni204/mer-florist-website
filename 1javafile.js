@@ -85,13 +85,8 @@ if (fitemLink) {
         });
     }
 
-    const selectedImages = document.querySelectorAll('.img');
-
-    selectedImages.forEach(image => {
-        image.addEventListener('click', () => {
-            window.location.href = 'payment.html';
-        });
-    });
+    // Removed automatic redirect to payment page when clicking images
+    // Users should use "Add to Cart" or "Pay Now" buttons instead
 
     const registrationForm = document.getElementById('registrationForm');
     if (registrationForm) {
