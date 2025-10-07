@@ -38,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             'name' => $item['name'],
                             'price' => $item['price'],
                             'image' => $item['image'],
+                            'description' => $item['description'] ?? '',
                             'quantity' => $quantity
                         ];
                     }
@@ -91,6 +92,19 @@ foreach ($_SESSION['cart'] as $item) {
     margin: 0 auto;
     padding: 20px;
     min-height: calc(100vh - 200px);
+    display: flex;
+    gap: 30px;
+}
+
+.cart-main-content {
+    flex: 2;
+}
+
+.cart-sidebar {
+    flex: 1;
+    position: sticky;
+    top: 90px;
+    height: fit-content;
 }
 
 .cart-title {
@@ -149,8 +163,16 @@ foreach ($_SESSION['cart'] as $item) {
 }
 
 .cart-item-price {
-    color: #ed7787;
+    color: #2c3e50;
     font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.cart-item-description {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    font-style: italic;
+    margin-top: 5px;
     font-weight: 500;
 }
 
@@ -169,6 +191,31 @@ foreach ($_SESSION['cart'] as $item) {
     font-weight: 600;
 }
 
+/* Show spinner arrows always visible */
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: auto;
+    opacity: 1;
+    cursor: pointer;
+}
+
+/* Firefox spinner buttons */
+.quantity-input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Custom styling for better visibility */
+.quantity-input:hover::-webkit-outer-spin-button,
+.quantity-input:hover::-webkit-inner-spin-button {
+    opacity: 1;
+}
+
+.quantity-input:focus {
+    border-color: #ed7787;
+    outline: none;
+    box-shadow: 0 0 8px rgba(237, 119, 135, 0.3);
+}
+
 .cart-btn {
     padding: 8px 15px;
     border: none;
@@ -179,13 +226,15 @@ foreach ($_SESSION['cart'] as $item) {
 }
 
 .update-btn {
-    background: linear-gradient(135deg, #fcd4e8 0%, #ed7787 100%);
-    color: white;
+    background: transparent;
+    color: #ed7787;
+    border: 2px solid #ed7787;
 }
 
 .remove-btn {
-    background: #e74c3c;
-    color: white;
+    background: transparent;
+    color: #e74c3c;
+    border: 2px solid #e74c3c;
 }
 
 .cart-btn:hover {
@@ -194,38 +243,58 @@ foreach ($_SESSION['cart'] as $item) {
 }
 
 .cart-summary {
-    background: linear-gradient(135deg, #fcd4e8 0%, #ed7787 100%);
-    color: white;
+    background: white;
+    color: #2c3e50;
     padding: 25px;
     border-radius: 15px;
-    margin-top: 30px;
+    margin: 0;
+    border: 3px solid white;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     text-align: center;
+    width: 100%;
 }
 
 .cart-total {
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 20px;
+    color: #2c3e50;
+    line-height: 1.2;
 }
 
 .checkout-btn {
     background: white;
-    color: #ed7787;
-    padding: 15px 40px;
-    border: none;
-    border-radius: 25px;
-    font-size: 1.1rem;
+    color: #b6b8bc;
+    padding: 10px 20px;
+    border: 2px solid #b6b8bc;
+    border-radius: 8px;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     text-decoration: none;
-    display: inline-block;
-    margin: 0 10px;
+    display: block;
+    margin: 10px 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .checkout-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    background: #b6b8bc;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(182, 184, 188, 0.3);
+}
+
+.checkout-btn.clear-cart {
+    background: white;
+    color: #e74c3c;
+    border-color: #e74c3c;
+}
+
+.checkout-btn.clear-cart:hover {
+    background: #e74c3c;
+    color: white;
 }
 
 .empty-cart {
@@ -257,22 +326,128 @@ foreach ($_SESSION['cart'] as $item) {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(237, 119, 135, 0.3);
 }
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .cart-container {
+        gap: 20px;
+    }
+    
+    .cart-item {
+        padding: 15px;
+    }
+    
+    .cart-item-image {
+        width: 80px;
+        height: 80px;
+        margin-right: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .cart-container {
+        flex-direction: column;
+        gap: 20px;
+        padding: 15px;
+    }
+    
+    .cart-main-content {
+        flex: none;
+        order: 1;
+    }
+    
+    .cart-sidebar {
+        flex: none;
+        position: static;
+        order: 2;
+        width: 100%;
+    }
+    
+    .cart-item {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .cart-item-image {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 15px auto;
+    }
+    
+    .cart-item-details {
+        margin-bottom: 15px;
+    }
+    
+    .cart-item-actions {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .cart-item-actions form {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cart-container {
+        padding: 10px;
+    }
+    
+    .cart-item {
+        padding: 15px;
+    }
+    
+    .cart-item-image {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .quantity-input {
+        width: 50px;
+        padding: 6px;
+    }
+    
+    .cart-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .checkout-btn {
+        padding: 12px 15px;
+        font-size: 0.85rem;
+    }
+    
+    .cart-summary {
+        padding: 20px;
+    }
+}
 </style>
 
 <div class="cart-container">
-    <h1 class="cart-title">Shopping Cart</h1>
-    
-    <?php if (empty($_SESSION['cart'])): ?>
-        <div class="empty-cart">
-            <i class="fas fa-shopping-cart"></i>
-            <h3>Your cart is empty</h3>
-            <p>Add some beautiful flowers to your cart to get started!</p>
-            <a href="<?php echo APPURL; ?>1catalogue.php" class="continue-shopping">
-                <i class="fas fa-leaf"></i> Continue Shopping
-            </a>
-        </div>
-    <?php else: ?>
-        <?php foreach ($_SESSION['cart'] as $item): ?>
+    <div class="cart-main-content">
+        
+        <?php if (empty($_SESSION['cart'])): ?>
+            <div class="empty-cart">
+                <i class="fas fa-shopping-cart"></i>
+                <h3>Your cart is empty</h3>
+                <p>Add some beautiful flowers to your cart to get started!</p>
+                <a href="<?php echo APPURL; ?>1catalogue.php" class="continue-shopping">
+                    <i class="fas fa-leaf"></i> Continue Shopping
+                </a>
+            </div>
+        <?php else: ?>
+            <?php foreach ($_SESSION['cart'] as $item): ?>
+                <?php
+                // Fetch fresh data from database to get description
+                $stmt = $conn->prepare("SELECT description FROM shop WHERE fid = :id");
+                $stmt->execute([':id' => $item['id']]);
+                $dbItem = $stmt->fetch(PDO::FETCH_ASSOC);
+                $description = $dbItem ? $dbItem['description'] : '';
+                ?>
             <div class="cart-item">
                 <?php if ($item['image']): ?>
                     <img src="<?php echo APPURL; ?>Images/<?php echo htmlspecialchars($item['image']); ?>" 
@@ -286,6 +461,9 @@ foreach ($_SESSION['cart'] as $item) {
                 <div class="cart-item-details">
                     <div class="cart-item-name"><?php echo htmlspecialchars($item['name']); ?></div>
                     <div class="cart-item-price">RS. <?php echo number_format($item['price'], 2); ?></div>
+                    <?php if (!empty($description)): ?>
+                        <div class="cart-item-description"><?php echo htmlspecialchars($description); ?></div>
+                    <?php endif; ?>
                 </div>
                 
                 <div class="cart-item-actions">
@@ -300,32 +478,38 @@ foreach ($_SESSION['cart'] as $item) {
                     <form method="POST" style="display: inline;">
                         <input type="hidden" name="action" value="remove">
                         <input type="hidden" name="item_id" value="<?php echo $item['id']; ?>">
-                        <button type="submit" class="cart-btn remove-btn">Remove</button>
+                        <button type="submit" class="cart-btn remove-btn"><i class="fas fa-trash"></i></button>
                     </form>
                 </div>
             </div>
         <?php endforeach; ?>
-        
+        <?php endif; ?>
+    </div>
+    
+    <?php if (!empty($_SESSION['cart'])): ?>
+    <div class="cart-sidebar">
         <div class="cart-summary">
             <div class="cart-total">
-                Total: RS. <?php echo number_format($cart_total, 2); ?>
+                Total:<br>
+                RS. <?php echo number_format($cart_total, 2); ?>
             </div>
             
             <a href="<?php echo APPURL; ?>1payment.php?cart=1" class="checkout-btn">
-                <i class="fas fa-credit-card"></i> Proceed to Checkout
+                Proceed to Checkout
             </a>
             
             <a href="<?php echo APPURL; ?>1catalogue.php" class="checkout-btn">
-                <i class="fas fa-leaf"></i> Continue Shopping
+                Continue Shopping
             </a>
             
-            <form method="POST" style="display: inline;">
+            <form method="POST" style="margin: 0;">
                 <input type="hidden" name="action" value="clear">
-                <button type="submit" class="checkout-btn" style="background: #e74c3c; color: white;">
-                    <i class="fas fa-trash"></i> Clear Cart
+                <button type="submit" class="checkout-btn clear-cart">
+                    Clear Cart
                 </button>
             </form>
         </div>
+    </div>
     <?php endif; ?>
 </div>
 

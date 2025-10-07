@@ -275,8 +275,6 @@ function addToCart(itemId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Show success message
-            showNotification('Item added to cart!', 'success');
             // Update cart count if you have a cart counter in header
             updateCartCount(data.cart_count);
         } else {
