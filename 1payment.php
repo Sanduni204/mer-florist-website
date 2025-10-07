@@ -34,11 +34,12 @@
 /* Item details box on the left */
 .item-details-box {
     flex: 0 0 300px;
-    background: linear-gradient(135deg, #fcd4e8 0%, #ed7787 100%);
-    color: white;
+    background: white;
+    color: #2c3e50;
     padding: 25px;
     border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(237, 119, 135, 0.3);
+    border: 3px solid #fcd4e8;
+    box-shadow: 0 10px 30px rgba(252, 212, 232, 0.3);
     height: fit-content;
     position: sticky;
     top: 90px;
@@ -47,7 +48,7 @@
 
 .item-details-box:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(237, 119, 135, 0.4);
+    box-shadow: 0 15px 40px rgba(252, 212, 232, 0.4);
 }
 
 .item-details-box h3 {
@@ -64,18 +65,19 @@
 
 .item-image img {
     width: 100%;
-    max-width: 250px;
-    height: 200px;
-    object-fit: cover;
+    max-width: 180px;
+    height: 150px;
+    object-fit: contain;
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    background: #f8f9fa;
 }
 
 .item-info {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(252, 212, 232, 0.1);
     padding: 15px;
     border-radius: 10px;
-    backdrop-filter: blur(10px);
+    border: 1px solid rgba(252, 212, 232, 0.3);
 }
 
 .item-info p {
@@ -95,7 +97,8 @@
     font-size: 1.3rem;
     font-weight: 700;
     text-align: center;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(252, 212, 232, 0.2);
+    color: #ed7787;
     padding: 10px;
     border-radius: 8px;
     margin-top: 15px;
@@ -120,11 +123,11 @@
 .payment-container .con {
     flex: 1;
     margin: 0;
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    background: white;
     padding: 30px;
     border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    border: 2px solid rgba(237, 119, 135, 0.1);
+    border: 3px solid #fcd4e8;
+    box-shadow: 0 10px 30px rgba(252, 212, 232, 0.3);
     height: fit-content;
 }
 
@@ -149,14 +152,14 @@
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     color: #34495e;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     font-style: italic;
 }
@@ -164,10 +167,10 @@
 .form-group input[type="text"],
 .form-group input[type="email"] {
     width: 100%;
-    padding: 15px 20px;
+    padding: 8px 12px;
     border: 2px solid #e9ecef;
-    border-radius: 10px;
-    font-size: 16px;
+    border-radius: 6px;
+    font-size: 13px;
     font-style: italic;
     transition: all 0.3s ease;
     background: #ffffff;
@@ -195,16 +198,16 @@ button[type="submit"] {
     background: linear-gradient(135deg, #fcd4e8 0%, #ed7787 100%);
     color: white;
     border: none;
-    padding: 15px 30px;
-    border-radius: 25px;
-    font-size: 16px;
+    padding: 12px 25px;
+    border-radius: 20px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 5px 15px rgba(237, 119, 135, 0.3);
     text-transform: uppercase;
     letter-spacing: 1px;
-    margin-top: 20px;
+    margin-top: 15px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
@@ -251,7 +254,7 @@ button[type="submit"]:active {
     
     .form-group input[type="text"],
     .form-group input[type="email"] {
-        padding: 12px 15px;
+        padding: 8px 12px;
     }
 }
 </style>
@@ -380,59 +383,62 @@ if (isset($_GET['cart']) && $_GET['cart'] == '1') {
         </div>
     </div>
     <?php endif; ?>
-    <div class="con" style="flex: 1;">
-        <h2 class="payment_h2">Enter your details</h2>
+    <div class="con" style="width: 100%;">
         <form method="POST">
-            <div class="form-group">
-                <label for="name">Full Name</label>
-                <input type="text" id="name" name="name" placeholder="SH perera" required >
+            <div style="display: flex; gap: 30px;">
+                <!-- Left Column: Customer Details -->
+                <div style="flex: 1;">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" placeholder="SH perera" required >
+                    </div>
+                    <div class="form-group">
+                        <label for="ContactN">Contact Number</label>
+                        <input type="text" id="ContactN" name="ContactN"  placeholder="0778654234"  required>
+                    </div>
+                    <div class="form-group">
+                        <label for="Address">Address</label>
+                        <input type="text" id="Address" name="Address" placeholder="112, Colombo 7" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pcode">Postal code</label>
+                        <input type="text" id="pcode" name="pcode" placeholder="1124" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="Iname"><?php echo $isCartCheckout ? "Order Description" : "Item's Name"; ?></label>
+                        <input type="text" id="Iname" name="Iname" 
+                               value="<?php echo $isCartCheckout ? 'Cart Checkout - Multiple Items' : htmlspecialchars($flowerName); ?>" 
+                               placeholder="<?php echo $isCartCheckout ? 'Cart Checkout' : 'Daisy Dazzle'; ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Price (Rs.)</label>
+                        <input type="text" id="price" name="price" 
+                               value="<?php echo $isCartCheckout ? number_format($cartTotal, 2) : htmlspecialchars($flowerPrice); ?>" 
+                               placeholder="0.00" readonly>
+                    </div>
+                </div>
+                
+                <!-- Right Column: Payment Details -->
+                <div style="flex: 1;">
+                    <div class="form-group">
+                        <label for="cardname">Name on Card</label>
+                        <input type="text" id="cardname" name="cardname" placeholder="John Doe" required >
+                    </div>
+                    <div class="form-group">
+                        <label for="card-number">Card Number</label>
+                        <input type="text" id="card-number" name="card-number"  placeholder="1100-2345-4567-2345"  required>
+                    </div>
+                    <div class="form-group">
+                        <label for="exp-date">Expiration Date</label>
+                        <input type="text" id="exp-date" name="exp-date" placeholder="MM/YY" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cvv">CVV</label>
+                        <input type="text" id="cvv" name="cvv" placeholder="123" required>
+                    </div>
+                    <button type="submit" id="paymentButton">Complete Payment</button>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="ContactN">Contact Number</label>
-                <input type="text" id="ContactN" name="ContactN"  placeholder="0778654234"  required>
-            </div>
-            <div class="form-group">
-                <label for="Address">Address</label>
-                <input type="text" id="Address" name="Address" placeholder="112, Colombo 7" required>
-            </div>
-            <div class="form-group">
-                <label for="pcode">Postal code</label>
-                <input type="text" id="pcode" name="pcode" placeholder="1124" required>
-            </div>
-            <div class="form-group">
-                <label for="Iname"><?php echo $isCartCheckout ? "Order Description" : "Item's Name"; ?></label>
-                <input type="text" id="Iname" name="Iname" 
-                       value="<?php echo $isCartCheckout ? 'Cart Checkout - Multiple Items' : htmlspecialchars($flowerName); ?>" 
-                       placeholder="<?php echo $isCartCheckout ? 'Cart Checkout' : 'Daisy Dazzle'; ?>" required>
-            </div>
-            <div class="form-group">
-                <label for="price">Price (Rs.)</label>
-                <input type="text" id="price" name="price" 
-                       value="<?php echo $isCartCheckout ? number_format($cartTotal, 2) : htmlspecialchars($flowerPrice); ?>" 
-                       placeholder="0.00" readonly>
-            </div>
-        </form>
-    </div>
-    <div class="con" style="flex: 1;">
-        <h2 class="payment_h2">Make your payment </h2>
-        <form method="POST">
-            <div class="form-group">
-                <label for="cardname">Name on Card</label>
-                <input type="text" id="cardname" name="cardname" placeholder="John Doe" required >
-            </div>
-            <div class="form-group">
-                <label for="card-number">Card Number</label>
-                <input type="text" id="card-number" name="card-number"  placeholder="1100-2345-4567-2345"  required>
-            </div>
-            <div class="form-group">
-                <label for="exp-date">Expiration Date</label>
-                <input type="text" id="exp-date" name="exp-date" placeholder="MM/YY" required>
-            </div>
-            <div class="form-group">
-                <label for="cvv">CVV</label>
-                <input type="text" id="cvv" name="cvv" placeholder="123" required>
-            </div>
-            <button type="submit" id="paymentButton">Complete Payment</button>
         </form>
     </div>
 </div>
