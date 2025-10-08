@@ -1,3 +1,28 @@
+<?php 
+// Start session first
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Define APPURL if not already defined
+if (!defined('APPURL')) {
+    define('APPURL', 'http://localhost/mer_ecommerce/');
+}
+
+// Check if user is logged in - redirect to sign up if not
+if (!isset($_SESSION['username'])) {
+    // Store the current page URL to redirect back after login
+    $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
+    
+    // Set a message for the user
+    $_SESSION['register_message'] = 'Please sign up to proceed with payment.';
+    
+    // Redirect to sign up page
+    header("Location: " . APPURL . "auth/1register.php");
+    exit();
+}
+?>
+
 <?php require "includes/header.php"; ?>
 <link rel="stylesheet" type="text/css" href="<?php echo APPURL; ?>1payment.css">
 <style>
@@ -260,6 +285,19 @@ button[type="submit"]:active {
 </style>
 <?php require "Config/config.php"; ?>
 <?php
+// Check if user is logged in - redirect to sign up if not
+if (!isset($_SESSION['username'])) {
+    // Store the current page URL to redirect back after login
+    $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
+    
+    // Set a message for the user
+    $_SESSION['register_message'] = 'Please sign up to proceed with payment.';
+    
+    // Redirect to sign up page
+    header("Location: " . APPURL . "auth/1register.php");
+    exit();
+}
+
 // Initialize variables
 $flower = null;
 $flowerName = '';

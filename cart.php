@@ -301,6 +301,11 @@ foreach ($_SESSION['cart'] as $item) {
     text-align: center;
     padding: 50px 20px;
     color: #666;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
 }
 
 .empty-cart i {
@@ -436,7 +441,7 @@ foreach ($_SESSION['cart'] as $item) {
                 <h3>Your cart is empty</h3>
                 <p>Add some beautiful flowers to your cart to get started!</p>
                 <a href="<?php echo APPURL; ?>1catalogue.php" class="continue-shopping">
-                    <i class="fas fa-leaf"></i> Continue Shopping
+                    Continue Shopping
                 </a>
             </div>
         <?php else: ?>

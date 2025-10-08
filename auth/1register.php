@@ -21,6 +21,9 @@ else{
         ':email' => $email,
         ':mypassword' => password_hash($password, PASSWORD_DEFAULT),
     ]);
+    
+    // Set a success message for login page
+    $_SESSION['login_message'] = 'Registration successful! Please sign in to complete your payment.';
     header("location: 1login.php");
 }
 }
@@ -36,6 +39,13 @@ else{
         <div class="register-container">
             <div class="register-form-container">
                 <h2 class="register-form-title">Register</h2>
+                
+                <!-- Success/Error Messages -->
+                <?php if(isset($_SESSION['register_message'])): ?>
+                <div class="register-message" style="display: block; background: #e3f2fd; color: #1565c0; padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+                    <?php echo htmlspecialchars($_SESSION['register_message']); unset($_SESSION['register_message']); ?>
+                </div>
+                <?php endif; ?>
                 
                 <!-- Message container for success/error messages -->
                 <div id="register-message" class="register-message" style="display: none;"></div>

@@ -31,6 +31,11 @@ if(isset($_POST['submit'])){
             $_SESSION['email'] = $email;
             // Optional: a synthetic user_id for admin session context
             $_SESSION['user_id'] = 0;
+            
+            // Check if there's a redirect URL, but admins go to admin panel
+            if (isset($_SESSION['redirect_after_login'])) {
+                unset($_SESSION['redirect_after_login']); // Clear it for admins
+            }
             header("location: ".APPURL."admin/index.php");
             exit;
         }
@@ -52,7 +57,14 @@ if(isset($_POST['submit'])){
                // For now, all regular users go to home page
                $_SESSION['is_admin'] = false;
                
-               header("location: ".APPURL."1home.php");
+               // Check if there's a redirect URL stored (from payment page)
+               if (isset($_SESSION['redirect_after_login'])) {
+                   $redirect_url = $_SESSION['redirect_after_login'];
+                   unset($_SESSION['redirect_after_login']); // Clear the redirect URL
+                   header("location: " . $redirect_url);
+               } else {
+                   header("location: ".APPURL."1home.php");
+               }
                exit;
             }else{
                 $error_message = "Email or password is wrong";
@@ -81,7 +93,11 @@ require "../includes/header.php";
             <h2 class="login-form-title">Login</h2>
             
             <!-- Success/Error Messages -->
-            <?php if(isset($error_message)): ?>
+            <?php if(isset($_SESSION['login_message'])): ?>
+            <div id="login-message" class="login-message" style="display: block; background: #e3f2fd; color: #1565c0; padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+                <?php echo htmlspecialchars($_SESSION['login_message']); unset($_SESSION['login_message']); ?>
+            </div>
+            <?php elseif(isset($error_message)): ?>
             <div id="login-message" class="login-message" style="display: block; background: #fdecea; color: #b71c1c; padding: 10px; border-radius: 6px; margin-bottom: 10px;">
                 <?php echo htmlspecialchars($error_message); ?>
             </div>
