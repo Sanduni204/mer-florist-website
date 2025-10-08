@@ -38,6 +38,7 @@ try {
                     <li><a href="<?php echo APPURL; ?>admin/index.php" class="navlink">Dashboard</a></li>
                     <li><a href="<?php echo APPURL; ?>admin/add_flower.php" class="navlink">Add Flower</a></li>
                     <li><a href="<?php echo APPURL; ?>admin/manage_flowers.php" class="navlink">Manage Flowers</a></li>
+                    <li><a href="<?php echo APPURL; ?>admin/manage_messages.php" class="navlink">Messages</a></li>
                     <li><a href="<?php echo APPURL; ?>admin/contact_settings.php" class="navlink">Contact Info</a></li>
                     <li><a href="<?php echo APPURL; ?>admin/media_cleanup.php" class="navlink">Media Cleanup</a></li>
                     <li class="drop">
@@ -93,11 +94,8 @@ try {
                     </li>
 
                     <?php if(isset($_SESSION['username'])) : ?>
-                        <li class="drop">
-                            <a href="<?php echo APPURL; ?>1catalogue.php"><?php echo $_SESSION['username']; ?></a>
-                            <ul class="dropdown arrow-top">
-                                <li><a href="<?php echo APPURL; ?>auth/logout.php">Logout</a></li>
-                            </ul>
+                        <li>
+                            <a href="<?php echo APPURL; ?>profile.php"><?php echo $_SESSION['username']; ?></a>
                         </li>
                     <?php else : ?>
                         <li><a href="<?php echo APPURL; ?>auth/1register.php" id="register-link" class="navlink">Sign-up</a></li>
