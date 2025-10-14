@@ -627,30 +627,26 @@ body {
     flex-wrap: wrap;
     width: 100%;
     justify-content: center;
-    align-items: center;
-    margin: 50px 0;
-    gap:10px;
+    align-items: flex-start; /* allow columns to grow independently */
+    gap: 20px;
     margin: 30px 0;  
-    padding-top: 10px;
-    padding-left: 5px;
-    padding-right: 5px;
-    padding-bottom: 10px;
-   
+    padding: 10px 5px;
 }
 
 #info div{
-    width:400px;
-    height: 500px;
-    margin: 25px;
-    border: 5px ;
+    width: 100%;
+    max-width: 420px; /* reasonable column width */
+    height: auto;    /* allow natural height */
+    margin: 12px;
     box-sizing: border-box;
     font-size: 18px;
     font-style: italic;
-    background-color: none;
+    background-color: transparent;
 }
 .col1 img{
-    width:400px;
-    height:500px;
+    max-width:100%;
+    height:auto;
+    display:block;
 }
 .col2{
     padding-top: 20px;
@@ -2208,3 +2204,91 @@ padding-top: 5%;
         .dropdown-item:not(:last-child) {
             margin-bottom: 0;
         }
+
+        /* Contact form precise alignment fixes */
+        .contact-form-column {
+            box-sizing: border-box;
+            width: 100%;
+            margin: 0; /* ensure no extra offset */
+        }
+
+        /* Use grid so actions can align precisely under the textarea */
+        .contact-form-column {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto auto;
+            gap: 5px; /* vertical gap between textarea and actions */
+        }
+
+        .contact-form-column .contact-actions {
+            display: flex;
+            justify-content: flex-end; /* keep buttons at the right edge of the grid */
+            gap: 15px;
+            margin: 0; /* rely on grid gap for spacing */
+        }
+
+        .contact-form-column .contact-actions input[type="submit"],
+        .contact-form-column .contact-actions .chat-btn {
+            margin-left: 0 !important;
+        }
+
+        .contact-form-column textarea,
+        .contact-form-column input[type="text"],
+        .contact-form-column input[type="email"] {
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .contact-form-column .contact-actions {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 0; /* keep actions container edge-aligned with textarea */
+            justify-content: flex-end;
+        }
+
+        /* Ensure buttons don't inherit global submit margin and use box-sizing so sizes align */
+        .contact-form-column .contact-actions input[type="submit"],
+        .contact-form-column .contact-actions .chat-btn {
+            box-sizing: border-box;
+            margin-left: 0 !important;
+        }
+
+        /* Small visual spacing rules kept consistent */
+        .contact-form-column .contact-actions { gap: 15px; }
+
+        /* Ensure the form aligns with other .col2 content which uses left padding */
+        .col2 .contact-form-column {
+            /* remove extra horizontal padding so the grid column edges match the textarea */
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        /* At very large viewports, keep buttons right-aligned to textarea by limiting action container width */
+        @media (min-width: 1200px) {
+            .col2 .contact-form-column {
+                padding-left: 60px; /* slight increase for wide screens */
+                padding-right: 60px;
+            }
+            .col2 .contact-form-column .contact-actions {
+                max-width: calc(100% - 0px);
+                justify-content: flex-end;
+            }
+        }
+
+        /* Ensure action buttons align exactly with textarea right edge */
+        .col2 .contact-form-column textarea {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .col2 .contact-form-column .contact-actions {
+            padding-right: 0; /* ensure actions share the same right edge as textarea */
+            justify-self: end; /* place the actions at the grid end */
+        }
+
+        .col2 .contact-form-column .contact-actions input[type="submit"],
+        .col2 .contact-form-column .contact-actions .chat-btn {
+            margin-left: 0 !important;
+        }
+
