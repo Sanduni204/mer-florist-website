@@ -139,17 +139,17 @@ try {
                 <img src="./Images/shop.png">
             </div>
             <div class="col2">
-               
                 <p><i class="fa-solid fa-location-dot"></i>&nbsp;&nbsp;&nbsp;<?php echo htmlspecialchars($c['address'] ?? ''); ?></p>
                 <p><i class="fa-solid fa-envelope"></i>&nbsp;&nbsp;&nbsp;<?php echo htmlspecialchars($c['email'] ?? ''); ?></p>
                 <p><i class="fa-solid fa-phone"></i>&nbsp;&nbsp;&nbsp;<?php echo htmlspecialchars($c['phone'] ?? ''); ?></p><br>
-                <p><a href="<?php echo htmlspecialchars($c['instagram'] ?? '#'); ?>" target="_blank"><i class="fa-brands fa-instagram"></i></a>&nbsp;&nbsp;
+                <p class="social-icons"><a href="<?php echo htmlspecialchars($c['instagram'] ?? '#'); ?>" target="_blank"><i class="fa-brands fa-instagram"></i></a>&nbsp;&nbsp;
                     <a href="<?php echo htmlspecialchars($c['facebook'] ?? '#'); ?>" target="_blank"><i class="fa-brands fa-facebook"></i></a>&nbsp;
                     <a href="<?php echo htmlspecialchars($c['twitter'] ?? '#'); ?>" target="_blank"><i class="fa-brands fa-twitter"></i></a>&nbsp;
                     <a href="<?php echo htmlspecialchars($c['youtube'] ?? '#'); ?>" target="_blank"><i class="fa-brands fa-youtube"></i></a>&nbsp;
                     <a href="<?php echo htmlspecialchars($c['whatsapp'] ?? '#'); ?>" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
                 </p><br>
-                <div class="contact-message-block"><i class="fa-solid fa-message"></i>
+                <div class="contact-message-block">
+                    <i class="fa-solid fa-message"></i>
                     <?php if (isset($error_message)): ?>
                         <script>
                             // Show error as the same styled notification used for success
@@ -254,8 +254,8 @@ try {
 
                    <div class="contact-actions-wrapper" style="position:relative;width:100%;">
                        <div class="contact-actions" style="display:flex;justify-content:flex-end;align-items:center;gap:15px;width:100%;margin-top:5px;">
-                           <button type="button" id="chat-toggle" class="chat-btn" style="background:#fff;border:1px solid #ccc;padding:8px 14px;border-radius:6px;cursor:pointer;">Chat</button>
-                           <input type="submit" name="send" value="Send" style="padding:8px 18px;border-radius:6px;background:#ed7787;color:#fff;border:0;cursor:pointer;margin-left:0;">
+                           <button type="button" id="chat-toggle" class="chat-btn">Chat</button>
+                           <button type="submit" name="send" class="chat-btn send-btn">Send</button>
                        </div>
 
                        <!-- Chat dropdown (absolute, appears below buttons) -->
