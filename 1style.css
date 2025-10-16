@@ -652,55 +652,83 @@ body {
     padding-top: 20px;
 }
 
-/* Contact info section styles */
-.contact-info-section {
-    margin-bottom: 20px;
+/* contact alignment baseline */
+.col2 {
+    --contact-pad: 40px;
+    position: relative;
 }
 
-/* Message form layout */
-.contact-message-block {
-    display: grid;
-    grid-template-columns: 24px 1fr;
-    gap: 15px;
-    padding-left: 40px;
-    align-items: start;
+/* small horizontal nudge for message icon alignment (adjust if needed) */
+:root { --contact-nudge: 6px; }
+
+/* Increase nudge on large screens to match desktop spacing */
+@media (min-width: 1201px) {
+    :root { --contact-nudge: 14px; }
 }
 
-.contact-message-block i {
-    font-size: 18px;
-    margin-top: 8px; /* Align with the first input field */
+.col2 p {
+    padding-left: var(--contact-pad);
+    text-align: left;
+    line-height: 30px;
 }
 
+/* Keep social icons and message block aligned by simple padding rules
+   (this restores the original, minimal styling you provided) */
+.col2 .social-icons,
+.col2 .contact-message-block {
+    padding-left: var(--contact-pad) !important;
+}
+
+.col2 .contact-message-block {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column; /* stack icon above inputs */
+    align-items: flex-start;
+    gap: 8px;
+    padding-left: var(--contact-pad);
+}
+
+.col2 .contact-message-block i {
+    margin: 0 0 6px 0; /* place icon above the inputs with small bottom gap */
+    font-size: 20px;
+}
+
+/* Place the message icon exactly under the first social icon (instagram)
+   by absolutely positioning it at the contact pad baseline. We keep the
+   form content padded so fields start aligned under the icon. */
+.col2 .contact-message-block {
+    position: relative;
+    padding-top: 28px; /* reserve space for absolute icon */
+}
+
+.col2 .contact-message-block i.fa-message {
+    position: absolute;
+    left: calc(0 + var(--contact-nudge)); /* nudge right to align under instagram */
+    top: 4px; /* fine-tune vertical alignment */
+    margin: 0; /* remove margins when absolutely positioned */
+}
+
+.col2 .contact-message-block .contact-form-column {
+    padding-left: calc(var(--contact-pad) + 0px);
+}
+
+/* Force icon boxes to have no extra left margin so centers/left edges align */
+.col2 .social-icons i,
+.col2 .contact-message-block i {
+    margin-left: 0 !important;
+    display: inline-block;
+}
+
+.col2 .contact-message-block .contact-form-column {
+    padding-left: 40px; /* align form fields under the same left offset */
+}
+
+/* Keep form inputs simple and inherit page defaults */
 .contact-form-column {
-    margin: 0;
-    padding: 0;
-}
-
-.contact-form-column input[type="text"],
-.contact-form-column input[type="email"],
-.contact-form-column textarea {
     width: 100%;
-    box-sizing: border-box;
-    margin-bottom: 10px;
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-}
-
-/* Reset margins for first input to align with icon */
-.contact-form-column input:first-of-type {
-    margin-top: 0;
-}
-
-/* Ensure grid alignment with social icons */
-@media (min-width: 1100px) {
-    .contact-message-block {
-        padding-left: 40px; /* Match social icons padding */
-    }
-    
-    .contact-message-block i.fa-message {
-        margin-top: 10px; /* Fine-tune alignment with first input */
-    }
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .contact-textarea {
@@ -708,119 +736,28 @@ body {
     min-height: 120px;
 }
 
-/* Actions alignment */
-.contact-actions {
-    justify-content: flex-end;
-    margin-top: 10px;
-}
+/* Apply desktop-like alignment for medium/half-screen widths (wider range) */
+@media (max-width: 1200px) and (min-width: 480px) {
+    .col2 p,
+    .col2 .social-icons,
+    .col2 .contact-message-block {
+        padding-left: 40px !important;
+    }
 
-.info-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-    padding-left: 40px;
-}
+    .col2 .contact-message-block {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 10px;
+    }
 
-.info-item i {
-    width: 24px;
-    margin-right: 15px;
-    text-align: center;
-    font-size: 18px;
-}
+    .col2 .contact-message-block i {
+        margin: 0 0 6px 0;
+        font-size: 20px;
+    }
 
-/* Social icons section */
-.social-icons {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding-left: 40px;
-    margin: 20px 0;
-}
-
-.social-icons a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.social-icons i {
-    font-size: 18px;
-    width: 24px;
-    text-align: center;
-}
-
-/* Message block alignment */
-.contact-message-block {
-    display: flex;
-    padding-left: 40px;
-    margin-top: 10px;
-}
-
-.contact-message-block i {
-    margin-right: 15px;
-    margin-top: 8px;
-}
-
-.contact-form-column {
-    flex: 1;
-}
-
-.contact-message-block i.fa-message {
-    margin-top: 12px; /* Align with input field */
-    font-size: 18px;
-}
-
-.contact-form-column {
-    margin: 0;
-    padding: 0;
-}
-
-/* Remove any top margin from first input */
-.contact-form-column input:first-of-type {
-    margin-top: 0;
-}
-
-.message-icon-wrapper {
-    flex-shrink: 0;
-    width: 24px;
-    margin-right: 15px;
-}
-
-.contact-message-block i {
-    width: 24px;
-    text-align: center;
-    font-size: 18px;
-}
-
-.message-form-wrapper {
-    flex: 1;
-    margin-top: -3px; /* Align with the message icon */
-}
-
-/* Form container alignment */
-.contact-form-column {
-    width: 100%;
-}
-
-/* Form input styling */
-.contact-form-column input[type="text"],
-.contact-form-column input[type="email"] {
-    margin-bottom: 10px;
-    padding: 8px 12px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.contact-textarea {
-    margin-top: 5px;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .info-item,
-    .social-icons,
-    .contact-message-block {
-        padding-left: 20px;
+    .social-icons {
+        gap: 12px !important;
     }
 }
 .col2 h3{
@@ -1564,6 +1501,14 @@ padding-top: 5%;
     font-size: 14px;
     color: #666;
     cursor: pointer;
+}
+.instagram-only {
+    padding-left: 40px; /* match contact lines */
+    margin: 6px 0;
+}
+.other-socials {
+    padding-left: 40px; /* keep other socials aligned too */
+    margin: 6px 0 18px 0;
 }
 
 .forgot-password {

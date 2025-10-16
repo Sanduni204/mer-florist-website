@@ -142,10 +142,11 @@ try {
                 <p><i class="fa-solid fa-location-dot"></i>&nbsp;&nbsp;&nbsp;<?php echo htmlspecialchars($c['address'] ?? ''); ?></p>
                 <p><i class="fa-solid fa-envelope"></i>&nbsp;&nbsp;&nbsp;<?php echo htmlspecialchars($c['email'] ?? ''); ?></p>
                 <p><i class="fa-solid fa-phone"></i>&nbsp;&nbsp;&nbsp;<?php echo htmlspecialchars($c['phone'] ?? ''); ?></p><br>
+                <!-- All social icons on a single line (Instagram, Facebook, Twitter, YouTube, WhatsApp) -->
                 <p class="social-icons"><a href="<?php echo htmlspecialchars($c['instagram'] ?? '#'); ?>" target="_blank"><i class="fa-brands fa-instagram"></i></a>&nbsp;&nbsp;
-                    <a href="<?php echo htmlspecialchars($c['facebook'] ?? '#'); ?>" target="_blank"><i class="fa-brands fa-facebook"></i></a>&nbsp;
-                    <a href="<?php echo htmlspecialchars($c['twitter'] ?? '#'); ?>" target="_blank"><i class="fa-brands fa-twitter"></i></a>&nbsp;
-                    <a href="<?php echo htmlspecialchars($c['youtube'] ?? '#'); ?>" target="_blank"><i class="fa-brands fa-youtube"></i></a>&nbsp;
+                    <a href="<?php echo htmlspecialchars($c['facebook'] ?? '#'); ?>" target="_blank"><i class="fa-brands fa-facebook"></i></a>&nbsp;&nbsp;
+                    <a href="<?php echo htmlspecialchars($c['twitter'] ?? '#'); ?>" target="_blank"><i class="fa-brands fa-twitter"></i></a>&nbsp;&nbsp;
+                    <a href="<?php echo htmlspecialchars($c['youtube'] ?? '#'); ?>" target="_blank"><i class="fa-brands fa-youtube"></i></a>&nbsp;&nbsp;
                     <a href="<?php echo htmlspecialchars($c['whatsapp'] ?? '#'); ?>" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
                 </p><br>
                 <div class="contact-message-block">
@@ -307,6 +308,35 @@ try {
                                     }
                                 });
                             }
+                        })();
+                    </script>
+                    <script>
+                        // Align message icon exactly under Instagram icon
+                        (function(){
+                            function alignMessageIcon(){
+                                const insta = document.querySelector('.social-icons i.fa-instagram');
+                                const msg = document.querySelector('.contact-message-block i.fa-message');
+                                const msgBlock = document.querySelector('.col2 .contact-message-block');
+                                if (!insta || !msg || !msgBlock) return;
+                                const instaRect = insta.getBoundingClientRect();
+                                const msgBlockRect = msgBlock.getBoundingClientRect();
+                                // compute left offset relative to .contact-message-block (the containing block for the absolute icon)
+                                const left = Math.max(0, Math.round(instaRect.left - msgBlockRect.left));
+                                // set left on the absolutely positioned message icon
+                                msg.style.position = 'absolute';
+                                msg.style.left = left + 'px';
+                                msg.style.top = '4px';
+                                msg.style.margin = '0';
+                                // ensure the message block reserves space for the absolutely positioned icon
+                                msgBlock.style.paddingTop = Math.max(28, msg.offsetHeight + 8) + 'px';
+                            }
+
+                            // run on load, DOM ready and resize (debounced). Also run after short delay to catch icon font load.
+                            let t;
+                            window.addEventListener('resize', function(){ clearTimeout(t); t = setTimeout(alignMessageIcon, 100); });
+                            window.addEventListener('load', alignMessageIcon);
+                            document.addEventListener('DOMContentLoaded', alignMessageIcon);
+                            setTimeout(alignMessageIcon, 350);
                         })();
                     </script>
                 </div>
