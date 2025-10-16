@@ -295,7 +295,28 @@ try {
                     <script>
                             function alignMessageIcon(){
                                 // goal: move the whole form so its left edge is directly under the message icon
-                                const instaAnchor = document.querySelector('.social-icons a');
+                                // prefer to target the instagram icon specifically, fallback to the first visible anchor
+                                let instaAnchor = document.querySelector('.social-icons a[href][target] .fa-instagram');
+                                if (instaAnchor) {
+                                    // if we found the <i> icon, use its parent anchor
+                                    instaAnchor = instaAnchor.closest('a');
+                                } else {
+                                    // if instagram icon isn't present, pick the first social anchor in the first row
+                                    const anchors = Array.from(document.querySelectorAll('.social-icons a'));
+                                    if (anchors.length === 0) instaAnchor = null;
+                                    else {
+                                        // pick the anchor whose icon sits on the top-most row (smallest top)
+                                        let best = anchors[0];
+                                        try {
+                                            let minTop = anchors[0].getBoundingClientRect().top;
+                                            anchors.forEach(a => {
+                                                const t = a.getBoundingClientRect().top;
+                                                if (t < minTop) { minTop = t; best = a; }
+                                            });
+                                        } catch (e) { best = anchors[0]; }
+                                        instaAnchor = best;
+                                    }
+                                }
                                 const msg = document.querySelector('.contact-message-block i.fa-message');
                                 const msgBlock = document.querySelector('.col2 .contact-message-block');
                                 const form = document.querySelector('.contact-form-column');
@@ -322,8 +343,13 @@ try {
                                     // determine icon offset inside the block after it's positioned
                                     const iconOffsetInBlock = msg.offsetLeft || Math.max(0, Math.round(msg.getBoundingClientRect().left - msgBlock.getBoundingClientRect().left));
 
+                                    // small nudge for medium widths where spacing differs
+                                    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+                                    let nudge = 0;
+                                    if (vw >= 480 && vw <= 1200) nudge = 2; // small mid-width adjustment (reduced)
+
                                     // apply padding-left to the form so its left edge starts at the icon's left
-                                    form.style.setProperty('padding-left', iconOffsetInBlock + 'px', 'important');
+                                    form.style.setProperty('padding-left', (iconOffsetInBlock + nudge) + 'px', 'important');
                                     form.style.setProperty('margin-left', '0px', 'important');
                                     form.style.boxSizing = 'border-box';
 
@@ -341,21 +367,31 @@ try {
                                 }
 
                                 if (window && window.console) {
-                                    console.log('alignMessageIcon: leftRel=', leftRel, 'instaLeft=', instaRect.left, 'msgBlockLeft=', msgBlockRect.left);
+                                    console.log('alignMessageIcon: vw=', vw, 'leftRel=', leftRel, 'iconOffsetInBlock=', iconOffsetInBlock, 'nudge=', nudge, 'instaLeft=', instaRect.left, 'msgBlockLeft=', msgBlockRect.left);
                                 }
                             }
 
                             // run on load, DOM ready and resize (debounced). Also run after short delay to catch icon font load.
                             let t;
+                            function runAlignWithRafRetries(){
+                                let attempts = 0;
+                                function tryOnce(){
+                                    alignMessageIcon();
+                                    attempts++;
+                                    if (attempts < 12) { // retry for up to ~200-300ms worth of frames
+                                        requestAnimationFrame(tryOnce);
+                                    }
+                                }
+                                tryOnce();
+                            }
+
                             window.addEventListener('resize', function(){ clearTimeout(t); t = setTimeout(alignMessageIcon, 120); });
-                            window.addEventListener('load', alignMessageIcon);
-                            document.addEventListener('DOMContentLoaded', alignMessageIcon);
-                            // multiple delayed runs to catch late font/icon loads and reflows
-                            setTimeout(alignMessageIcon, 350);
-                            setTimeout(alignMessageIcon, 700);
-                            setTimeout(alignMessageIcon, 1200);
-                            // final safety run
-                            setTimeout(alignMessageIcon, 2000);
+                            window.addEventListener('load', runAlignWithRafRetries);
+                            document.addEventListener('DOMContentLoaded', runAlignWithRafRetries);
+                            // multiple delayed runs as a backup to catch late icon or font loads
+                            setTimeout(runAlignWithRafRetries, 250);
+                            setTimeout(runAlignWithRafRetries, 650);
+                            setTimeout(runAlignWithRafRetries, 1200);
                     </script>
                 </div>
             </div>

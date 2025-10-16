@@ -666,6 +666,16 @@ body {
     :root { --contact-nudge: 14px; }
 }
 
+/* Responsive contact padding: reduce on medium screens so form aligns under icons */
+@media (max-width: 1200px) and (min-width: 480px) {
+    .col2 { --contact-pad: 20px; }
+}
+
+/* Remove left padding on very small screens */
+@media (max-width: 479px) {
+    .col2 { --contact-pad: 0px; }
+}
+
 .col2 p {
     padding-left: var(--contact-pad);
     text-align: left;
@@ -704,7 +714,7 @@ body {
 
 .col2 .contact-message-block i.fa-message {
     position: absolute;
-    left: calc(0 + var(--contact-nudge)); /* nudge right to align under instagram */
+    left: calc(var(--contact-pad) + var(--contact-nudge)); /* align under the same pad as social icons */
     top: 4px; /* fine-tune vertical alignment */
     margin: 0; /* remove margins when absolutely positioned */
 }
@@ -712,7 +722,7 @@ body {
 /* default: let JS set padding-left on the form column to match the icon
    but provide a small default for accessibility if JS is disabled */
 .col2 .contact-message-block .contact-form-column {
-    padding-left: 12px; /* small default offset when JS is not available */
+    padding-left: calc(var(--contact-pad)); /* align form fields under the same left offset as icons */
 }
 
 /* Force icon boxes to have no extra left margin so centers/left edges align */
@@ -722,10 +732,7 @@ body {
     display: inline-block;
 }
 
-.col2 .contact-message-block .contact-form-column {
-    /* keep modest padding unless JS overwrites it */
-    padding-left: 12px;
-}
+/* .contact-form-column padding is controlled via --contact-pad above */
 
 /* Keep form inputs simple and inherit page defaults */
 .contact-form-column {
@@ -743,9 +750,12 @@ body {
 /* Apply desktop-like alignment for medium/half-screen widths (wider range) */
 @media (max-width: 1200px) and (min-width: 480px) {
     .col2 p,
-    .col2 .social-icons,
+    .col2 .social-icons {
+        /* smaller padding on medium/half screens so fields are closer to icons by default */
+        padding-left: 12px !important;
+    }
     .col2 .contact-message-block {
-        padding-left: 20px !important;
+        padding-left: 0; /* message block stays flush; JS positions the icon and form */
     }
 
     .col2 .contact-message-block {
