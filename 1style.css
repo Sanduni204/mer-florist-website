@@ -674,18 +674,19 @@ body {
 
 /* Keep social icons and message block aligned by simple padding rules
    (this restores the original, minimal styling you provided) */
-.col2 .social-icons,
-.col2 .contact-message-block {
-    padding-left: var(--contact-pad) !important;
+.col2 .social-icons {
+    /* keep social icons visually aligned with other contact content */
+    padding-left: var(--contact-pad);
 }
 
 .col2 .contact-message-block {
+    /* message block should be flush so the form can be positioned precisely by JS */
     margin-top: 10px;
     display: flex;
     flex-direction: column; /* stack icon above inputs */
     align-items: flex-start;
     gap: 8px;
-    padding-left: var(--contact-pad);
+    padding-left: 0;
 }
 
 .col2 .contact-message-block i {
@@ -708,8 +709,10 @@ body {
     margin: 0; /* remove margins when absolutely positioned */
 }
 
+/* default: let JS set padding-left on the form column to match the icon
+   but provide a small default for accessibility if JS is disabled */
 .col2 .contact-message-block .contact-form-column {
-    padding-left: calc(var(--contact-pad) + 0px);
+    padding-left: 12px; /* small default offset when JS is not available */
 }
 
 /* Force icon boxes to have no extra left margin so centers/left edges align */
@@ -720,7 +723,8 @@ body {
 }
 
 .col2 .contact-message-block .contact-form-column {
-    padding-left: 40px; /* align form fields under the same left offset */
+    /* keep modest padding unless JS overwrites it */
+    padding-left: 12px;
 }
 
 /* Keep form inputs simple and inherit page defaults */
@@ -741,7 +745,7 @@ body {
     .col2 p,
     .col2 .social-icons,
     .col2 .contact-message-block {
-        padding-left: 40px !important;
+        padding-left: 20px !important;
     }
 
     .col2 .contact-message-block {
@@ -760,6 +764,7 @@ body {
         gap: 12px !important;
     }
 }
+
 .col2 h3{
     font-size: 20px;
     padding-top: 50px;
@@ -834,6 +839,11 @@ input[type=submit]{
     align-items: stretch;
     margin:30px 0 ;  
     background-color: rgb(255, 255, 255);
+
+    /* allow contact-form-column to be positioned by scripts */
+
+     /* Removed strong reset here to allow the contact form column to be
+         positioned/padded by JavaScript for precise icon alignment. */
     padding: 5px;
 }
 /* Ensure anchors behave like blocks inside the grid */

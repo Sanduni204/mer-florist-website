@@ -293,51 +293,69 @@ try {
                    </div>
                     </form>
                     <script>
-                        (function(){
-                            const toggle = document.getElementById('chat-toggle');
-                            const dropdown = document.getElementById('chat-dropdown');
-                            if (toggle && dropdown) {
-                                toggle.addEventListener('click', function(){
-                                    dropdown.style.display = dropdown.style.display === 'none' || !dropdown.style.display ? 'block' : 'none';
-                                });
-
-                                // Close when clicking outside
-                                document.addEventListener('click', function(e){
-                                    if (!dropdown.contains(e.target) && !toggle.contains(e.target)) {
-                                        dropdown.style.display = 'none';
-                                    }
-                                });
-                            }
-                        })();
-                    </script>
-                    <script>
-                        // Align message icon exactly under Instagram icon
-                        (function(){
                             function alignMessageIcon(){
-                                const insta = document.querySelector('.social-icons i.fa-instagram');
+                                // goal: move the whole form so its left edge is directly under the message icon
+                                const instaAnchor = document.querySelector('.social-icons a');
                                 const msg = document.querySelector('.contact-message-block i.fa-message');
                                 const msgBlock = document.querySelector('.col2 .contact-message-block');
-                                if (!insta || !msg || !msgBlock) return;
-                                const instaRect = insta.getBoundingClientRect();
+                                const form = document.querySelector('.contact-form-column');
+                                if (!instaAnchor || !msg || !msgBlock || !form) return;
+
+                                const instaRect = instaAnchor.getBoundingClientRect();
+                                const msgRect = msg.getBoundingClientRect();
                                 const msgBlockRect = msgBlock.getBoundingClientRect();
-                                // compute left offset relative to .contact-message-block (the containing block for the absolute icon)
-                                const left = Math.max(0, Math.round(instaRect.left - msgBlockRect.left));
-                                // set left on the absolutely positioned message icon
+
+                                // compute the instagram icon left relative to the contact-message-block
+                                const leftRel = Math.max(0, Math.round(instaRect.left - msgBlockRect.left));
+
+                                // position the message icon absolutely inside the block so it visually sits under instagram
                                 msg.style.position = 'absolute';
-                                msg.style.left = left + 'px';
+                                msg.style.left = leftRel + 'px';
                                 msg.style.top = '4px';
                                 msg.style.margin = '0';
-                                // ensure the message block reserves space for the absolutely positioned icon
+
+                                // reserve vertical space for the icon
                                 msgBlock.style.paddingTop = Math.max(28, msg.offsetHeight + 8) + 'px';
+
+                                // Allow the form to shift horizontally by setting padding-left on the form column
+                                try {
+                                    // determine icon offset inside the block after it's positioned
+                                    const iconOffsetInBlock = msg.offsetLeft || Math.max(0, Math.round(msg.getBoundingClientRect().left - msgBlock.getBoundingClientRect().left));
+
+                                    // apply padding-left to the form so its left edge starts at the icon's left
+                                    form.style.setProperty('padding-left', iconOffsetInBlock + 'px', 'important');
+                                    form.style.setProperty('margin-left', '0px', 'important');
+                                    form.style.boxSizing = 'border-box';
+
+                                    // ensure inputs are full width within the adjusted padding
+                                    const inputs = form.querySelectorAll('input, textarea');
+                                    inputs.forEach(i => {
+                                        i.style.boxSizing = 'border-box';
+                                        i.style.marginLeft = '0';
+                                        i.style.setProperty('width', '100%', 'important');
+                                        i.style.transform = ''; // clear any previous transforms
+                                    });
+                                } catch (e) {
+                                    // fallback: move the form container by simple margin
+                                    form.style.marginLeft = leftRel + 'px';
+                                }
+
+                                if (window && window.console) {
+                                    console.log('alignMessageIcon: leftRel=', leftRel, 'instaLeft=', instaRect.left, 'msgBlockLeft=', msgBlockRect.left);
+                                }
                             }
 
                             // run on load, DOM ready and resize (debounced). Also run after short delay to catch icon font load.
                             let t;
-                            window.addEventListener('resize', function(){ clearTimeout(t); t = setTimeout(alignMessageIcon, 100); });
+                            window.addEventListener('resize', function(){ clearTimeout(t); t = setTimeout(alignMessageIcon, 120); });
                             window.addEventListener('load', alignMessageIcon);
                             document.addEventListener('DOMContentLoaded', alignMessageIcon);
+                            // multiple delayed runs to catch late font/icon loads and reflows
                             setTimeout(alignMessageIcon, 350);
-                        })();
+                            setTimeout(alignMessageIcon, 700);
+                            setTimeout(alignMessageIcon, 1200);
+                            // final safety run
+                            setTimeout(alignMessageIcon, 2000);
                     </script>
                 </div>
             </div>
