@@ -393,6 +393,102 @@ try {
                             setTimeout(runAlignWithRafRetries, 650);
                             setTimeout(runAlignWithRafRetries, 1200);
                     </script>
+
+                    <script>
+                        // Chat as notification: show chat history as a fixed notification box
+                        (function(){
+                            const chatToggle = document.getElementById('chat-toggle');
+                            const chatDropdown = document.getElementById('chat-dropdown');
+                            if (!chatToggle) return;
+
+                            // create a notification element when chat is requested
+                            function createNotification(contentHtml){
+                                // remove existing chat-notification if any
+                                const existing = document.querySelector('.chat-notification');
+                                if (existing) existing.remove();
+
+                                const n = document.createElement('div');
+                                n.className = 'chat-notification custom-notification';
+                                // copy the visual style used for success notifications but keep it isolated
+                                n.style.cssText = `
+                                    position: fixed;
+                                    right: 20px;
+                                    top: 20px;
+                                    background: rgba(255, 255, 255, 0.95);
+                                    color: #2c3e50;
+                                    padding: 12px 14px;
+                                    border-radius: 12px;
+                                    font-weight: 500;
+                                    z-index: 10000;
+                                    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+                                    border: 1px solid rgba(0,0,0,0.06);
+                                    max-width: 420px;
+                                    width: min(420px, 92vw);
+                                    max-height: 70vh;
+                                    overflow: auto;
+                                    font-family: inherit;
+                                `;
+
+                                // header with close button
+                                const header = document.createElement('div');
+                                header.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;';
+                                const title = document.createElement('div');
+                                title.textContent = 'Chat history';
+                                title.style.fontWeight = '700';
+                                const closeBtn = document.createElement('button');
+                                closeBtn.type = 'button';
+                                closeBtn.innerHTML = '✕';
+                                closeBtn.style.cssText = 'background:transparent;border:none;font-size:16px;cursor:pointer;';
+                                closeBtn.addEventListener('click', () => n.remove());
+                                header.appendChild(title);
+                                header.appendChild(closeBtn);
+
+                                n.appendChild(header);
+
+                                const body = document.createElement('div');
+                                // sanitize the provided dropdown HTML: remove any existing "Chat history" header
+                                let sanitized = contentHtml || '<div style="padding:12px;color:#666">No messages.</div>';
+                                try {
+                                    const tmp = document.createElement('div');
+                                    tmp.innerHTML = sanitized;
+                                    // remove any top header elements that include the text "Chat history"
+                                    const possibleHeaders = tmp.querySelectorAll('div');
+                                    for (let i = 0; i < possibleHeaders.length; i++) {
+                                        const el = possibleHeaders[i];
+                                        if (el && el.textContent && el.textContent.trim().toLowerCase().includes('chat history')) {
+                                            el.remove();
+                                            break;
+                                        }
+                                    }
+                                    sanitized = tmp.innerHTML;
+                                } catch (e) {
+                                    sanitized = contentHtml;
+                                }
+                                body.innerHTML = sanitized;
+                                n.appendChild(body);
+
+                                // append to body
+                                document.body.appendChild(n);
+
+                                // close on outside click
+                                setTimeout(()=>{
+                                    function onDocClick(e){ if (!n.contains(e.target) && e.target !== chatToggle) { n.remove(); document.removeEventListener('click', onDocClick); }}
+                                    document.addEventListener('click', onDocClick);
+                                }, 10);
+
+                                // close on Escape
+                                function onEsc(e){ if (e.key === 'Escape') { n.remove(); document.removeEventListener('keydown', onEsc); }}
+                                document.addEventListener('keydown', onEsc);
+                            }
+
+                            chatToggle.addEventListener('click', function(e){
+                                e.preventDefault(); e.stopPropagation();
+                                // use the existing dropdown markup content as body (sanitized by server-side already)
+                                const contentHtml = chatDropdown ? chatDropdown.innerHTML : '<div style="padding:12px;color:#666">No chat available.</div>';
+                                createNotification(contentHtml);
+                            });
+                        })();
+                    </script>
                 </div>
             </div>
             <div class="col3">
