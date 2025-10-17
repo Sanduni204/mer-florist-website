@@ -149,7 +149,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profile'])) {
 
 <style>
 .profile-container {
-    max-width: 900px;
+    max-width: 1200px;
+    width: 100%;
     margin: 0 auto;
     padding: 20px;
     background: transparent;
@@ -202,6 +203,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profile'])) {
     color: black;
 }
 
+/* Spacing and alignment for the Account Details heading */
+#account-info > h2 { margin-bottom: 20px; text-align: center; }
+
+/* Responsive two-column form */
+.profile-form { display:grid; row-gap:10px; column-gap:10px !important; grid-template-columns: 1fr; }
+@media (min-width: 992px) {
+    .profile-form { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 10px; }
+}
+.profile-form .span-2 { grid-column: 1 / -1; }
+/* Ensure no extra margins and prevent overflow so gaps remain consistent */
+.profile-form > div { margin: 0; min-width: 0; }
+/* Extra top spacing for Mobile No field (10px beyond row gap) */
+.profile-form > div.mobile-field { margin-top: 20px; }
+/* Normalize control sizing */
+#account-info input[type="text"],
+#account-info input[type="email"],
+#account-info input[type="date"],
+#account-info input[type="tel"],
+#account-info select,
+#account-info input[type="file"] {
+    box-sizing: border-box;
+    width: 100%;
+    font-style: italic;
+}
+
+/* Hide native file input text and use a custom trigger */
+.file-input-hidden { position: absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
+.file-trigger { display:inline-block; }
+
 /* Buttons matching navbar color */
 .btn-navcolor {
     background: rgb(250, 228, 228);
@@ -213,6 +243,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profile'])) {
     font-weight: normal;
 }
 .btn-navcolor:hover { background: rgb(250, 228, 228); border-color: rgb(250, 228, 228); color: #0d0d0d; }
+
+/* Extra spacing above the Save Changes button */
+.profile-form .span-2 > button[name="save_profile"] { margin-top: 30px; }
 
 @media (max-width: 768px) {
     .profile-container { padding: 15px; }
@@ -232,8 +265,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profile'])) {
                     <?php endif; ?>
                 </div>
                 <div>
-                    <div style="margin:0 0 8px 0;">Username: <?php echo htmlspecialchars($user['username']); ?></div>
-                    <div>Email: <?php echo htmlspecialchars($user['email']); ?></div>
+                    <div style="margin:0 0 8px 0; font-style:italic;">Username: <?php echo htmlspecialchars($user['username']); ?></div>
+                    <div style="font-style:italic;">Email: <?php echo htmlspecialchars($user['email']); ?></div>
                 </div>
             </div>
             <div class="menu-wrapper">
@@ -251,8 +284,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profile'])) {
 
     <div class="profile-content-wrapper">
         <div class="profile-main">
-            <div class="content-section" id="account-info">
-                <h2>Account Information</h2>
+            <div class="content-section" id="account-info" style="margin-bottom:20px;">
+                <h2>Account Details</h2>
                 <?php if (isset($saveError) && $saveError): ?>
                     <div style="margin:10px 0; padding:10px; border:1px solid #dc3545; color:#dc3545; border-radius:6px; background:#fff5f5;">
                         <?php echo htmlspecialchars($saveError); ?>
@@ -262,17 +295,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profile'])) {
                         <?php echo htmlspecialchars($saveSuccess); ?>
                     </div>
                 <?php endif; ?>
-                <form method="post" enctype="multipart/form-data" style="display:grid; gap:15px; max-width: 450px;">
-                    <div>
-                        <label style="font-weight: normal; color: black; display: block; margin-bottom: 5px;" for="username">Username</label>
-                        <input id="username" name="username" type="text" value="<?php echo htmlspecialchars($user['username']); ?>" required style="width:100%; padding:10px; background:#f8f9fa; border-radius:6px; border:1px solid #ddd;">
-                    </div>
-                    <div>
-                        <label style="font-weight: normal; color: black; display: block; margin-bottom: 5px;" for="email">Email</label>
-                        <input id="email" name="email" type="email" value="<?php echo htmlspecialchars($user['email']); ?>" required style="width:100%; padding:10px; background:#f8f9fa; border-radius:6px; border:1px solid #ddd;">
-                    </div>
-                    <div>
-                        <label style="font-weight: 600; color: black; display: block; margin-bottom: 5px;">Profile Picture</label>
+                <form method="post" enctype="multipart/form-data" class="profile-form" style="column-gap:10px !important;">
+                    <div class="span-2">
+                        <label style="font-weight: normal; color: black; display: block; margin-bottom: 5px;">Profile Picture</label>
                         <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
                             <div class="avatar-circle" style="width:64px; height:64px;">
                                 <?php if (!empty($user['profile_image'])): ?>
@@ -282,7 +307,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profile'])) {
                                     <span id="avatarPlaceholder" style="color:#bbb; font-weight:normal;">No Image</span>
                                 <?php endif; ?>
                             </div>
-                            <input type="file" name="avatar" id="avatarInput" accept="image/*">
+                            <input type="file" name="avatar" id="avatarInput" accept="image/*" class="file-input-hidden">
+                            <label for="avatarInput" class="btn-navcolor file-trigger">Choose Image</label>
                         </div>
                         <?php if (isset($uploadError) && $uploadError): ?>
                             <div class="avatar-msg" style="color:#dc3545;">&bull; <?php echo htmlspecialchars($uploadError); ?></div>
@@ -291,8 +317,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profile'])) {
                         <?php endif; ?>
                     </div>
                     <div>
+                        <label style="font-weight: normal; color: black; display: block; margin-bottom: 5px;" for="username">Username</label>
+                        <input id="username" name="username" type="text" value="<?php echo htmlspecialchars($user['username']); ?>" required style="width:100%; padding:10px; background:#fff; border-radius:6px; border:1px solid #ddd;">
+                    </div>
+                    <div>
+                        <label style="font-weight: normal; color: black; display: block; margin-bottom: 5px;" for="email">Email</label>
+                        <input id="email" name="email" type="email" value="<?php echo htmlspecialchars($user['email']); ?>" required style="width:100%; padding:10px; background:#fff; border-radius:6px; border:1px solid #ddd;">
+                    </div>
+                    <div>
                         <label style="font-weight: normal; color: black; display: block; margin-bottom: 5px;" for="gender">Gender</label>
-                        <select id="gender" name="gender" style="width:100%; padding:10px; background:#f8f9fa; border-radius:6px; border:1px solid #ddd;">
+                        <select id="gender" name="gender" style="width:100%; padding:10px; background:#fff; border-radius:6px; border:1px solid #ddd;">
                             <option value="" <?php echo empty($user['gender']) ? 'selected' : ''; ?>>Select</option>
                             <option value="male" <?php echo (isset($user['gender']) && $user['gender']==='male') ? 'selected' : ''; ?>>Male</option>
                             <option value="female" <?php echo (isset($user['gender']) && $user['gender']==='female') ? 'selected' : ''; ?>>Female</option>
@@ -301,13 +335,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profile'])) {
                     </div>
                     <div>
                         <label style="font-weight: normal; color: black; display: block; margin-bottom: 5px;" for="date_of_birth">Date of Birth</label>
-                        <input id="date_of_birth" name="date_of_birth" type="date" value="<?php echo htmlspecialchars($user['date_of_birth'] ?? ''); ?>" style="width:100%; padding:10px; background:#f8f9fa; border-radius:6px; border:1px solid #ddd;">
+                        <input id="date_of_birth" name="date_of_birth" type="date" value="<?php echo htmlspecialchars($user['date_of_birth'] ?? ''); ?>" style="width:100%; padding:10px; background:#fff; border-radius:6px; border:1px solid #ddd;">
                     </div>
-                    <div>
+                    <div class="mobile-field">
                         <label style="font-weight: normal; color: black; display: block; margin-bottom: 5px;" for="mobile_no">Mobile No</label>
-                        <input id="mobile_no" name="mobile_no" type="tel" value="<?php echo htmlspecialchars($user['mobile_no'] ?? ''); ?>" placeholder="e.g. +94771234567" style="width:100%; padding:10px; background:#f8f9fa; border-radius:6px; border:1px solid #ddd;">
+                        <input id="mobile_no" name="mobile_no" type="tel" value="<?php echo htmlspecialchars($user['mobile_no'] ?? ''); ?>" placeholder="e.g. +94771234567" style="width:100%; padding:10px; background:#fff; border-radius:6px; border:1px solid #ddd;">
                     </div>
-                    <div>
+                    <div class="span-2">
                         <button type="submit" name="save_profile" class="btn-navcolor">Save Changes</button>
                     </div>
                 </form>
