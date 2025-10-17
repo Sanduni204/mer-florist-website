@@ -65,7 +65,17 @@ try {
                                         <p><b><?php echo htmlspecialchars($sho->description); ?></b></p>
                                     <?php endif; ?>
                         <div class="item-buttons">
-                            <button onclick="addToCart(<?php echo $shopId; ?>)" class="add-to-cart-btn" data-id="<?php echo $shopId; ?>">Add to Cart</button>
+                            <?php
+                            $cartIds = [];
+                            if (!empty($_SESSION['cart'])) {
+                                foreach ($_SESSION['cart'] as $cartItem) {
+                                    if (isset($cartItem['id'])) {
+                                        $cartIds[] = $cartItem['id'];
+                                    }
+                                }
+                            }
+                            ?>
+                            <button onclick="addToCart(<?php echo $shopId; ?>)" class="add-to-cart-btn<?php echo in_array($shopId, $cartIds) ? ' clicked' : ''; ?>" data-id="<?php echo $shopId; ?>" <?php echo in_array($shopId, $cartIds) ? 'disabled' : ''; ?>><?php echo in_array($shopId, $cartIds) ? 'Added!' : 'Add to Cart'; ?></button>
                             <a href="1payment.php?id=<?php echo $shopId; ?>" class="pay-now-btn">Pay Now</a>
                         </div>
                         </div>

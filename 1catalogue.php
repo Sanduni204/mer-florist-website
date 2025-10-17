@@ -29,6 +29,7 @@ function fetch_items_by_types(PDO $conn, array $keywords): array {
 }
 
 function render_item_card(array $it, string $cardClass): string {
+    global $_SESSION;
     $name = htmlspecialchars($it['name'] ?? '');
     $price = isset($it['price']) ? number_format((float)$it['price'], 2) : '0.00';
     $desc = htmlspecialchars(trim((string)($it['description'] ?? '')));
@@ -37,13 +38,25 @@ function render_item_card(array $it, string $cardClass): string {
         ? '<img class="img" src="'.APPURL.'Images/'.$img.'" alt="'. $name .'" />'
         : '<div class="img" style="display:flex;align-items:center;justify-content:center;background:#f6f6f6;color:#999;">No Image</div>';
     $fid = isset($it['fid']) ? (int)$it['fid'] : 0;
+    $inCart = false;
+    if (!empty($_SESSION['cart'])) {
+        foreach ($_SESSION['cart'] as $cartItem) {
+            if (isset($cartItem['id']) && $cartItem['id'] == $fid) {
+                $inCart = true;
+                break;
+            }
+        }
+    }
+    $btnText = $inCart ? 'Added!' : 'Add to Cart';
+    $btnClass = 'add-to-cart-btn' . ($inCart ? ' clicked' : '');
+    $btnDisabled = $inCart ? 'disabled' : '';
     return '<div class="'. $cardClass .'">'.
          $imgTag.
          '<p>'. $name .'</p>'.
          '<p>RS.'. $price .'</p>'.
          ($desc !== '' ? '<p><b>'. $desc .'</b></p>' : '').
          '<div class="item-buttons">'.
-         '<button onclick="addToCart('.$fid.')" class="add-to-cart-btn" data-id="'.$fid.'">Add to Cart</button>'.
+         '<button onclick="addToCart('.$fid.')" class="'.$btnClass.'" data-id="'.$fid.'" '.$btnDisabled.'>'.$btnText.'</button>'.
          '<a href="1payment.php?id='.$fid.'" class="pay-now-btn" onclick="return payNowClicked(this)">Pay Now</a>'.
          '</div>'.
          '</div>';

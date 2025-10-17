@@ -36,7 +36,16 @@ $stmt->execute([
 $listings = $stmt->fetchAll(PDO::FETCH_OBJ);
 
 ?>
-
+<?php
+$cartIds = [];
+if (!empty($_SESSION['cart'])) {
+    foreach ($_SESSION['cart'] as $cartItem) {
+        if (isset($cartItem['id'])) {
+            $cartIds[] = $cartItem['id'];
+        }
+    }
+}
+?>
 <div id="fitems" class="search-results">
    
    <div class="front2">
@@ -50,7 +59,7 @@ $listings = $stmt->fetchAll(PDO::FETCH_OBJ);
             <p>RS.<?php echo $listing->price; ?>.00</p>
             <p><B><?php echo $listing->description; ?></B></p>
             <div class="item-buttons">
-                <button onclick="addToCart(<?php echo $listingId; ?>)" class="add-to-cart-btn" data-id="<?php echo $listingId; ?>">Add to Cart</button>
+                <button onclick="addToCart(<?php echo $listingId; ?>)" class="add-to-cart-btn<?php echo in_array($listingId, $cartIds) ? ' clicked' : ''; ?>" data-id="<?php echo $listingId; ?>" <?php echo in_array($listingId, $cartIds) ? 'disabled' : ''; ?>><?php echo in_array($listingId, $cartIds) ? 'Added!' : 'Add to Cart'; ?></button>
                 <a href="1payment.php?id=<?php echo $listingId; ?>" class="pay-now-btn">Pay Now</a>
             </div>
             </div>

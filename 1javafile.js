@@ -263,15 +263,7 @@ function toggleDropdown() {
 // Add to cart functionality
 function addToCart(itemId) {
     // Find the button and change style
-    // Find all Add to Cart buttons and reset others
-    document.querySelectorAll('.add-to-cart-btn').forEach(b => {
-        if (b.getAttribute('data-id') !== String(itemId)) {
-            b.disabled = false;
-            b.classList.remove('clicked');
-            b.innerHTML = 'Add to Cart';
-        }
-    });
-    // Only update the clicked button
+    // Only update the clicked button, do not reset others
     const btn = document.querySelector('.add-to-cart-btn[data-id="'+itemId+'"]');
     if (btn) {
         btn.disabled = true;

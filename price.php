@@ -2,10 +2,8 @@
 <?php
 require_once "Config/config.php";
 
-
 if(isset($_GET['price'])){
     $price = $_GET['price'];
-
     // Sanitize the input to prevent SQL injection
     if ($price == 'ASC' || $price == 'DESC') {
         $price_query = $conn->prepare("SELECT * FROM shop ORDER BY price $price");
@@ -18,8 +16,14 @@ if(isset($_GET['price'])){
     }
 }
 
-
-
+$cartIds = [];
+if (!empty($_SESSION['cart'])) {
+    foreach ($_SESSION['cart'] as $cartItem) {
+        if (isset($cartItem['id'])) {
+            $cartIds[] = $cartItem['id'];
+        }
+    }
+}
 ?>
 <div class="sort-dropdown">
         <button class="dropdown-btn" onclick="toggleDropdown()">
@@ -48,7 +52,7 @@ if(isset($_GET['price'])){
             <p>RS.<?php echo $listing->price; ?>.00</p>
             <p><B><?php echo $listing->description; ?></B></p>
             <div class="item-buttons">
-                <button onclick="addToCart(<?php echo $listingId; ?>)" class="add-to-cart-btn" data-id="<?php echo $listingId; ?>">Add to Cart</button>
+                <button onclick="addToCart(<?php echo $listingId; ?>)" class="add-to-cart-btn<?php echo in_array($listingId, $cartIds) ? ' clicked' : ''; ?>" data-id="<?php echo $listingId; ?>" <?php echo in_array($listingId, $cartIds) ? 'disabled' : ''; ?>><?php echo in_array($listingId, $cartIds) ? 'Added!' : 'Add to Cart'; ?></button>
                 <a href="1payment.php?id=<?php echo $listingId; ?>" class="pay-now-btn">Pay Now</a>
             </div>
             </div>
