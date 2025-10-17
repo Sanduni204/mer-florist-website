@@ -1,9 +1,36 @@
 <?php require "includes/header.php"; ?>
 <?php require "Config/config.php"; ?>
+
+
 <?php
-// Initialize cart if not exists
-if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [];
+// Only reload cart from DB for logged-in users on GET requests
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    if (isset($_SESSION['user_id'])) {
+        $user_id = $_SESSION['user_id'];
+        $_SESSION['cart'] = [];
+        $stmt = $conn->prepare("SELECT item_id, quantity FROM cart_items WHERE user_id = :uid");
+        $stmt->execute([':uid' => $user_id]);
+        $cartRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($cartRows as $row) {
+            $itemStmt = $conn->prepare("SELECT * FROM shop WHERE fid = :id");
+            $itemStmt->execute([':id' => $row['item_id']]);
+            $item = $itemStmt->fetch(PDO::FETCH_ASSOC);
+            if ($item) {
+                $_SESSION['cart'][] = [
+                    'id' => $row['item_id'],
+                    'name' => $item['name'],
+                    'price' => $item['price'],
+                    'image' => $item['image'],
+                    'description' => $item['description'] ?? '',
+                    'quantity' => $row['quantity']
+                ];
+            }
+        }
+    } else {
+        if (!isset($_SESSION['cart'])) {
+            $_SESSION['cart'] = [];
+        }
+    }
 }
 
 // Handle cart actions
@@ -15,14 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'add':
                 $item_id = (int)$_POST['item_id'];
                 $quantity = (int)($_POST['quantity'] ?? 1);
-                
-                // Fetch item details from database
                 $stmt = $conn->prepare("SELECT * FROM shop WHERE fid = :id");
                 $stmt->execute([':id' => $item_id]);
                 $item = $stmt->fetch(PDO::FETCH_ASSOC);
-                
                 if ($item) {
-                    // Check if item already in cart
                     $found = false;
                     foreach ($_SESSION['cart'] as &$cart_item) {
                         if ($cart_item['id'] == $item_id) {
@@ -31,7 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             break;
                         }
                     }
-                    
                     if (!$found) {
                         $_SESSION['cart'][] = [
                             'id' => $item_id,
@@ -42,6 +64,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             'quantity' => $quantity
                         ];
                     }
+                    // Sync to DB for logged-in users
+                    if (isset($_SESSION['user_id'])) {
+                        $user_id = $_SESSION['user_id'];
+                        $stmt = $conn->prepare("INSERT INTO cart_items (user_id, item_id, quantity) VALUES (:uid, :iid, :qty) ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)");
+                        $stmt->execute([':uid' => $user_id, ':iid' => $item_id, ':qty' => $quantity]);
+                    }
                 }
                 break;
                 
@@ -50,18 +78,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['cart'] = array_filter($_SESSION['cart'], function($item) use ($item_id) {
                     return $item['id'] != $item_id;
                 });
-                $_SESSION['cart'] = array_values($_SESSION['cart']); // Re-index array
+                $_SESSION['cart'] = array_values($_SESSION['cart']);
+                // Remove from DB for logged-in users
+                if (isset($_SESSION['user_id'])) {
+                    $user_id = $_SESSION['user_id'];
+                    $stmt = $conn->prepare("DELETE FROM cart_items WHERE user_id = :uid AND item_id = :iid");
+                    $stmt->execute([':uid' => $user_id, ':iid' => $item_id]);
+                }
                 break;
                 
             case 'update':
                 $item_id = (int)$_POST['item_id'];
                 $quantity = (int)$_POST['quantity'];
-                
                 if ($quantity <= 0) {
                     $_SESSION['cart'] = array_filter($_SESSION['cart'], function($item) use ($item_id) {
                         return $item['id'] != $item_id;
                     });
                     $_SESSION['cart'] = array_values($_SESSION['cart']);
+                    // Remove from DB for logged-in users
+                    if (isset($_SESSION['user_id'])) {
+                        $user_id = $_SESSION['user_id'];
+                        $stmt = $conn->prepare("DELETE FROM cart_items WHERE user_id = :uid AND item_id = :iid");
+                        $stmt->execute([':uid' => $user_id, ':iid' => $item_id]);
+                    }
                 } else {
                     foreach ($_SESSION['cart'] as &$cart_item) {
                         if ($cart_item['id'] == $item_id) {
@@ -69,11 +108,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             break;
                         }
                     }
+                    // Update DB for logged-in users
+                    if (isset($_SESSION['user_id'])) {
+                        $user_id = $_SESSION['user_id'];
+                        $stmt = $conn->prepare("UPDATE cart_items SET quantity = :qty WHERE user_id = :uid AND item_id = :iid");
+                        $stmt->execute([':qty' => $quantity, ':uid' => $user_id, ':iid' => $item_id]);
+                    }
                 }
                 break;
                 
             case 'clear':
                 $_SESSION['cart'] = [];
+                // Clear DB for logged-in users
+                if (isset($_SESSION['user_id'])) {
+                    $user_id = $_SESSION['user_id'];
+                    $stmt = $conn->prepare("DELETE FROM cart_items WHERE user_id = :uid");
+                    $stmt->execute([':uid' => $user_id]);
+                }
                 break;
         }
     }

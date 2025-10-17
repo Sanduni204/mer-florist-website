@@ -48,7 +48,7 @@ if(isset($_GET['price'])){
             <p>RS.<?php echo $listing->price; ?>.00</p>
             <p><B><?php echo $listing->description; ?></B></p>
             <div class="item-buttons">
-                <button onclick="addToCart(<?php echo $listingId; ?>)" class="add-to-cart-btn">Add to Cart</button>
+                <button onclick="addToCart(<?php echo $listingId; ?>)" class="add-to-cart-btn" data-id="<?php echo $listingId; ?>">Add to Cart</button>
                 <a href="1payment.php?id=<?php echo $listingId; ?>" class="pay-now-btn">Pay Now</a>
             </div>
             </div>

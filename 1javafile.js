@@ -262,11 +262,26 @@ function toggleDropdown() {
 
 // Add to cart functionality
 function addToCart(itemId) {
+    // Find the button and change style
+    // Find all Add to Cart buttons and reset others
+    document.querySelectorAll('.add-to-cart-btn').forEach(b => {
+        if (b.getAttribute('data-id') !== String(itemId)) {
+            b.disabled = false;
+            b.classList.remove('clicked');
+            b.innerHTML = 'Add to Cart';
+        }
+    });
+    // Only update the clicked button
+    const btn = document.querySelector('.add-to-cart-btn[data-id="'+itemId+'"]');
+    if (btn) {
+        btn.disabled = true;
+        btn.classList.add('clicked');
+        btn.innerHTML = 'Added!';
+    }
     // Create form data
     const formData = new FormData();
     formData.append('action', 'add');
     formData.append('item_id', itemId);
-    
     // Send AJAX request
     fetch('add_to_cart.php', {
         method: 'POST',
@@ -275,15 +290,26 @@ function addToCart(itemId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Update cart count if you have a cart counter in header
             updateCartCount(data.cart_count);
         } else {
             showNotification('Failed to add item to cart', 'error');
+        }
+        if (btn) {
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.classList.remove('clicked');
+                btn.innerHTML = 'Add to Cart';
+            }, 1200);
         }
     })
     .catch(error => {
         console.error('Error:', error);
         showNotification('An error occurred', 'error');
+        if (btn) {
+            btn.disabled = false;
+            btn.classList.remove('clicked');
+            btn.innerHTML = 'Add to Cart';
+        }
     });
 }
 
@@ -359,4 +385,14 @@ function updateCartCount(count) {
     if (cartCounter) {
         cartCounter.textContent = count;
     }
+}
+
+function payNowClicked(btn) {
+    btn.classList.add('clicked');
+    btn.innerHTML = '<span class="cart-spinner"></span> Processing...';
+    setTimeout(() => {
+        btn.classList.remove('clicked');
+        btn.innerHTML = 'Pay Now';
+    }, 1200);
+    return true;
 }

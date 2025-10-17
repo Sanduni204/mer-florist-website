@@ -29,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     break;
                 }
             }
-            
             if (!$found) {
                 $_SESSION['cart'][] = [
                     'id' => $item_id,
@@ -39,7 +38,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     'quantity' => $quantity
                 ];
             }
-            
+
+            // Sync to DB for logged-in users
+            if (isset($_SESSION['user_id'])) {
+                $user_id = $_SESSION['user_id'];
+                $stmt = $conn->prepare("INSERT INTO cart_items (user_id, item_id, quantity) VALUES (:uid, :iid, :qty) ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)");
+                $stmt->execute([':uid' => $user_id, ':iid' => $item_id, ':qty' => $quantity]);
+            }
+
             // Return cart count
             $cart_count = count($_SESSION['cart']);
             echo json_encode(['success' => true, 'cart_count' => $cart_count, 'message' => 'Item added to cart!']);

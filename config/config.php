@@ -35,6 +35,18 @@ if (!isset($conn) || !($conn instanceof PDO)) {
         }
     }
 
+    // Ensure cart_items table exists
+    try {
+        $conn->exec("CREATE TABLE IF NOT EXISTS cart_items (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT NOT NULL,
+            item_id INT NOT NULL,
+            quantity INT NOT NULL DEFAULT 1,
+            added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY user_item (user_id, item_id)
+        )");
+    } catch (PDOException $e) {}
+
     if (!isset($conn) || !($conn instanceof PDO)) {
         $message = "Database connection failed. Tried hosts: " . implode(", ", $hosts) . "; ports: " . implode(", ", $ports) . ". Error: " . ($lastException ? $lastException->getMessage() : 'unknown');
         die($message);

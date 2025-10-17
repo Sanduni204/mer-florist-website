@@ -43,8 +43,8 @@ function render_item_card(array $it, string $cardClass): string {
          '<p>RS.'. $price .'</p>'.
          ($desc !== '' ? '<p><b>'. $desc .'</b></p>' : '').
          '<div class="item-buttons">'.
-         '<button onclick="addToCart('.$fid.')" class="add-to-cart-btn">Add to Cart</button>'.
-         '<a href="1payment.php?id='.$fid.'" class="pay-now-btn">Pay Now</a>'.
+         '<button onclick="addToCart('.$fid.')" class="add-to-cart-btn" data-id="'.$fid.'">Add to Cart</button>'.
+         '<a href="1payment.php?id='.$fid.'" class="pay-now-btn" onclick="return payNowClicked(this)">Pay Now</a>'.
          '</div>'.
          '</div>';
 }
@@ -148,3 +148,16 @@ function render_item_card(array $it, string $cardClass): string {
 
   
    <?php require "includes/footer.php"; ?>
+   <style>
+/* Add to Cart and Pay Now button feedback styles */
+.add-to-cart-btn.clicked, .pay-now-btn.clicked {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white !important;
+    border: none;
+    box-shadow: 0 2px 8px rgba(76,175,80,0.2);
+    position: relative;
+}
+
+/* Remove spinner styles */
+.cart-spinner { display: none; }
+</style>
