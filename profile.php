@@ -148,8 +148,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profile'])) {
 ?>
 
 <style>
+* {
+    box-sizing: border-box;
+}
+body {
+    overflow-x: hidden !important;
+}
 .profile-container {
-    max-width: 1200px;
+    max-width: 100%;
     width: 100%;
     margin: 0 auto;
     padding: 20px;
@@ -157,6 +163,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profile'])) {
     border-radius: 15px;
     box-shadow: none;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    overflow-y: visible !important;
+    overflow-x: hidden !important;
+}
+@media (min-width: 600px) {
+    .profile-container {
+        max-width: 700px;
+    }
 }
 
 .profile-header {
@@ -213,7 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profile'])) {
 }
 .profile-form .span-2 { grid-column: 1 / -1; }
 /* Ensure no extra margins and prevent overflow so gaps remain consistent */
-.profile-form > div { margin: 0; min-width: 0; }
+.profile-form > div { margin: 0; min-width: 0; max-width: 100%; }
 /* Extra top spacing for Mobile No field (10px beyond row gap) */
 .profile-form > div.mobile-field { margin-top: 20px; }
 /* Normalize control sizing */
