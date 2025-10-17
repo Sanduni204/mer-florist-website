@@ -12,9 +12,21 @@ if (!isset($_SESSION['user_id'])) {
 require_once __DIR__ . '/Config/config.php';
 require_once __DIR__ . '/includes/header.php';
 
+// Ensure users table has profile_image column
+try {
+    $conn->exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_image VARCHAR(255) NULL");
+} catch (PDOException $e) {
+    // Ignore if column already exists or insufficient permissions
+}
+// Ensure additional profile fields exist
+try { $conn->exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS gender ENUM('male','female','other') NULL"); } catch (PDOException $e) {}
+try { $conn->exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS date_of_birth DATE NULL"); } catch (PDOException $e) {}
+try { $conn->exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS age INT NULL"); } catch (PDOException $e) {}
+try { $conn->exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS mobile_no VARCHAR(20) NULL"); } catch (PDOException $e) {}
+
 // Get user info
 $user_id = $_SESSION['user_id'];
-$stmt = $conn->prepare("SELECT username, email FROM users WHERE id = :id");
+$stmt = $conn->prepare("SELECT username, email, profile_image, gender, date_of_birth, age, mobile_no FROM users WHERE id = :id");
 $stmt->execute([':id' => $user_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -24,34 +36,122 @@ if (!$user) {
     exit;
 }
 
-// Get user's messages and replies
-try {
-    // Ensure user_id column exists in messages table
-    try {
-        $conn->exec("ALTER TABLE messages ADD COLUMN IF NOT EXISTS user_id INT NULL");
-    } catch (PDOException $e) {
-        // Column might already exist
+// Handle profile image upload
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_avatar'])) {
+    $uploadError = null;
+    $uploadSuccess = null;
+    if (!isset($_FILES['avatar']) || $_FILES['avatar']['error'] === UPLOAD_ERR_NO_FILE) {
+        $uploadError = 'Please choose an image file.';
+    } else {
+        $file = $_FILES['avatar'];
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            $uploadError = 'Upload failed. Please try again.';
+        } else {
+            $maxSize = 2 * 1024 * 1024; // 2MB
+            if ($file['size'] > $maxSize) {
+                $uploadError = 'Image too large. Max size is 2MB.';
+            } else {
+                // Validate mime type
+                $finfo = new finfo(FILEINFO_MIME_TYPE);
+                $mime = $finfo->file($file['tmp_name']);
+                $allowed = [
+                    'image/jpeg' => 'jpg',
+                    'image/png' => 'png',
+                    'image/gif' => 'gif',
+                    'image/webp' => 'webp',
+                ];
+                if (!isset($allowed[$mime])) {
+                    $uploadError = 'Invalid image type. Use JPG, PNG, GIF, or WEBP.';
+
+                } else {
+                    $ext = $allowed[$mime];
+                    $uploadDir = __DIR__ . '/Images/avatars';
+                    if (!is_dir($uploadDir)) {
+                        @mkdir($uploadDir, 0775, true);
+                    }
+                    $filename = 'user_' . $user_id . '_' . time() . '.' . $ext;
+                    $destPath = $uploadDir . DIRECTORY_SEPARATOR . $filename;
+                    $relativePath = 'Images/avatars/' . $filename;
+
+                    // Remove old file if exists and inside avatars dir
+                    if (!empty($user['profile_image'])) {
+                        $oldPath = __DIR__ . '/' . $user['profile_image'];
+                        if (strpos($user['profile_image'], 'Images/avatars/') === 0 && file_exists($oldPath)) {
+                            @unlink($oldPath);
+                        }
+                    }
+
+                    if (move_uploaded_file($file['tmp_name'], $destPath)) {
+                        $stmt = $conn->prepare('UPDATE users SET profile_image = :img WHERE id = :id');
+                        $stmt->execute([':img' => $relativePath, ':id' => $user_id]);
+                        $user['profile_image'] = $relativePath; // update in-memory
+                        $uploadSuccess = 'Profile picture updated.';
+                    } else {
+                        $uploadError = 'Failed to save the uploaded file.';
+                    }
+                }
+            }
+        }
     }
-    
-    // Update existing messages to link them to this user if email matches
-    $stmt = $conn->prepare("UPDATE messages SET user_id = :user_id WHERE email = :email AND user_id IS NULL");
-    $stmt->execute([':user_id' => $user_id, ':email' => $user['email']]);
-    
-    // Get messages for this user (both by user_id and email for backward compatibility)
-    $stmt = $conn->prepare("
-        SELECT m.id, m.message, m.created_at, m.is_read,
-               COUNT(r.id) as reply_count
-        FROM messages m 
-        LEFT JOIN message_replies r ON m.id = r.message_id 
-        WHERE (m.user_id = :user_id OR m.email = :email)
-        GROUP BY m.id 
-        ORDER BY m.created_at DESC
-    ");
-    $stmt->execute([':user_id' => $user_id, ':email' => $user['email']]);
-    $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    $messages = [];
 }
+
+// Handle profile info update
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profile'])) {
+    $saveError = null;
+    $saveSuccess = null;
+    $newUsername = trim($_POST['username'] ?? '');
+    $newEmail = trim($_POST['email'] ?? '');
+    $newGender = $_POST['gender'] ?? '';
+    $newDob = $_POST['date_of_birth'] ?? '';
+    $newMobile = trim($_POST['mobile_no'] ?? '');
+
+    if ($newUsername === '' || $newEmail === '') {
+        $saveError = 'Username and Email are required.';
+    } elseif (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
+        $saveError = 'Please enter a valid email address.';
+    } else {
+        $allowedGenders = ['male','female','other',''];
+        if (!in_array($newGender, $allowedGenders, true)) {
+            $saveError = 'Invalid gender selection.';
+        }
+        if ($newDob !== '') {
+            $d = DateTime::createFromFormat('Y-m-d', $newDob);
+            if (!($d && $d->format('Y-m-d') === $newDob)) {
+                $saveError = 'Invalid date of birth.';
+            }
+        }
+        // Validate mobile number (basic)
+        if ($newMobile !== '') {
+            $digits = preg_replace('/\D+/', '', $newMobile);
+            if (strlen($digits) < 7 || strlen($digits) > 15) {
+                $saveError = 'Please enter a valid mobile number.';
+            }
+        }
+    }
+
+    if ($saveError === null) {
+        try {
+            $stmt = $conn->prepare("UPDATE users SET username = :username, email = :email, gender = :gender, date_of_birth = :dob, mobile_no = :mobile WHERE id = :id");
+            $stmt->execute([
+                ':username' => $newUsername,
+                ':email' => $newEmail,
+                ':gender' => ($newGender === '' ? null : $newGender),
+                ':dob' => ($newDob === '' ? null : $newDob),
+                ':mobile' => ($newMobile === '' ? null : $newMobile),
+                ':id' => $user_id
+            ]);
+            $user['username'] = $newUsername;
+            $user['email'] = $newEmail;
+            $user['gender'] = ($newGender === '' ? null : $newGender);
+            $user['date_of_birth'] = ($newDob === '' ? null : $newDob);
+            $user['mobile_no'] = ($newMobile === '' ? null : $newMobile);
+            $saveSuccess = 'Profile updated successfully.';
+        } catch (PDOException $e) {
+            $saveError = 'Failed to update profile.';
+        }
+    }
+}
+
 ?>
 
 <style>
@@ -70,20 +170,15 @@ try {
     padding: 30px;
     border-radius: 12px;
     margin-bottom: 30px;
-    text-align: center;
+    text-align: left;
     border: 3px solid #ed7787;
 }
 
-.profile-header h1 {
-    margin: 0;
-    font-size: 2rem;
-    color: black;
-}
-
-.profile-header p {
-    margin: 0;
-    opacity: 0.9;
-}
+.avatar-wrap { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+.avatar-circle { width:96px; height:96px; border-radius:50%; overflow:hidden; border:3px solid #ed7787; background:#f5f5f5; display:flex; align-items:center; justify-content:center; }
+.avatar-circle img { width:100%; height:100%; object-fit:cover; display:block; }
+.avatar-form { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.avatar-msg { margin-top:8px; font-size:0.9rem; }
 
 .profile-nav {
     display: flex;
@@ -104,15 +199,8 @@ try {
     align-items: flex-start;
 }
 
-.profile-sidebar {
-    flex-shrink: 0;
-    width: 250px;
-}
-
-.profile-main {
-    flex: 1;
-    min-width: 0;
-}
+.profile-sidebar { flex-shrink: 0; width: 250px; }
+.profile-main { flex: 1; min-width: 0; }
 
 .nav-tab {
     padding: 12px 20px;
@@ -124,11 +212,7 @@ try {
     font-weight: 600;
     transition: all 0.3s ease;
 }
-
-.nav-tab:hover, .nav-tab.active {
-    background: #ed7787;
-    color: white;
-}
+.nav-tab:hover, .nav-tab.active { background: #ed7787; color: white; }
 
 .content-section {
     background: white;
@@ -139,177 +223,35 @@ try {
     color: black;
 }
 
-.message-item {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    transition: all 0.3s ease;
-    background: white;
-    color: black;
-}
-
-.message-item:hover {
-    box-shadow: 0 4px 12px rgba(237, 119, 135, 0.2);
-    border-color: #ed7787;
-}
-
-.message-item.has-reply {
-    border-left: 4px solid #28a745;
-    background: white;
-}
-
-.message-item.no-reply {
-    border-left: 4px solid #ffc107;
-    background: white;
-}
-
-.message-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.message-date {
-    color: black;
-    font-size: 0.9rem;
-}
-
-.message-status {
-    padding: 4px 10px;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
-
-.status-replied {
-    background: #d4edda;
-    color: black;
-}
-
-.status-pending {
-    background: #fff3cd;
-    color: black;
-}
-
-.message-content {
-    background: #fcd4e8;
-    padding: 15px;
-    border-radius: 6px;
-    margin-bottom: 15px;
-    line-height: 1.5;
-    border-left: 3px solid #ed7787;
-    color: black;
-}
-
-.replies-section {
-    border-top: 1px solid #eee;
-    padding-top: 15px;
-    background: white;
-    color: black;
-}
-
-.reply-item {
-    background: #e8f5e8;
-    padding: 15px;
-    border-radius: 6px;
-    border-left: 3px solid #28a745;
-    margin-bottom: 10px;
-    color: black;
-}
-
-.reply-header {
-    font-size: 0.85rem;
-    color: black;
-    margin-bottom: 8px;
-    font-weight: 600;
-}
-
-.reply-content {
-    line-height: 1.4;
-    color: black;
-}
-
-.no-messages {
-    text-align: center;
-    padding: 40px;
-    color: black;
-    background: white;
-    border-radius: 8px;
-    border: 2px solid #ed7787;
-}
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.stat-card {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
-    border: 2px solid #ed7787;
-    box-shadow: 0 2px 8px rgba(237, 119, 135, 0.1);
-    color: black;
-}
-
-.stat-number {
-    font-size: 2rem;
-    font-weight: 600;
-    color: black;
-    margin-bottom: 5px;
-}
-
-.stat-label {
-    color: black;
-    font-size: 0.9rem;
-}
-
 @media (max-width: 768px) {
-    .profile-container {
-        padding: 15px;
-    }
-    
-    .profile-content-wrapper {
-        flex-direction: column;
-        gap: 20px;
-    }
-    
-    .profile-sidebar {
-        width: 100%;
-    }
-    
-    .profile-nav {
-        width: 100%;
-        flex-direction: row;
-        min-height: auto;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    
-    .message-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+    .profile-container { padding: 15px; }
+    .profile-content-wrapper { flex-direction: column; gap: 20px; }
+    .profile-sidebar { width: 100%; }
+    .profile-nav { width: 100%; flex-direction: row; min-height: auto; flex-wrap: wrap; justify-content: center; }
 }
 </style>
 
 <div class="profile-container">
     <div class="profile-header">
-        <h1>Welcome, <?php echo htmlspecialchars($user['username']); ?>!</h1>
+        <div class="avatar-wrap">
+            <div class="avatar-circle">
+                <?php if (!empty($user['profile_image'])): ?>
+                    <img src="<?php echo APPURL . $user['profile_image']; ?>" alt="Profile picture">
+                <?php else: ?>
+                    <span style="color:#bbb; font-weight:700;">No Image</span>
+                <?php endif; ?>
+            </div>
+            <div>
+                <div style="margin:0 0 8px 0;"><strong>Username:</strong> <?php echo htmlspecialchars($user['username']); ?></div>
+                <div><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></div>
+            </div>
+        </div>
     </div>
 
     <div class="profile-content-wrapper">
         <div class="profile-sidebar">
             <div class="profile-nav">
-                <a href="#messages" class="nav-tab active" onclick="showSection('messages')">My Messages</a>
-                <a href="#account" class="nav-tab" onclick="showSection('account')">Account Info</a>
+                <a class="nav-tab active">Account Info</a>
                 <a href="<?php echo APPURL; ?>1contact.php" class="nav-tab">Send New Message</a>
                 <a href="<?php echo APPURL; ?>auth/logout.php" class="nav-tab" style="background: #dc3545; border-color: #dc3545;">
                     <i class="fas fa-sign-out-alt"></i> Logout
@@ -318,133 +260,107 @@ try {
         </div>
 
         <div class="profile-main">
-            <!-- Messages Section -->
-            <div id="messages-section" class="content-section">
-                <h2>Your Messages & Replies</h2>
-        
-        <?php
-        $total_messages = count($messages);
-        $replied_messages = array_filter($messages, function($msg) { return $msg['reply_count'] > 0; });
-        $pending_messages = array_filter($messages, function($msg) { return $msg['reply_count'] == 0; });
-        $replied_count = count($replied_messages);
-        $pending_count = count($pending_messages);
-        ?>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number"><?php echo $total_messages; ?></div>
-                <div class="stat-label">Total Messages</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number"><?php echo $replied_count; ?></div>
-                <div class="stat-label">Replied</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number"><?php echo $pending_count; ?></div>
-                <div class="stat-label">Pending Reply</div>
-            </div>
-        </div>
-
-        <?php if (empty($messages)): ?>
-            <div class="no-messages">
-                <i class="fas fa-inbox" style="font-size: 3rem; color: #ccc; margin-bottom: 15px;"></i>
-                <h3>No messages yet</h3>
-                <p>You haven't sent any messages yet. Click "Send New Message" to contact us!</p>
-            </div>
-        <?php else: ?>
-            <?php foreach ($messages as $message): ?>
-                <div class="message-item <?php echo $message['reply_count'] > 0 ? 'has-reply' : 'no-reply'; ?>">
-                    <div class="message-header">
-                        <div class="message-date">
-                            Sent on <?php echo date('M j, Y \a\t g:i A', strtotime($message['created_at'])); ?>
-                        </div>
-                        <div class="message-status <?php echo $message['reply_count'] > 0 ? 'status-replied' : 'status-pending'; ?>">
-                            <?php if ($message['reply_count'] > 0): ?>
-                                <i class="fas fa-check-circle"></i> Replied (<?php echo $message['reply_count']; ?> response<?php echo $message['reply_count'] == 1 ? '' : 's'; ?>)
-                            <?php else: ?>
-                                <i class="fas fa-clock"></i> Pending Reply
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                    
-                    <div class="message-content">
-                        <strong>Your Message:</strong><br>
-                        <?php echo nl2br(htmlspecialchars($message['message'])); ?>
-                    </div>
-                    
-                    <?php if ($message['reply_count'] > 0): ?>
-                        <div class="replies-section">
-                            <h4 style="margin: 0 0 15px 0; color: #28a745;">
-                                <i class="fas fa-reply"></i> Admin Responses:
-                            </h4>
-                            <?php
-                            try {
-                                $stmt = $conn->prepare("SELECT reply_text, admin_name, created_at FROM message_replies WHERE message_id = :message_id ORDER BY created_at ASC");
-                                $stmt->execute([':message_id' => $message['id']]);
-                                $replies = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                                
-                                foreach ($replies as $reply): ?>
-                                    <div class="reply-item">
-                                        <div class="reply-header">
-                                            <i class="fas fa-user-tie"></i> 
-                                            <?php echo htmlspecialchars($reply['admin_name']); ?> replied on 
-                                            <?php echo date('M j, Y \a\t g:i A', strtotime($reply['created_at'])); ?>
-                                        </div>
-                                        <div class="reply-content">
-                                            <?php echo nl2br(htmlspecialchars($reply['reply_text'])); ?>
-                                        </div>
-                                    </div>
-                                <?php endforeach;
-                            } catch (PDOException $e) {
-                                echo '<p style="color: #dc3545;">Error loading replies.</p>';
-                            }
-                            ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            <?php endforeach; ?>
-        <?php endif; ?>
-            </div>
-
-            <!-- Account Section -->
-            <div id="account-section" class="content-section" style="display: none;">
+            <div class="content-section">
                 <h2>Account Information</h2>
-                <div style="display: grid; gap: 15px; max-width: 400px;">
+                <?php if (isset($saveError) && $saveError): ?>
+                    <div style="margin:10px 0; padding:10px; border:1px solid #dc3545; color:#dc3545; border-radius:6px; background:#fff5f5;">
+                        <?php echo htmlspecialchars($saveError); ?>
+                    </div>
+                <?php elseif (isset($saveSuccess) && $saveSuccess): ?>
+                    <div style="margin:10px 0; padding:10px; border:1px solid #28a745; color:#155724; border-radius:6px; background:#e8f5e8;">
+                        <?php echo htmlspecialchars($saveSuccess); ?>
+                    </div>
+                <?php endif; ?>
+                <form method="post" style="display:grid; gap:15px; max-width: 450px;">
                     <div>
-                        <label style="font-weight: 600; color: black; display: block; margin-bottom: 5px;">Username:</label>
-                        <div style="padding: 10px; background: #f8f9fa; border-radius: 6px;">
-                            <?php echo htmlspecialchars($user['username']); ?>
-                        </div>
+                        <label style="font-weight: 600; color: black; display: block; margin-bottom: 5px;" for="username">Username</label>
+                        <input id="username" name="username" type="text" value="<?php echo htmlspecialchars($user['username']); ?>" required style="width:100%; padding:10px; background:#f8f9fa; border-radius:6px; border:1px solid #ddd;">
                     </div>
                     <div>
-                        <label style="font-weight: 600; color: black; display: block; margin-bottom: 5px;">Email:</label>
-                        <div style="padding: 10px; background: #f8f9fa; border-radius: 6px;">
-                            <?php echo htmlspecialchars($user['email']); ?>
-                        </div>
+                        <label style="font-weight: 600; color: black; display: block; margin-bottom: 5px;" for="email">Email</label>
+                        <input id="email" name="email" type="email" value="<?php echo htmlspecialchars($user['email']); ?>" required style="width:100%; padding:10px; background:#f8f9fa; border-radius:6px; border:1px solid #ddd;">
                     </div>
-                </div>
+                    <div>
+                        <label style="font-weight: 600; color: black; display: block; margin-bottom: 5px;">Profile Picture</label>
+                        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                            <div class="avatar-circle" style="width:64px; height:64px;">
+                                <?php if (!empty($user['profile_image'])): ?>
+                                    <img id="avatarPreview" src="<?php echo APPURL . $user['profile_image']; ?>" alt="Profile picture">
+                                <?php else: ?>
+                                    <img id="avatarPreview" src="" alt="Profile picture" style="display:none;">
+                                    <span id="avatarPlaceholder" style="color:#bbb; font-weight:700;">No Image</span>
+                                <?php endif; ?>
+                            </div>
+                            <form class="avatar-form" method="post" enctype="multipart/form-data" style="display:flex; align-items:center; gap:10px;">
+                                <input type="file" name="avatar" id="avatarInput" accept="image/*">
+                                <button type="submit" name="upload_avatar" style="background:#ed7787;color:#fff;border:2px solid #ed7787;padding:8px 14px;border-radius:6px;cursor:pointer;">Upload</button>
+                            </form>
+                        </div>
+                        <?php if (isset($uploadError) && $uploadError): ?>
+                            <div class="avatar-msg" style="color:#dc3545;">&bull; <?php echo htmlspecialchars($uploadError); ?></div>
+                        <?php elseif (isset($uploadSuccess) && $uploadSuccess): ?>
+                            <div class="avatar-msg" style="color:#28a745;">&bull; <?php echo htmlspecialchars($uploadSuccess); ?></div>
+                        <?php endif; ?>
+                    </div>
+                    <div>
+                        <label style="font-weight: 600; color: black; display: block; margin-bottom: 5px;" for="gender">Gender</label>
+                        <select id="gender" name="gender" style="width:100%; padding:10px; background:#f8f9fa; border-radius:6px; border:1px solid #ddd;">
+                            <option value="" <?php echo empty($user['gender']) ? 'selected' : ''; ?>>Select</option>
+                            <option value="male" <?php echo (isset($user['gender']) && $user['gender']==='male') ? 'selected' : ''; ?>>Male</option>
+                            <option value="female" <?php echo (isset($user['gender']) && $user['gender']==='female') ? 'selected' : ''; ?>>Female</option>
+                            <option value="other" <?php echo (isset($user['gender']) && $user['gender']==='other') ? 'selected' : ''; ?>>Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-weight: 600; color: black; display: block; margin-bottom: 5px;" for="date_of_birth">Date of Birth</label>
+                        <input id="date_of_birth" name="date_of_birth" type="date" value="<?php echo htmlspecialchars($user['date_of_birth'] ?? ''); ?>" style="width:100%; padding:10px; background:#f8f9fa; border-radius:6px; border:1px solid #ddd;">
+                    </div>
+                    <div>
+                        <label style="font-weight: 600; color: black; display: block; margin-bottom: 5px;" for="mobile_no">Mobile No</label>
+                        <input id="mobile_no" name="mobile_no" type="tel" value="<?php echo htmlspecialchars($user['mobile_no'] ?? ''); ?>" placeholder="e.g. +94771234567" style="width:100%; padding:10px; background:#f8f9fa; border-radius:6px; border:1px solid #ddd;">
+                    </div>
+                    <div>
+                        <button type="submit" name="save_profile" style="background:#ed7787;color:#fff;border:2px solid #ed7787;padding:10px 16px;border-radius:6px;cursor:pointer;font-weight:600;">Save Changes</button>
+                    </div>
+                </form>
+                <script>
+                (function(){
+                    const input = document.getElementById('avatarInput');
+                    if (input) {
+                        input.addEventListener('change', function(e){
+                            const file = e.target.files && e.target.files[0];
+                            const preview = document.getElementById('avatarPreview');
+                            const placeholder = document.getElementById('avatarPlaceholder');
+                            if (!file || !preview) return;
+                            const url = URL.createObjectURL(file);
+                            preview.src = url;
+                            preview.style.display = 'block';
+                            if (placeholder) placeholder.style.display = 'none';
+                        });
+                    }
+                })();
+                </script>
+                <script>
+                // Preview selected avatar in the account section
+                (function(){
+                    const input = document.getElementById('avatarInput');
+                    if (input) {
+                        input.addEventListener('change', function(e){
+                            const file = e.target.files && e.target.files[0];
+                            const preview = document.getElementById('avatarPreview');
+                            const placeholder = document.getElementById('avatarPlaceholder');
+                            if (!file || !preview) return;
+                            const url = URL.createObjectURL(file);
+                            preview.src = url;
+                            preview.style.display = 'block';
+                            if (placeholder) placeholder.style.display = 'none';
+                        });
+                    }
+                })();
+                </script>
             </div>
         </div>
     </div>
 </div>
-
-<script>
-function showSection(section) {
-    // Hide all sections
-    document.getElementById('messages-section').style.display = 'none';
-    document.getElementById('account-section').style.display = 'none';
-    
-    // Remove active class from all tabs
-    document.querySelectorAll('.nav-tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    
-    // Show selected section
-    document.getElementById(section + '-section').style.display = 'block';
-    
-    // Add active class to clicked tab
-    event.target.classList.add('active');
-}
-</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
