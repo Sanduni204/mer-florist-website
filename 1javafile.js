@@ -260,6 +260,67 @@ function toggleDropdown() {
             });
         });
 
+        // --- Custom styled dropdowns for finder page ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const customSelects = document.querySelectorAll('.custom-select');
+
+            customSelects.forEach(function(csel) {
+                const btn = csel.querySelector('.dropdown-btn');
+                const list = csel.querySelector('.dropdown-content');
+                const items = csel.querySelectorAll('.dropdown-item');
+                const name = csel.getAttribute('data-name');
+                const hiddenInput = csel.parentElement.querySelector('input[type="hidden"][name]');
+
+                // Toggle
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const isOpen = list.classList.contains('show');
+                    // close other custom selects first
+                    document.querySelectorAll('.custom-select .dropdown-content.show').forEach(function(openList) {
+                        if (openList !== list) { openList.classList.remove('show'); openList.previousElementSibling && openList.previousElementSibling.setAttribute('aria-expanded','false'); }
+                    });
+                    if (!isOpen) {
+                        list.classList.add('show');
+                        btn.setAttribute('aria-expanded','true');
+                    } else {
+                        list.classList.remove('show');
+                        btn.setAttribute('aria-expanded','false');
+                    }
+                });
+
+                // Select item
+                items.forEach(function(item) {
+                    item.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const value = item.getAttribute('data-value');
+                        const label = item.textContent.trim();
+                        // update visible label
+                        const labelSpan = csel.querySelector('.selected-label');
+                        if (labelSpan) labelSpan.textContent = label;
+                        // update hidden input
+                        if (hiddenInput && name && hiddenInput.getAttribute('name') === name) {
+                            hiddenInput.value = value;
+                        }
+                        // close
+                        list.classList.remove('show');
+                        btn.setAttribute('aria-expanded','false');
+                    });
+                });
+            });
+
+            // Close custom dropdowns when clicking outside
+            document.addEventListener('click', function(event) {
+                document.querySelectorAll('.custom-select .dropdown-content.show').forEach(function(openList) {
+                    const custom = openList.closest('.custom-select');
+                    if (!custom.contains(event.target)) {
+                        openList.classList.remove('show');
+                        const btn = custom.querySelector('.dropdown-btn');
+                        if (btn) btn.setAttribute('aria-expanded','false');
+                    }
+                });
+            });
+        });
+
 // Add to cart functionality
 function addToCart(itemId) {
     // Find the button and change style

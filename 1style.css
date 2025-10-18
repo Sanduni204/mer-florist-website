@@ -2273,6 +2273,19 @@ padding-top: 5%;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
 
+        /* Finder page: make dropdown buttons transparent but show thin black outline and keep spacing */
+        .search-section .dropdown-btn {
+            background: transparent !important;
+            border: 1px solid #000 !important; /* 1px black border as requested */
+            box-shadow: none !important;
+            padding: 10px 20px; /* keep spacing */
+            margin: 0 6px; /* maintain separation between the two dropdowns */
+        }
+
+        .search-section .dropdown-btn .dropdown-arrow {
+            color: inherit; /* keep arrow visible */
+        }
+
         .dropdown-arrow {
             transition: transform 0.3s ease;
         }
