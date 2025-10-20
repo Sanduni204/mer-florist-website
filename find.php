@@ -6,7 +6,7 @@
     <div class="search-container">
         <h2 class="search-title">Find Your Perfect Bouquet</h2>
         <p class="search-subtitle">Discover beautiful flowers for every occasion</p>
-        
+
         <form class="search-form" action="search.php" method="POST">
             <div class="dropdowns-row">
                 <!-- Styled dropdown for bouquet type (posts via hidden input 'types') -->
@@ -56,12 +56,16 @@
                         <input type="hidden" name="color_theme" value="">
                     </div>
                 </div>
-            </div>
 
-            <button type="submit" class="search-btn" name="submit">
-                <i class="fas fa-search"></i>
-                Search
-            </button>
+                <!-- Search button as its own sibling so gaps are uniform -->
+                <div class="search-input-group">
+                    <div class="select-wrapper">
+                        <button type="submit" class="search-btn emoji-only" name="submit" aria-label="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
     </div>

@@ -1767,16 +1767,43 @@ padding-top: 5%;
 
 .dropdowns-row {
     display: flex;
-    gap: 15px;
-    justify-content: center;
+    gap: 16px; /* uniform gap between controls */
+    justify-content: flex-start;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* keep all controls on one horizontal line */
+}
+
+/* Force children to share a single line and shrink when needed */
+.dropdowns-row .search-input-group {
+    flex: 1 1 0;
+    min-width: 0; /* allow children to shrink below their content width */
+}
+
+.dropdowns-row .select-wrapper,
+.dropdowns-row .custom-select {
+    display: flex;
+    align-items: center;
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.custom-select .dropdown-btn {
+    width: 100%;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.search-btn.emoji-only {
+    flex: 0 0 56px; /* fixed button width */
 }
 
 .search-input-group {
     position: relative;
-    min-width: 300px;
-    max-width: 400px;
+    flex: 1 1 0; /* allow flexible shrinking/growing */
+    min-width: 0; /* allow the element to shrink below content width */
+    max-width: 420px;
     margin: 0;
 }
 
@@ -1904,6 +1931,185 @@ padding-top: 5%;
     font-size: 16px;
     font-weight: bold;
     display: inline-block;
+}
+
+/* Compact emoji-only search button next to the pickers */
+.search-btn.emoji-only {
+    padding: 0; /* use fixed width/height to center the icon */
+    border-radius: 10px;
+    width: 52px; /* increased width */
+    height: 52px; /* increased height */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px; /* larger icon */
+    box-shadow: none;
+    background: transparent !important;
+    border: 1px solid #000 !important; /* 1px border for the icon button */
+    text-transform: none;
+}
+
+.search-btn.emoji-only i {
+    display: inline-block;
+    line-height: 1;
+    font-size: 18px;
+    vertical-align: middle;
+}
+
+/* Ensure emoji-only icon has no extra margin and is centered inside its button */
+.search-btn.emoji-only i { margin: 0; }
+
+/* Center the search button's wrapper so the icon is perfectly centered in its bordered box */
+.dropdowns-row .search-input-group:nth-child(3) .select-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0; /* remove any wrapper padding that could offset centering */
+}
+
+.dropdowns-row { align-items: center; }
+
+/* Ensure emoji button sits to the right of the second dropdown with a small gap */
+/* remove individual margins so gap controls spacing */
+.dropdowns-row .search-btn.emoji-only { margin-left: 0; }
+
+/* Reduce width of the picker buttons only on the finder page (do not alter other layout) */
+.search-section .custom-select .dropdown-btn {
+    width: 200px !important; /* fixed equal width for both pickers */
+    max-width: 200px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Picker height variable so search button can match it */
+:root { --finder-picker-height: 52px; }
+
+/* Apply the picker height to finder pickers */
+.search-section .custom-select .dropdown-btn {
+    height: var(--finder-picker-height) !important;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Make the search icon button match the pickers' height */
+.search-section .search-btn.emoji-only {
+    height: var(--finder-picker-height) !important;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive layout for finder controls */
+/* Desktop: arrange pickers inline and keep compact sizes */
+@media (min-width: 769px) {
+    .dropdowns-row {
+        display: flex;
+        gap: 16px; /* uniform gap between controls on desktop */
+        justify-content: center; /* center controls on wide screens for balanced gaps */
+        align-items: center;
+        flex-wrap: nowrap;
+    }
+
+    /* Keep each control at its intrinsic/fixed width on desktop so flex doesn't create uneven spacing */
+    .search-input-group {
+        flex: 0 0 auto;
+        min-width: 0;
+        width: auto;
+        max-width: none;
+    }
+
+    .search-btn.emoji-only { margin-left: 0; }
+
+    /* Explicit fixed sizes so gaps are perfectly even on wide screens */
+    .dropdowns-row .search-input-group:nth-child(1),
+    .dropdowns-row .search-input-group:nth-child(2) {
+        flex: 0 0 200px; /* two pickers fixed width */
+    }
+
+    .dropdowns-row .search-input-group:nth-child(3) {
+        flex: 0 0 56px; /* search button fixed width */
+    }
+}
+
+/* Tablet: reduce widths, wrap if needed */
+@media (min-width: 481px) and (max-width: 768px) {
+    .dropdowns-row {
+        gap: 10px;
+        justify-content: flex-start;
+        align-items: center;
+        flex-wrap: nowrap;
+    }
+
+    .search-input-group {
+        width: 30%;
+        min-width: 180px;
+        max-width: 360px;
+    }
+
+    .search-btn.emoji-only { margin-left: 0; }
+}
+
+/* Mid-size windows (e.g. when browser is half-screen on desktop) ---
+   Center controls and enforce fixed widths so gaps stay equal. */
+@media (min-width: 481px) and (max-width: 1199px) {
+    .dropdowns-row {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: nowrap;
+    }
+
+    .dropdowns-row .search-input-group:nth-child(1),
+    .dropdowns-row .search-input-group:nth-child(2) {
+        flex: 0 0 200px;
+    }
+
+    .dropdowns-row .search-input-group:nth-child(3) {
+        flex: 0 0 56px;
+    }
+
+    /* Ensure the picker button widths are applied */
+    .search-section .custom-select .dropdown-btn {
+        width: 200px !important;
+        max-width: 200px !important;
+    }
+
+    .search-section .search-btn.emoji-only {
+        width: 56px !important;
+        height: var(--finder-picker-height) !important;
+    }
+}
+
+/* Mobile: stack vertically, full-width pickers, emoji button inline on the same row as second picker if space allows */
+@media (max-width: 480px) {
+    .dropdowns-row {
+        display: flex;
+            /* On very small screens keep everything inline but allow scroll */
+            .dropdowns-row { overflow-x: auto; }
+
+            .search-input-group { width: 220px; min-width: 160px; }
+
+            .search-btn.emoji-only { width: 56px; height: 56px; font-size: 22px; flex: 0 0 56px; }
+    }
+
+    .dropdown-item {
+        padding: 12px 10px;
+        font-size: 15px;
+    }
+
+    /* Ensure the emoji button stays aligned and larger for finger taps */
+    .search-btn.emoji-only {
+        width: 56px;
+        height: 56px;
+        font-size: 22px;
+        flex: 0 0 56px;
+    }
 }
 
 /* Item buttons styling */
@@ -2273,13 +2479,14 @@ padding-top: 5%;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
 
-        /* Finder page: make dropdown buttons transparent but show thin black outline and keep spacing */
+        /* Finder page: make dropdown buttons transparent but show thin black outline and keep spacing
+           Use parent's gap to control spacing — remove per-element margins to keep gaps uniform */
         .search-section .dropdown-btn {
             background: transparent !important;
             border: 1px solid #000 !important; /* 1px black border as requested */
             box-shadow: none !important;
-            padding: 10px 20px; /* keep spacing */
-            margin: 0 6px; /* maintain separation between the two dropdowns */
+            padding: 10px 20px; /* keep internal spacing */
+            margin: 0 !important; /* rely on .dropdowns-row gap for uniform spacing */
         }
 
         .search-section .dropdown-btn .dropdown-arrow {
