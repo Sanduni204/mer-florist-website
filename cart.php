@@ -550,7 +550,7 @@ foreach ($_SESSION['cart'] as $item) {
                 RS. <?php echo number_format($cart_total, 2); ?>
             </div>
             
-            <a href="<?php echo APPURL; ?>1payment.php?cart=1" class="checkout-btn">
+            <a href="<?php echo APPURL; ?>payment.php?cart=1" class="checkout-btn">
                 Proceed to Checkout
             </a>
             

@@ -26,7 +26,7 @@ if (isset($_GET['id'])) {
   <div class="checkout-container">
     <div class="checkout-left">
       <h2 class="section-title">Contact</h2>
-      <input type="text" class="input" placeholder="Email or mobile phone number">
+      <input type="text" class="input" placeholder="Email">
       <label class="checkbox-label"><input type="checkbox"> Email me with news and offers</label>
       <h2 class="section-title">Delivery</h2>
       <select class="input"><option>Sri Lanka</option></select>
@@ -73,18 +73,53 @@ if (isset($_GET['id'])) {
       </form>
     </div>
     <div class="checkout-right">
+      <?php
+      // If cart flag is present, render all items from session cart
+      $displayCart = [];
+      if (isset($_GET['cart']) && $_GET['cart'] == '1') {
+          // prefer session cart, but if logged in and session empty, pull from DB
+          if (!empty($_SESSION['cart'])) {
+              $displayCart = $_SESSION['cart'];
+          } elseif (isset($_SESSION['user_id'])) {
+              $uid = $_SESSION['user_id'];
+              $stmt = $conn->prepare("SELECT c.item_id AS id, s.name, s.price, s.image, c.quantity FROM cart_items c JOIN shop s ON c.item_id = s.fid WHERE c.user_id = :uid");
+              $stmt->execute([':uid' => $uid]);
+              $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+              foreach ($rows as $r) {
+                  $displayCart[] = [
+                      'id' => $r['id'],
+                      'name' => $r['name'],
+                      'price' => $r['price'],
+                      'image' => $r['image'],
+                      'quantity' => $r['quantity']
+                  ];
+              }
+          }
+      } else {
+          // fall back to single item view (existing behavior)
+          $displayCart = [[ 'id' => $fid ?? 0, 'name' => $itemName, 'price' => $itemPrice, 'image' => $itemImage, 'quantity' => $itemQty ]];
+      }
+
+      $subtotal = 0;
+      foreach ($displayCart as $d) {
+          $qty = isset($d['quantity']) ? intval($d['quantity']) : 1;
+          $price = isset($d['price']) ? floatval($d['price']) : 0.0;
+          $subtotal += $price * $qty;
+      ?>
       <div class="cart-item">
-        <img src="Images/<?php echo $itemImage; ?>" class="cart-img" alt="<?php echo $itemName; ?>">
+        <img src="<?php echo APPURL; ?>Images/<?php echo htmlspecialchars($d['image'] ?? 'sample-bundle.jpg'); ?>" class="cart-img" alt="<?php echo htmlspecialchars($d['name']); ?>">
         <div class="cart-info">
-          <div class="cart-title"><?php echo $itemName; ?></div>
-          <div class="cart-qty"><?php echo $itemQty; ?></div>
-          <div class="cart-price">Rs <?php echo number_format($itemPrice,2); ?></div>
+          <div class="cart-title"><?php echo htmlspecialchars($d['name']); ?></div>
+          <div class="cart-qty"><?php echo $qty; ?></div>
+          <div class="cart-price">Rs <?php echo number_format($price,2); ?></div>
         </div>
       </div>
+      <?php } // end loop ?>
+
       <div class="cart-summary">
-        <div class="summary-row"><span>Subtotal</span><span>Rs <?php echo number_format($itemPrice * $itemQty,2); ?></span></div>
+        <div class="summary-row"><span>Subtotal</span><span>Rs <?php echo number_format($subtotal,2); ?></span></div>
         <div class="summary-row"><span>Shipping</span><span>Rs <?php echo number_format($shipping,2); ?></span></div>
-        <div class="summary-row total"><span>Total</span><span class="total-price">LKR Rs <?php echo number_format($total,2); ?></span></div>
+        <div class="summary-row total"><span>Total</span><span class="total-price">LKR Rs <?php echo number_format($subtotal + $shipping,2); ?></span></div>
       </div>
     </div>
   </div>
