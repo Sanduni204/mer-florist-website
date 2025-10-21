@@ -85,6 +85,10 @@ nav ul.main li a:hover {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
+    /* Make cart item name and price smaller */
+    .cart-item-name, .cart-item-price {
+        font-size: 15px !important;
+    }
 /* Finder page: center the search box */
 .finder-wrapper {
     min-height: 80vh;
@@ -96,7 +100,11 @@ nav ul.main li a:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    margin-top: 50px;
+    padding-top: 0;
+    padding-bottom: 50px;
+    padding-left: 20px;
+    padding-right: 20px;
     width: 100%;
 }
 
@@ -339,6 +347,67 @@ body {
     padding-bottom: 20px;
     border:2px #000000 solid;
     border-radius: 12px;
+}
+/* Remove boldness from all cart item text */
+.cart-item, .cart-item-details, .cart-item-name, .cart-item-price, .cart-item-description, .cart-item-actions, .cart-btn, .quantity-input {
+    font-weight: normal !important;
+}
+/* Pink style for clear cart and delete buttons */
+.remove-btn, .clear-cart-btn {
+    background: linear-gradient(135deg, #fcd4e8 0%, #ed7787 100%) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    box-shadow: none !important;
+    padding: 4px 14px !important;
+    transition: background 0.2s, border 0.2s;
+}
+.clear-cart, .clear-cart-btn {
+    background: linear-gradient(135deg, #fcd4e8 0%, #ed7787 100%) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    box-shadow: none !important;
+    padding: 4px 14px !important;
+    transition: background 0.2s, border 0.2s;
+}
+.remove-btn:hover, .remove-btn:focus, .clear-cart-btn:hover, .clear-cart-btn:focus {
+    background: linear-gradient(135deg, #ed7787 0%, #fcd4e8 100%) !important;
+    color: #fff !important;
+}
+.clear-cart:hover, .clear-cart:focus, .clear-cart-btn:hover, .clear-cart-btn:focus {
+    background: linear-gradient(135deg, #ed7787 0%, #fcd4e8 100%) !important;
+    color: #fff !important;
+}
+/* Update button style: light ash border, black font, like counter button */
+.update-btn {
+    background: #f8f8f8 !important;
+    color: #111 !important;
+    border: 1.5px solid #d3d3d3 !important;
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    box-shadow: none !important;
+    padding: 4px 14px !important;
+    transition: border 0.2s, background 0.2s;
+}
+.update-btn:hover, .update-btn:focus {
+    border-color: #b0b0b0 !important;
+    background: #ededed !important;
+}
+.quantity-input {
+    border: 1.5px solid #d3d3d3 !important;
+    border-radius: 6px !important;
+    font-size: 14px !important;
+    color: #111 !important;
+    background: #fff !important;
+    padding: 2px 8px !important;
+    width: 48px !important;
+    text-align: center;
 }
 .R img{
  width: 250px;
