@@ -67,13 +67,7 @@ if (isset($_GET['id'])) {
           <input type="radio" name="paymethod"> Cash on Delivery (COD)
         </div>
       </div>
-      <h2 class="section-title">Billing address</h2>
-      <div class="billing-box selected">
-        <input type="radio" name="billing" checked> Same as shipping address
-      </div>
-      <div class="billing-box">
-        <input type="radio" name="billing"> Use a different billing address
-      </div>
+      <!-- Billing address section removed as requested -->
       <form action="payment.php" method="get">
         <button type="submit" class="paynow-btn">Pay now</button>
       </form>

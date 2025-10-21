@@ -103,7 +103,7 @@ nav, nav ul.main, nav ul.main li, nav ul.main li a {
 .input {
   width: 100%;
   padding: 12px 14px;
-  border: 1.5px solid #dbeafe;
+  border: 1.5px solid rgba(16,24,32,0.06);
   border-radius: 6px;
   font-size: 1rem;
   background: #f8f8f8;
@@ -111,7 +111,7 @@ nav, nav ul.main, nav ul.main li, nav ul.main li a {
   transition: border 0.2s;
 }
 .input:focus {
-  border-color: #2563eb;
+  border-color: #ed7787; /* soft pink focus */
   outline: none;
 }
 .row {
@@ -127,17 +127,27 @@ nav, nav ul.main, nav ul.main li, nav ul.main li a {
   gap: 8px;
 }
 .shipping-box {
-  border: 2px solid #2563eb;
+  border: 2px solid rgba(16,24,32,0.06);
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 18px;
-  background: #f5faff;
+  background: #fff; /* neutral by default */
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+.shipping-box:hover {
+  background: #fff7f8; /* pale pink on hover */
+  border-color: rgba(237,119,135,0.22);
+}
 .shipping-box.selected {
-  background: #e0e7ff;
+  background: #fff; /* keep neutral even when selected */
+  border-color: rgba(16,24,32,0.06);
+}
+/* make the whole box feel clickable */
+.shipping-box, .payment-box, .billing-box {
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease, transform 0.06s ease;
 }
 .shipping-desc {
   font-size: 0.98rem;
@@ -146,18 +156,25 @@ nav, nav ul.main, nav ul.main li, nav ul.main li a {
 .shipping-price {
   font-size: 1.08rem;
   font-weight: 600;
-  color: #2563eb;
+  color: #0d0d0d; /* dark text for clarity */
 }
 .payment-box {
-  border: 2px solid #dbeafe;
+  border: 2px solid rgba(16,24,32,0.06);
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 18px;
-  background: #fff;
+  background: #fff; /* neutral by default */
+}
+.payment-box:hover {
+  border-color: rgba(237,119,135,0.25);
+  background: #fff7f8; /* pale pink on hover */
 }
 .payment-box.selected {
-  border-color: #2563eb;
-  background: #e0e7ff;
+  background: #fff; /* neutral when selected */
+  border-color: rgba(16,24,32,0.06);
+}
+.payment-box:hover .payment-method {
+  color: #0d0d0d;
 }
 .payment-method {
   font-size: 1.08rem;
@@ -183,34 +200,44 @@ nav, nav ul.main, nav ul.main li, nav ul.main li a {
   margin-top: 12px;
 }
 .billing-box {
-  border: 2px solid #dbeafe;
+  border: 2px solid rgba(16,24,32,0.06);
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 12px;
-  background: #fff;
+  background: #fff; /* neutral by default */
   display: flex;
   align-items: center;
   gap: 8px;
 }
+.billing-box:hover {
+  border-color: rgba(237,119,135,0.25);
+  background: #fff7f8; /* pale pink on hover */
+}
 .billing-box.selected {
-  border-color: #2563eb;
-  background: #e0e7ff;
+  background: #fff; /* neutral when selected */
+  border-color: rgba(16,24,32,0.06);
+}
+.billing-box:hover {
+  transform: translateY(-1px);
 }
 .paynow-btn {
-  background: #2563eb;
-  color: #fff;
-  border: none;
+  background: rgb(250,228,228); /* match header */
+  color: #0d0d0d; /* dark text for contrast against light header background */
+  border: 1px solid rgba(0,0,0,0.06);
   border-radius: 8px;
-  padding: 16px 0;
-  font-size: 1.15rem;
+  padding: 14px 0;
+  font-size: 1.08rem;
   font-weight: 600;
   width: 100%;
-  margin-top: 24px;
+  margin-top: 20px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.12s ease, box-shadow 0.12s ease, transform 0.06s ease;
+  box-shadow: 0 6px 14px rgba(16,24,32,0.06);
 }
 .paynow-btn:hover {
-  background: #1742a0;
+  background: rgb(240,212,212); /* slightly darker/toned hover */
+  box-shadow: 0 8px 18px rgba(16,24,32,0.08);
+  transform: translateY(-1px);
 }
 .cart-item {
   display: flex;
