@@ -76,7 +76,7 @@ try {
                             }
                             ?>
                             <button onclick="addToCart(<?php echo $shopId; ?>)" class="add-to-cart-btn<?php echo in_array($shopId, $cartIds) ? ' clicked' : ''; ?>" data-id="<?php echo $shopId; ?>" <?php echo in_array($shopId, $cartIds) ? 'disabled' : ''; ?>><?php echo in_array($shopId, $cartIds) ? 'Added!' : 'Add to Cart'; ?></button>
-                            <a href="1payment.php?id=<?php echo $shopId; ?>" class="pay-now-btn">Pay Now</a>
+                            <a href="payment.php?id=<?php echo $shopId; ?>" class="pay-now-btn">Pay Now</a>
                         </div>
                         </div>
                 <?php endforeach; ?>

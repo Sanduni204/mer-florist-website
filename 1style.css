@@ -43,7 +43,7 @@ nav ul.main li a {
     padding: 10px 10px; 
     display: inline-block;
     font-size: 16px;
-    font-weight: 500;
+    font-weight: normal;
 }
 
 nav ul.main li a:hover {

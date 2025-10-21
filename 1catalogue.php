@@ -57,7 +57,7 @@ function render_item_card(array $it, string $cardClass): string {
          ($desc !== '' ? '<p><b>'. $desc .'</b></p>' : '').
          '<div class="item-buttons">'.
          '<button onclick="addToCart('.$fid.')" class="'.$btnClass.'" data-id="'.$fid.'" '.$btnDisabled.'>'.$btnText.'</button>'.
-         '<a href="1payment.php?id='.$fid.'" class="pay-now-btn" onclick="return payNowClicked(this)">Pay Now</a>'.
+         '<a href="payment.php?id='.$fid.'" class="pay-now-btn" onclick="return payNowClicked(this)">Pay Now</a>'.
          '</div>'.
          '</div>';
 }

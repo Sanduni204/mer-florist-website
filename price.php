@@ -53,7 +53,7 @@ if (!empty($_SESSION['cart'])) {
             <p><B><?php echo $listing->description; ?></B></p>
             <div class="item-buttons">
                 <button onclick="addToCart(<?php echo $listingId; ?>)" class="add-to-cart-btn<?php echo in_array($listingId, $cartIds) ? ' clicked' : ''; ?>" data-id="<?php echo $listingId; ?>" <?php echo in_array($listingId, $cartIds) ? 'disabled' : ''; ?>><?php echo in_array($listingId, $cartIds) ? 'Added!' : 'Add to Cart'; ?></button>
-                <a href="1payment.php?id=<?php echo $listingId; ?>" class="pay-now-btn">Pay Now</a>
+                <a href="payment.php?id=<?php echo $listingId; ?>" class="pay-now-btn">Pay Now</a>
             </div>
             </div>
         
