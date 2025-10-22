@@ -65,32 +65,13 @@ if (isset($_GET['id'])) {
         <div class="shipping-desc">Delivery Within 2-5 Working Days</div>
         <div class="shipping-price">Rs <?php echo number_format($shipping,2); ?></div>
       </div>
-      <h2 class="section-title">Payment</h2>
-      <div class="payment-box selected">
-        <div class="payment-method">
-          <input type="radio" name="paymethod" checked> Onepay
-          <span class="card-icons">
-            <img src="Images/visa.png" alt="Visa" />
-            <img src="Images/mastercard.png" alt="Mastercard" />
-            <img src="Images/discover.png" alt="Discover" />
-            <span class="more">+3</span>
-          </span>
-          </div>
-          <div class="payment-desc">After clicking "Pay now", you will be redirected to Onepay to complete your purchase securely.</div>
-          <!-- PayHere Sandbox Integration Button -->
-          <button id="payhere-payment" class="paynow-btn" type="button">Pay with PayHere Sandbox</button>
-        </div>
-        <div class="payment-desc">After clicking "Pay now", you will be redirected to Onepay to complete your purchase securely.</div>
+      <!-- Payment heading and Onepay/UI labels removed as requested -->
+      <!-- PayHere Sandbox Integration Button remains -->
+      <!-- PayHere Sandbox Integration Button -->
+  <button id="payhere-payment" class="paynow-btn" type="button">Pay now</button>
       </div>
-      <div class="payment-box">
-        <div class="payment-method">
-          <input type="radio" name="paymethod"> Cash on Delivery (COD)
-        </div>
-      </div>
+      <!-- Cash on Delivery option removed -->
       <!-- Billing address section removed as requested -->
-      <form action="payment.php" method="get">
-        <button type="submit" class="paynow-btn">Pay now</button>
-      </form>
     </div>
     <div class="checkout-right">
       <?php
