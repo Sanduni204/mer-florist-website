@@ -19,6 +19,22 @@ if (isset($_GET['id'])) {
     $itemPrice = floatval($item['price']);
     $itemImage = htmlspecialchars($item['image']);
     $total = $itemPrice * $itemQty + $shipping;
+
+  $merchant_id = "1232562";
+  $order_id = isset($fid) ? $fid : 'ItemNo12345';
+  $amount = floatval($total); // Ensure $amount is float
+  $currency = "LKR";
+  $merchant_secret = "OTc2MDU5NzEzMTI2MjIyNDg0MjM5NjQ2NjU5MTkzOTUxODY3MTQy";
+
+  $hash = strtoupper(
+    md5(
+      $merchant_id .
+      $order_id .
+      number_format($amount, 2, '.', '') .
+      $currency .
+      strtoupper(md5($merchant_secret))
+    )
+  );
   }
 }
 ?>
@@ -59,6 +75,10 @@ if (isset($_GET['id'])) {
             <img src="Images/discover.png" alt="Discover" />
             <span class="more">+3</span>
           </span>
+          </div>
+          <div class="payment-desc">After clicking "Pay now", you will be redirected to Onepay to complete your purchase securely.</div>
+          <!-- PayHere Sandbox Integration Button -->
+          <button id="payhere-payment" class="paynow-btn" type="button">Pay with PayHere Sandbox</button>
         </div>
         <div class="payment-desc">After clicking "Pay now", you will be redirected to Onepay to complete your purchase securely.</div>
       </div>
@@ -125,4 +145,52 @@ if (isset($_GET['id'])) {
   </div>
 </div>
 <script type="text/javascript" src="https://www.payhere.lk/lib/payhere.js"></script>
+<script type="text/javascript">
+  // Payment completed. It can be a successful failure.
+  payhere.onCompleted = function onCompleted(orderId) {
+    console.log("Payment completed. OrderID:" + orderId);
+    // Note: validate the payment and show success or failure page to the customer
+  };
+
+  // Payment window closed
+  payhere.onDismissed = function onDismissed() {
+    // Note: Prompt user to pay again or show an error page
+    console.log("Payment dismissed");
+  };
+
+  // Error occurred
+  payhere.onError = function onError(error) {
+    // Note: show an error page
+    console.log("Error:"  + error);
+  };
+
+  // Collect form values and update payment object before starting PayHere
+  document.getElementById('payhere-payment').onclick = function (e) {
+    var payment = {
+      "sandbox": true,
+      "merchant_id": "1232562",    // Replace your Merchant ID
+      "return_url": undefined,     // Important
+      "cancel_url": undefined,     // Important
+      "notify_url": "http://sample.com/notify",
+      "order_id": "<?php echo isset($fid) ? $fid : 'ItemNo12345'; ?>",
+      "items": "<?php echo addslashes($itemName); ?>",
+      "amount": "<?php echo number_format($total,2,'.',''); ?>",
+      "currency": "LKR",
+      "hash": "<?php echo isset($hash) ? $hash : ''; ?>", // *Replace with generated hash retrieved from backend
+      "first_name": document.querySelector('input[placeholder="First name (optional)"]').value || 'Guest',
+      "last_name": document.querySelector('input[placeholder="Last name"]').value || '',
+      "email": document.querySelector('input[placeholder="Email"]').value || '',
+      "phone": document.querySelector('input[placeholder="Phone"]').value || '',
+      "address": document.querySelector('input[placeholder="Address"]').value || '',
+      "city": document.querySelector('input[placeholder="City"]').value || '',
+      "country": "Sri Lanka",
+      "delivery_address": document.querySelector('input[placeholder="Address"]').value || '',
+      "delivery_city": document.querySelector('input[placeholder="City"]').value || '',
+      "delivery_country": "Sri Lanka",
+      "custom_1": "",
+      "custom_2": ""
+    };
+    payhere.startPayment(payment);
+  };
+</script>
 <?php require "includes/footer.php"; ?>
