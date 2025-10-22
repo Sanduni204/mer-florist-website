@@ -65,13 +65,9 @@ if (isset($_GET['id'])) {
         <div class="shipping-desc">Delivery Within 2-5 Working Days</div>
         <div class="shipping-price">Rs <?php echo number_format($shipping,2); ?></div>
       </div>
-      <!-- Payment heading and Onepay/UI labels removed as requested -->
-      <!-- PayHere Sandbox Integration Button remains -->
-      <!-- PayHere Sandbox Integration Button -->
-  <button id="payhere-payment" class="paynow-btn" type="button">Pay now</button>
-      </div>
-      <!-- Cash on Delivery option removed -->
-      <!-- Billing address section removed as requested -->
+      
+      <button id="payhere-payment" class="paynow-btn" type="button">Pay now</button>
+      
     </div>
     <div class="checkout-right">
       <?php
