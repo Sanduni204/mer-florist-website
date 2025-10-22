@@ -124,4 +124,5 @@ if (isset($_GET['id'])) {
     </div>
   </div>
 </div>
+<script type="text/javascript" src="https://www.payhere.lk/lib/payhere.js"></script>
 <?php require "includes/footer.php"; ?>
