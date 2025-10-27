@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$error) {
   }
 }
 ?>
-<h2>Edit Flower</h2>
+ 
 <?php if ($error): ?>
   <div class="register-message error"><?php echo htmlspecialchars($error); ?></div>
 <?php endif; ?>

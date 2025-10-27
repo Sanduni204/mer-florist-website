@@ -338,7 +338,7 @@ try {
 }
 </style>
 
-<h2>Manage Messages</h2>
+ 
 
 <?php if (isset($success_message)): ?>
     <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 6px; margin-bottom: 15px;">

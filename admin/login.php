@@ -34,7 +34,7 @@ require_once __DIR__ . '/../includes/header.php';
   .error { background:#fdecea; color:#b71c1c; padding:10px; border-radius:6px; margin-bottom:10px; }
 </style>
 <div class="admin-login">
-  <h2>Admin Login</h2>
+  
   <?php if ($error): ?><div class="error"><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
   <form method="post" action="">
     <label for="email">Email</label>

@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 }
 ?>
-<h2>Add New Flower</h2>
+ 
 <?php if ($success): ?><div class="register-message success"><?php echo htmlspecialchars($success); ?></div><?php endif; ?>
 <?php if ($error): ?><div class="register-message error"><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
 <form class="admin-form" method="post" enctype="multipart/form-data">

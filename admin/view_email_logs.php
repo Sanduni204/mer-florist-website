@@ -120,7 +120,7 @@ if (file_exists($log_file)) {
 }
 ?>
 
-<h2>Email Logs</h2>
+ 
 
 <a href="manage_messages.php" class="btn btn-secondary">
     <i class="fas fa-arrow-left"></i> Back to Messages

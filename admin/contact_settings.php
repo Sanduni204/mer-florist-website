@@ -129,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 }
 ?>
-<h2>Contact Information</h2>
+ 
 <?php if (!empty($success)): ?><div class="register-message success"><?php echo htmlspecialchars($success); ?></div><?php endif; ?>
 <?php if (!empty($error)): ?><div class="register-message error"><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
 

@@ -10,7 +10,7 @@
 		.admin-wrapper { max-width: 600px; }
 	@media (max-width: 480px){ .admin-profile { flex-direction:column; align-items:flex-start; } }
 </style>
-<h2>Admin Dashboard</h2>
+ 
 <div class="admin-profile">
 	<img src="<?php echo APPURL; ?>Images/admin.png" alt="Admin" />
 	<div class="info">
