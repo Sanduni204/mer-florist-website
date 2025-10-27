@@ -38,6 +38,7 @@ try {
                     <li><a href="<?php echo APPURL; ?>admin/index.php" class="navlink">Dashboard</a></li>
                     <li><a href="<?php echo APPURL; ?>admin/add_flower.php" class="navlink">Add Flower</a></li>
                     <li><a href="<?php echo APPURL; ?>admin/manage_flowers.php" class="navlink">Manage Flowers</a></li>
+                    <li><a href="<?php echo APPURL; ?>admin/manage_users.php" class="navlink">Manage Users</a></li>
                     <li><a href="<?php echo APPURL; ?>admin/manage_messages.php" class="navlink">Messages</a></li>
                     <li><a href="<?php echo APPURL; ?>admin/contact_settings.php" class="navlink">Contact Info</a></li>
                     

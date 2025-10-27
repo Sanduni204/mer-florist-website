@@ -112,7 +112,7 @@ try {
 
 <style>
 .message-item {
-    border: 1px solid #ddd;
+    border: none;
     border-radius: 8px;
     padding: 15px;
     margin-bottom: 15px;
@@ -121,7 +121,7 @@ try {
 }
 
 .message-item:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: none;
 }
 
 .message-item.unread {
@@ -206,7 +206,6 @@ try {
 
 .btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .stats {
@@ -246,7 +245,7 @@ try {
     padding: 15px;
     background: #f8f9fa;
     border-radius: 8px;
-    border: 1px solid #e9ecef;
+    border: none;
     display: none;
 }
 
@@ -270,7 +269,7 @@ try {
     width: 100%;
     min-height: 80px;
     padding: 10px;
-    border: 1px solid #ddd;
+    border: none;
     border-radius: 6px;
     resize: vertical;
     font-family: inherit;
