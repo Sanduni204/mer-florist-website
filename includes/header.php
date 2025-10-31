@@ -30,10 +30,21 @@ try {
 
 <body>
     <header>
-    
+
     <div class="menubar">
-        <nav>
-            <ul class="main">
+        <nav class="nav-container">
+            <div class="nav-left">
+                <a href="<?php echo APPURL; ?>">
+                    <img src="<?php echo APPURL; ?>/Images/<?php echo $customLogo ? htmlspecialchars($customLogo) : 'logo.png'; ?>" class="logo" alt="logo">
+                </a>
+            </div>
+
+            <button class="mobile-toggle" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="hamburger"><i class="fas fa-bars"></i></span>
+            </button>
+
+            <ul class="main nav-list">
+                <li class="drawer-header"><button class="drawer-close" aria-label="Close menu">&times;</button></li>
                 <?php if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true): ?>
                     <li><a href="<?php echo APPURL; ?>admin/index.php" class="navlink">Dashboard</a></li>
                     <li><a href="<?php echo APPURL; ?>admin/add_flower.php" class="navlink">Add Flower</a></li>
@@ -42,14 +53,7 @@ try {
                     <li><a href="<?php echo APPURL; ?>admin/manage_messages.php" class="navlink">Messages</a></li>
                     <li><a href="<?php echo APPURL; ?>admin/contact_settings.php" class="navlink">Contact Info</a></li>
                     
-                    <li class="drop">
-                        <a href="<?php echo APPURL; ?>admin/index.php">
-                            <?php echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Admin'; ?>
-                        </a>
-                        <ul class="dropdown arrow-top">
-                            <li><a href="<?php echo APPURL; ?>admin/logout.php">Logout</a></li>
-                        </ul>
-                    </li>
+                    <!-- admin username/profile removed from nav -->
                 <?php else: ?>
                     <li><a href="<?php echo APPURL; ?>/1home.php" id="home-link" class="navlink">Home</a></li>
                     <li><a href="<?php echo APPURL; ?>/1catalogue.php" id="catalogue-link" class="navlink">Shop</a></li>
@@ -103,9 +107,85 @@ try {
                         <li><a href="<?php echo APPURL; ?>auth/1login.php" id="login-link" class="navlink">Sign-in</a></li>
                     <?php endif; ?>
                 <?php endif; ?>
-
-                <img src="<?php echo APPURL; ?>/Images/<?php echo $customLogo ? htmlspecialchars($customLogo) : 'logo.png'; ?>" class="logo">
             </ul>
         </nav>
     </div>
 </header>
+
+<style>
+/* Remove default page margins so header sits flush to top */
+html, body { margin: 0; padding: 0; }
+header { margin: 0; padding: 0; }
+
+/* Responsive navbar styles */
+.nav-container{display:flex;align-items:center;justify-content:flex-start;padding:10px 18px;gap:12px;}
+.nav-left .logo{height:42px;display:block}
+.nav-list{list-style:none;margin:0;padding:0;display:flex;gap:12px;align-items:center}
+.nav-list li{display:inline-block}
+.nav-list li a{color:#000;text-decoration:none;padding:8px 10px;border-radius:4px}
+.mobile-toggle{display:none;align-items:center;justify-content:center;gap:8px;background:transparent;border:1px solid transparent;padding:6px 10px;border-radius:6px;cursor:pointer}
+.mobile-toggle .hamburger{font-size:1.1rem;color:#000}
+/* Hide drawer close on large screens */
+.drawer-close{display:none}
+
+/* Mobile styles: side drawer */
+@media (max-width: 960px){
+    /* Stack ordering: show toggle at left, logo after it */
+    .nav-container{position:relative;display:flex;align-items:center}
+    .mobile-toggle{display:flex;order:0}
+    .nav-left{order:1}
+    .nav-list{display:flex;position:fixed;top:12px;left:12px;height:calc(100% - 24px);width:260px;max-width:86%;flex-direction:column;background:#fff;border:1px solid #e6e6e6;padding:12px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);transform:translateX(-120%);transition:transform 220ms ease;overflow:auto;z-index:1200}
+    .nav-list.open{transform:translateX(0)}
+    .drawer-header{list-style:none;display:flex;justify-content:flex-end;padding:4px 0;margin:0}
+    .drawer-close{display:block;background:transparent;border:0;font-size:1.6rem;line-height:1;color:#444;cursor:pointer;padding:6px;border-radius:6px}
+    .nav-list{align-items:flex-start}
+    .nav-list li{margin:6px 0;width:100%;display:block}
+    .nav-list li a{display:flex;align-items:center;justify-content:flex-start;gap:10px;text-align:left;padding:10px 8px;color:#000;border-radius:6px;width:100%}
+    .nav-list li a:hover{background:#f2f2f2}
+    /* Ensure all text inside the drawer is left-aligned */
+    .nav-list, .nav-list * { text-align: left !important; }
+    .nav-list i.fas, .nav-list i.far { min-width:20px; }
+}
+
+/* Ensure toggle and links are left-aligned on large screens */
+@media (min-width: 961px){
+    .mobile-toggle{order:0}
+    .nav-left{order:1;margin-left:8px}
+    .nav-list{order:2;margin-left:12px}
+}
+
+/* Ensure dropdown items look good */
+.nav-list li a{background:transparent;color:#000}
+.nav-list li .dropdown, .nav-list li .dropdown-content{background:#f5f5f5}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    const toggle = document.querySelector('.mobile-toggle');
+    const navList = document.querySelector('.nav-list');
+    if(!toggle || !navList) return;
+    toggle.addEventListener('click', function(e){
+        const expanded = navList.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', expanded);
+    });
+
+    // Close button inside drawer
+    const drawerClose = document.querySelector('.drawer-close');
+    if (drawerClose) {
+        drawerClose.addEventListener('click', function(){
+            navList.classList.remove('open');
+            toggle.setAttribute('aria-expanded', 'false');
+        });
+    }
+
+    // Close nav when clicking outside (mobile)
+    document.addEventListener('click', function(e){
+        if(window.innerWidth <= 960){
+            if(!e.target.closest('.nav-container')){
+                navList.classList.remove('open');
+                toggle.setAttribute('aria-expanded', 'false');
+            }
+        }
+    });
+});
+</script>
