@@ -70,6 +70,12 @@ $sql = "SELECT $pk AS id, fid, name, type, color_theme, price, image, descriptio
 $rows = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 ?>
  
+<!-- spacing between header and table: 50px default, 75px on full screen -->
+<style>
+.admin-table { margin-top: 50px; }
+@media (min-width: 961px) { .admin-table { margin-top: 75px; } }
+</style>
+
 <?php if (!empty($success)): ?><div class="register-message success"><?php echo htmlspecialchars($success); ?></div><?php endif; ?>
 <?php if (!empty($error)):   ?><div class="register-message error"><?php   echo htmlspecialchars($error);   ?></div><?php endif; ?>
 <table class="admin-table">

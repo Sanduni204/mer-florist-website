@@ -133,6 +133,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php if (!empty($success)): ?><div class="register-message success"><?php echo htmlspecialchars($success); ?></div><?php endif; ?>
 <?php if (!empty($error)): ?><div class="register-message error"><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
 
+<!-- spacing between header and contact form: 50px default, 75px on full screen -->
+<style>
+.admin-form { margin-top: 50px; }
+@media (min-width: 961px) { .admin-form { margin-top: 75px; } }
+</style>
 <form class="admin-form" method="post" enctype="multipart/form-data">
   <label for="address">Address</label>
   <input id="address" name="address" value="<?php echo htmlspecialchars($contact['address'] ?? ''); ?>" required />

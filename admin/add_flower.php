@@ -1,4 +1,12 @@
 <?php require __DIR__ . '/admin_header.php'; ?>
+<style>
+/* Add spacing between header and the add-flower form */
+.admin-form { margin-top: 50px; }
+@media (min-width: 961px) {
+  /* increase spacing to 75px on full-screen / large viewports */
+  .admin-form { margin-top: 75px; }
+}
+</style>
 <?php
 $success = '';
 $error = '';
