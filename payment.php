@@ -1,5 +1,9 @@
 <?php require "includes/header.php"; ?>
 <link rel="stylesheet" type="text/css" href="<?php echo APPURL; ?>payment.css">
+<!-- spacing between header and payment details: apply only on screens >= 961px -->
+<style>
+@media (min-width: 961px) { .main-content { margin-top: 75px; } }
+</style>
 <?php
 require "Config/config.php";
 $itemName = 'DAILY ESSENTIAL BUNDLE';
