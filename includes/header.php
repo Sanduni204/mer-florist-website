@@ -44,7 +44,7 @@ try {
             </button>
 
             <ul class="main nav-list">
-                <li class="drawer-header"><button class="drawer-close" aria-label="Close menu">&times;</button></li>
+                <button class="drawer-close" aria-label="Close menu">&times;</button>
                 <?php if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true): ?>
                     <li><a href="<?php echo APPURL; ?>admin/index.php" class="navlink">Dashboard</a></li>
                     <li><a href="<?php echo APPURL; ?>admin/add_flower.php" class="navlink">Add Flower</a></li>
@@ -134,14 +134,119 @@ header { margin: 0; padding: 0; }
     .nav-container{position:relative;display:flex;align-items:center}
     .mobile-toggle{display:flex;order:0}
     .nav-left{order:1}
-    .nav-list{display:flex;position:fixed;top:12px;left:12px;height:calc(100% - 24px);width:260px;max-width:86%;flex-direction:column;background:#fff;border:1px solid #e6e6e6;padding:12px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);transform:translateX(-120%);transition:transform 220ms ease;overflow:auto;z-index:1200}
-    .nav-list.open{transform:translateX(0)}
-    .drawer-header{list-style:none;display:flex;justify-content:flex-end;padding:4px 0;margin:0}
-    .drawer-close{display:block;background:transparent;border:0;font-size:1.6rem;line-height:1;color:#444;cursor:pointer;padding:6px;border-radius:6px}
+    /* Hide the nav by default on mobile to avoid it rendering inline under the header.
+       When the menu is opened the `.open` class makes it visible and slides it in. */
+    .nav-list{
+        display: none;
+        position: fixed;
+        top: 12px;
+        left: 12px !important;
+        height: calc(100% - 24px);
+        width: 260px !important;
+        max-width: 86%;
+        box-sizing: border-box;
+        flex-direction: column;
+        background: #fff;
+        border: 1px solid #e6e6e6;
+        padding: 12px;
+        /* reserve space at the top for the absolute-positioned close button (inside the box) */
+        padding-top: 56px;
+        padding-bottom: 20px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        transform: translateX(-120%);
+        transition: transform 220ms ease, opacity 180ms ease;
+        overflow: auto;
+        z-index: 1200;
+    }
+     /* Use a consistent vertical gap between drawer items on mobile and
+         ensure no per-item margins interfere. This makes all nav rows
+         (Sort by, Home, Shop, etc.) share the exact same spacing. */
+     .nav-list { gap: 12px; row-gap: 12px; column-gap: 0; }
+     /* Remove any leftover margins on direct children so gap is the sole spacer */
+     .nav-list > * { margin: 0 !important; }
+     /* Ensure list items take full width for consistent visual blocks */
+     .nav-list li { width: 100% !important; }
+    /* Make all drawer rows the same height so vertical gaps look equal */
+    /* Ensure the list item itself is the fixed-height row so children fill it
+       — this prevents inline elements inside the button from changing the row height. */
+    .nav-list > li { height: 48px !important; box-sizing: border-box; }
+    .nav-list > li > a { height: 100% !important; display: flex; align-items: center; padding: 0 10px !important; }
+    /* Sort dropdown structure: li > .sort-dropdown > .dropdown-btn */
+    .nav-list > li.nav-sort-dropdown .sort-dropdown { height: 100%; }
+    .nav-list > li.nav-sort-dropdown .dropdown-btn { height: 100% !important; display: flex; align-items: center; padding: 0 10px !important; width: 100% !important; }
+    /* Standardize icon sizing so icon-only rows match text rows visually */
+    .nav-list i.fas, .nav-list i.far, .nav-list i {
+        font-size: 20px;
+        line-height: 1;
+        display: inline-block;
+        min-width: 24px; /* reserve space so text and icons align */
+        margin-right: 10px;
+        text-align: center;
+    }
+    /* Keep the cart badge vertically centered relative to the 48px row */
+    .nav-cart .cart-count {
+        top: 12px;
+        right: 12px;
+    }
+    .nav-list.open{display:flex;transform:translateX(0);}
+    /* Place close button at the right inside the drawer (mobile) */
+     /* keep the header element in the DOM (flow) and absolutely position the close icon
+         relative to the drawer so it sits inside the box at the top-right. */
+     .drawer-header{list-style:none;padding:0;margin:0;position:relative;height:0}
+    .nav-list .drawer-close{position:absolute;top:12px;right:12px;z-index:1301;display:block;background:transparent;border:0;font-size:1.6rem;line-height:1;color:#444;cursor:pointer;padding:8px;border-radius:6px}
+    /* Place Sort dropdown directly under the close button and align it left */
+    /* ensure Sort dropdown appears directly below the header area and is left-aligned */
+    .nav-sort-dropdown{order:1;width:100%;display:flex;align-items:center;padding:0;margin-top:0}
+    .nav-sort-dropdown .sort-dropdown{width:100%}
+    /* Override global fixed positioning (from 1style.css) so sort dropdown
+       participates in the drawer flow on mobile. Use !important to counter
+       the earlier rules that set position:fixed and left/top with !important. */
+    .nav-sort-dropdown {
+        position: static !important;
+        top: auto !important;
+        left: auto !important;
+        z-index: auto !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .nav-sort-dropdown .sort-dropdown { position: static !important; }
+    /* match other drawer items' left padding so 'Sort by' aligns exactly */
+     .nav-sort-dropdown .dropdown-btn{width:100%;text-align:left;padding:10px 8px;border-radius:6px;background:transparent}
     .nav-list{align-items:flex-start}
-    .nav-list li{margin:6px 0;width:100%;display:block}
-    .nav-list li a{display:flex;align-items:center;justify-content:flex-start;gap:10px;text-align:left;padding:10px 8px;color:#000;border-radius:6px;width:100%}
-    .nav-list li a:hover{background:#f2f2f2}
+    /* Put drawer header first (0), sort dropdown second (1), others after (2) */
+    .nav-list li{margin:0;width:100%;display:block;order:2}
+    .nav-list .drawer-header{order:0}
+    .nav-list .nav-sort-dropdown{order:1}
+    /* Use a consistent left padding on the list so all items (including Sort) start
+       at the same x position without relying on absolute/relative offsets. */
+    .nav-list { padding-left: 12px !important; }
+    /* Keep anchors and the dropdown button positioned normally so they align
+       to the UL's left padding rather than using individual left offsets. */
+    /* Apply one consistent rule so all drawer items share the same look. */
+    .nav-list li a,
+    .nav-sort-dropdown .dropdown-btn {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
+        text-align: left;
+        /* enforce fixed row height and remove vertical padding so all rows match */
+        height: 48px !important;
+        min-height: 48px !important;
+        padding: 0 10px !important;
+        color: #000;
+        border-radius: 6px;
+        width: 100% !important;
+        margin-left: 0 !important;
+        background: transparent;
+        border: 0;
+        cursor: pointer;
+        font-style: italic;
+    }
+    .nav-list li a:hover,
+    .nav-sort-dropdown .dropdown-btn:hover { background: #f2f2f2; }
     /* Ensure all text inside the drawer is left-aligned */
     .nav-list, .nav-list * { text-align: left !important; }
     .nav-list i.fas, .nav-list i.far { min-width:20px; }
@@ -150,8 +255,52 @@ header { margin: 0; padding: 0; }
 /* Ensure toggle and links are left-aligned on large screens */
 @media (min-width: 961px){
     .mobile-toggle{order:0}
-    .nav-left{order:1;margin-left:8px}
-    .nav-list{order:2;margin-left:12px}
+    /* On desktop place nav items first (left) and push logo to the right */
+    .nav-list{order:1;align-items:center;gap:12px}
+    .nav-left{order:2;margin-left:auto}
+     /* Keep the container padding modest so items sit predictably from the left
+         On desktop we remove the container left padding and let the UL control the column.
+         This avoids double offsets from both the container and the list. */
+     .nav-container{padding-left:0}
+     /* Make the nav items align on the same left column: give the list a single left offset
+         and remove extra left padding from individual items so their text starts together. */
+    /* Ensure nav items and dropdown use the same padding and alignment */
+    /* UL controls the left column to align text; items have zero left padding */
+    .nav-list { padding-left: 18px !important; }
+    .nav-list li a,
+    .nav-sort-dropdown .dropdown-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 10px 8px 0 !important; /* left = 0 so text aligns with UL */
+        margin: 0 !important;
+        height: 42px; /* match logo height for visual alignment */
+        line-height: 1;
+        background: transparent;
+        border: 0;
+        color: #000;
+        text-align: left;
+        cursor: pointer;
+        font-style: italic;
+    }
+    /* Remove extra offsets from list items */
+    .nav-list li { margin-left: 0 !important; }
+    .nav-sort-dropdown { margin-left: 0 !important; }
+    .nav-sort-dropdown { display: flex; align-items: center; }
+    .nav-list, .nav-list * { text-align: left; }
+    /* Override global fixed positioning (from 1style.css) on desktop so
+       the Sort dropdown participates in the nav flow and aligns with
+       other nav items. We use !important to beat the earlier rules. */
+    .nav-sort-dropdown {
+        position: static !important;
+        top: auto !important;
+        left: auto !important;
+        margin-left: 0 !important;
+        width: auto !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+    .nav-sort-dropdown .dropdown-btn { padding-left: 0 !important; }
 }
 
 /* Ensure dropdown items look good */
