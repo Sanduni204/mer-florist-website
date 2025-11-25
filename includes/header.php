@@ -188,4 +188,34 @@ document.addEventListener('DOMContentLoaded', function(){
         }
     });
 });
+
+// Ensure page content is not hidden behind the fixed nav.
+// Set body's padding-top equal to the actual nav height and update on resize/load.
+(function(){
+    function adjustBodyPadding(){
+        var nav = document.querySelector('nav');
+        if(!nav) return;
+        // On small screens we don't want extra body padding (removes top gap)
+        if (window.innerWidth <= 960) {
+            if (document.body.style.paddingTop !== '0px') {
+                document.body.style.paddingTop = '0px';
+            }
+            return;
+        }
+        // Use offsetHeight to include padding and borders on larger screens
+        var h = nav.offsetHeight || 0;
+        // Only update if different to avoid layout thrash
+        if (document.body.style.paddingTop !== h + 'px') {
+            document.body.style.paddingTop = h + 'px';
+        }
+    }
+    window.addEventListener('resize', adjustBodyPadding);
+    window.addEventListener('load', adjustBodyPadding);
+    // Run after DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', adjustBodyPadding);
+    } else {
+        adjustBodyPadding();
+    }
+})();
 </script>
